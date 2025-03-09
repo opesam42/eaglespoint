@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+</head>
+<body>
+    <h2>Register</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        <!-- Show Non-Field Errors -->
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field }}{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+        <h2>Register</h2>
+
+        <div>
+            <p>First Name</p>
+            {{form.first_name}}
+        </div>
+        <div>
+            <p>First Name</p>
+            {{form.last_name}}
+        </div>
+        <div>
+            <p>Email</p>
+            {{form.email}}
+        </div>
+        <div>
+            <p>Password</p>
+            {{form.password1}}
+        </div>
+        <div>
+            <p>Confirm Password</p>
+            {{form.password2}}
+        </div>
+        <input type="submit", value="Register">
+    </form>
+</body>
+</html>

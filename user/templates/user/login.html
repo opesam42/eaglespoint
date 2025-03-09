@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login</h2>
+    <form method="POST" action="">
+        {% csrf_token %}
+
+        <!-- Show Non-Field Errors -->
+        {% if form.errors %}
+        <div class="alert alert-danger">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ field }}{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+        <h2>Login</h2>
+        {{form.as_p}}
+        {% comment %} <div>
+            <p>Email</p>
+            {{form.username}}
+        </div>
+        <div>
+            <p>Password</p>
+            {{form.password}}
+        </div> {% endcomment %}
+        <input type="submit", value="Login">
+    </form>
+</body>
+</html>
