@@ -1,0 +1,8 @@
+asgiref==3.8.1
+Django==5.1.7
+django_components==0.130
+djc_core_html_parser==1.0.1
+pillow==11.1.0
+sqlparse==0.5.3
+tzdata==2025.1
+whitenoise==6.9.0

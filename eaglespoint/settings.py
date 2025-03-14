@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'core',
     'user',
     'listing',
+
+    'django_components',
 ]
 
 AUTH_USER_MODEL = 'user.CustomUser' # updated
@@ -58,6 +60,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    "django_components.middleware.ComponentDependencyMiddleware", #django-component
+    "whitenoise.middleware.WhiteNoiseMiddleware", #whitenoise
 ]
 
 ROOT_URLCONF = 'eaglespoint.urls'
@@ -66,7 +71,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': True,
+        'APP_DIRS': False,  # Should be False if using custom loaders
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -74,9 +79,21 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'loaders': [
+                ('django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                    'django_components.template_loader.Loader',
+                ])
+            ],
+            'builtins': [  # Add builtins correctly
+                'django_components.templatetags.component_tags',
+            ],
         },
     },
 ]
+
+
 
 WSGI_APPLICATION = 'eaglespoint.wsgi.application'
 
@@ -127,6 +144,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Ensures Django can find static files
+]
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -138,3 +159,26 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 
+from django_components import ComponentsSettings
+
+COMPONENTS = ComponentsSettings(
+    dirs=[
+        Path(BASE_DIR) / "components",
+    ],
+)
+
+STATICFILES_FINDERS = [
+    # Default finders
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    # Django components
+    "django_components.finders.ComponentsFileSystemFinder",
+]
+
+""" for whitenoise caching """
+STORAGES = {
+    # ...
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}

@@ -18,7 +18,7 @@ class Listings(models.Model):
     description = models.TextField(max_length=2000, blank=False, null=False)
     price = models.DecimalField(decimal_places=2, max_digits=20, blank=False, null=False)
     cover_image = models.ImageField(upload_to='listing-cover/', blank=False, null=False)
-    units = models.IntegerField(blank=True, null=True, max_length=20)
+    units = models.IntegerField(blank=True, null=True)
     size = models.IntegerField(blank=True, null=True)
 
     # address

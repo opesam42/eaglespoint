@@ -1,11 +1,133 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomePage</title>
-</head>
-<body>
-    <p>Hi eaglespoint</p>
-</body>
-</html>
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Home - Eaglespoint Horizon Limited{% endblock %}
+
+{% block content %}
+<div class="flex flex-col gap-6">
+    <section class="travel-hero w-full self-stretch bg-slate-100 py-6">
+        <div class="flex flex-col gap-4 items-center">
+            <h2 class="text-5xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h2>
+            <p class="text-center">Want to <span class="text-red-600 font-cursive">study, work or visit</span>. Yeah! you are in the right place</p>
+            <div class="flex flex-row gap-3 border rounded-lg w-max p-1 border-slate-400">
+                {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %}
+                {% component "button" label="Study Abroad" type="tertiary" %} {% endcomponent %}
+            </div>
+            <div class="image-container">
+                <img>
+            </div>
+        </div>
+
+    </section>
+    <section class="flex flex-col p-4 gap-3">
+        <div class="stats flex justify-start gap-10 items-center font-medium">
+            <div>
+                <div class="text-5xl">200</div>
+                <div class="text-sm">satisfied customers</div>
+            </div>
+    
+            <div>
+                <div class="text-5xl">10+</div>
+                <div class="text-sm">years served</div>
+            </div>
+        </div>
+
+        <div class="partners">
+            <h4 class="font-semibold">Our Partners</h4>
+            <div>
+                <img>
+            </div>
+            <div>
+                <img>
+            </div>
+        </div>
+    </section>
+
+    <section class="p-4">
+        <h3 class="text-2xl bold white">Are You Interested In Our Real Estate</h3>
+        {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
+    </section>
+
+    <section>
+        <h3><span class="text-red-600">Explore</span>Our Travel Services</h3>
+        <div>
+            <div>
+                <div>Flight Booking</div>
+                <p>Seamless flight reservations at the best rates, ensuring a smooth journey.</p>
+            </div>
+            <div>
+                <div>Visa Processing</div>
+                <p>Expert guidance to simplify your visa application and approval process.</p>
+            </div>
+            <div>
+                <div>Hotel Reservation</div>
+                <p>Find and book the perfect stay, from budget-friendly to luxury hotels.</p>
+            </div>
+            <div>
+                <div>Study Abroad</div>
+                <p>Secure admissions and visas for top universities worldwide.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h3><span class="text-red-600">Unlock</span> Your Global Academic Dream</h3>
+        <p>Are you a scholar seeking to explore new horizons, meet new people, and achieve academic excellence abroad? Look no further! At Eaglespoint Horizon Limited, we specialize in simplifying the study abroad process, ensuring a seamless and enjoyable experience for you.
+        </p>
+        <img>
+    </section>
+
+    <section>
+        <h3><span class="text-red-600">Worry-less</span> about SAT, TOEFL, IELTS</h3>
+        <p>Our team of experienced and professional tutors will coach and prepare you to achieve excellent results and higher scores. With higher scores, you'll increase your chances of securing a scholarship!
+        </p>
+        <img>
+    </section>
+
+    <section>
+        <h3><span class="text-red-600">Enjoy</span> Flexible Learning Options</h3>
+        <p>Our services cater to both schools and individuals. For schools, we'll send a team of capable teachers to instruct students within their primary learning environment, ensuring a seamless integration with curricular activities. Individuals can join us at our conducive learning environment or opt for online courses, eliminating physical barriers.
+
+        </p>
+        <img>
+    </section>
+
+    <section class="testimonial">
+        <h3>Listen to our Trusted Clients ❤ ️</h3>
+        <div class="card-container">
+            <div class="card">
+                <div>
+                    <img>
+                    <span>Mr. Gospel</span>
+                </div>
+                <div class="body">
+                    I'd always dreamed of living and working abroad. Eaglespoint's expert guidance made it possible. They helped me navigate the Permanent Residence process, ensuring a flawless application. I highly recommend Eaglespoint to anyone seeking to relocate abroad. Their professionalism and expertise are unmatched. Thank you, Eaglespoint, for making my dream a reality!
+                </div>
+            </div>
+
+            
+            <div class="card">
+                <div>
+                    <img>
+                    <span>Mr. Bethel</span>
+                </div>
+                <div class="body">                  
+                    I'm forever grateful to Eaglespoint Horizon Limited for guiding me through my international education journey. From securing admission to studying abroad, graduating, and now working as a lecturer, Eaglespoint has been an invaluable partner. Their competence, efficiency, and dedication to customer satisfaction are unparalleled. I highly recommend Eaglespoint to anyone seeking to study abroad or relocate internationally. They truly helped me achieve my dreams!
+                </div>
+            </div>
+
+            <div class="card">
+                <div>
+                    <img>
+                    <span>Mr. Elle</span>
+                </div>
+                <div class="body">                  
+                    I'm forever grateful to Eaglespoint for making my study abroad dreams a reality! Their guidance and support throughout the application and visa process were invaluable. I'm now proudly holding a degree from a prestigious international university, and I couldn't have done it without Eaglespoint's expertise. Thank you for helping me soar to new heights!
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+    
+{% endblock %}

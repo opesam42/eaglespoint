@@ -1,0 +1,15 @@
+{
+  "name": "eaglespoint",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/opesam42/eaglespoint.git",
+  "author": "Gbenga Opeyemi <opesam42@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.0.13",
+    "tailwindcss": "^4.0.13"
+  },
+  "scripts": {
+  "start": "tailwindcss -i ./static/css/input.css -o ./static/css/output.css --watch"
+}
+}
