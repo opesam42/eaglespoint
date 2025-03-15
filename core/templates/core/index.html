@@ -4,22 +4,43 @@
 {% block title %}Home - Eaglespoint Horizon Limited{% endblock %}
 
 {% block content %}
-<div class="flex flex-col gap-6">
-    <section class="travel-hero w-full self-stretch bg-slate-100 py-6">
-        <div class="flex flex-col gap-4 items-center">
-            <h2 class="text-5xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h2>
-            <p class="text-center">Want to <span class="text-red-600 font-cursive">study, work or visit</span>. Yeah! you are in the right place</p>
-            <div class="flex flex-row gap-3 border rounded-lg w-max p-1 border-slate-400">
-                {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %}
-                {% component "button" label="Study Abroad" type="tertiary" %} {% endcomponent %}
+<div class="flex flex-col gap-20">
+
+    <section class="travel-hero w-full self-stretch bg-slate-100 py-6 pb-0">
+        <div class="flex flex-col gap-7 lg:gap-12 responsive-padding">
+            <div class="flex flex-col gap-4 items-center">
+                <h2 class="text-5xl lg:text-6xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h2>
+                <p class="text-center text-lg">Want to <span class="text-red-600 font-cursive">study, work or visit</span>. Yeah! you are in the right place</p>
+                <div class="flex flex-row gap-3 border rounded-lg w-max p-1 border-slate-400">
+                    {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %}
+                    {% component "button" label="Study Abroad" type="tertiary" %} {% endcomponent %}
+                </div>
             </div>
-            <div class="image-container">
-                <img>
+
+            <div class="relative w-full overflow-hidden">
+                <div class="image-container flex items-start gap-6 animate-scroll *:w-60 *:h-60 *:object-cover *:rounded-lg">
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
+                    <img src="{% static 'images/toronto-image.jpg' %} ">
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
+                    <img src="{% static 'images/toronto-image.jpg' %} ">
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
+                    <img src="{% static 'images/toronto-image.jpg' %} ">
+    
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
+                    <img src="{% static 'images/toronto-image.jpg' %} ">
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
+                    <img src="{% static 'images/toronto-image.jpg' %} ">
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
+                    <img src="{% static 'images/toronto-image.jpg' %} ">
+                    
+                </div>
             </div>
+            
         </div>
 
     </section>
-    <section class="flex flex-col p-4 gap-3">
+
+    <section class="responsive-padding flex flex-col lg:flex-row responsive-padding gap-3 lg:justify-between">
         <div class="stats flex justify-start gap-10 items-center font-medium">
             <div>
                 <div class="text-5xl">200</div>
@@ -33,64 +54,86 @@
         </div>
 
         <div class="partners">
-            <h4 class="font-semibold">Our Partners</h4>
+            <h4 class="font-bold">Our Partners</h4>
+            <div class="flex gap-4 *:h-16 *:w-16">
+                <img src="{% static 'images/slack-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/tinder-1-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/airbnb-2-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/soundcloud-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/coca-cola-logo-svgrepo-com.svg' %}">
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="relative bg-cover bg-center text-white py-4 lg:py-10 responsive-padding" 
+    style="background-image: url('{% static 'images/house-duplex.jpg' %}');">
+    
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/50"></div> 
+
+        <!-- Content -->
+        <div class="relative z-10">
+            <h3 class="text-2xl font-bold mb-4">Are You Interested In Our Real Estate</h3>
+            {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
+        </div>
+
+    </section>
+
+    <section class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center responsive-padding">
+        <h3 class="text-4xl lg:text-6xl font-extrabold text-center lg:w-1/4 lg:text-left"><span class="text-red-600 font-cursive">Explore</span> Our Travel Services</h3>
+        <div class="flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-6 *:w-64 *:h-64 *:flex *:flex-col *:gap-2 *:items-center *:justify-center *:px-2 *:rounded-xl *:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
             <div>
-                <img>
+                <img src="{% static 'images/material-symbols-light-flight.svg' %}" class="w-16 h-16">
+                <div class="text-xl font-bold">Flight Booking</div>
+                <p class="text-center font-medium">Seamless flight reservations at the best rates, ensuring a smooth journey.</p>
             </div>
             <div>
-                <img>
+                <img src="{% static 'images/icon-park_passport.svg' %}" class="w-16 h-16">
+                <div class="text-xl font-bold">Visa Processing</div>
+                <p class="text-center font-medium">Expert guidance to simplify your visa application and approval process.</p>
+            </div>
+            <div>
+                <img src="{% static 'images/fluent-emoji-flat_hotel.svg' %}" class="w-16 h-16">
+                <div class="text-xl font-bold">Hotel Reservation</div>
+                <p class="text-center font-medium">Find and book the perfect stay, from budget-friendly to luxury hotels.</p>
+            </div>
+            <div>
+                <img src="{% static 'images/noto_graduation-cap.svg' %}" class="w-16 h-16">
+                <div class="text-xl font-bold">Study Abroad</div>
+                <p class="text-center font-medium">Secure admissions and visas for top universities worldwide.</p>
             </div>
         </div>
     </section>
 
-    <section class="p-4">
-        <h3 class="text-2xl bold white">Are You Interested In Our Real Estate</h3>
-        {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
-    </section>
-
-    <section>
-        <h3><span class="text-red-600">Explore</span>Our Travel Services</h3>
-        <div>
-            <div>
-                <div>Flight Booking</div>
-                <p>Seamless flight reservations at the best rates, ensuring a smooth journey.</p>
+    <div class="flex flex-col gap-6 lg:gap-9">
+        <section class="bg-slate-100 flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center">
+            <div class="responsive-padding lg:p-0 lg:w-1/2 lg:pl-20">
+                <h3 class="text-4xl font-extrabold mb-3"><span class="text-red-600 font-cursive">Unlock</span> Your Global Academic Dream</h3>
+                <p class="text-xl">Are you a scholar seeking to explore new horizons, meet new people, and achieve academic excellence abroad? Look no further! At Eaglespoint Horizon Limited, we specialize in simplifying the study abroad process, ensuring a seamless and enjoyable experience for you.
+                </p>
             </div>
-            <div>
-                <div>Visa Processing</div>
-                <p>Expert guidance to simplify your visa application and approval process.</p>
+            <img src="{% static 'images/happy-graduand.jpeg' %}" class="w-full lg:max-w-96 h-auto max-h-64 lg:h-full object-cover">
+        </section>
+    
+        <section class="flex flex-col gap-3 lg:flex-row-reverse lg:justify-between lg:items-center">
+            <div class="responsive-padding lg:p-0 lg:w-1/2 lg:pr-20">
+                <h3 class="text-4xl font-extrabold mb-3 pr-20"><span class="text-red-600 font-cursive">Worry-less</span> about SAT, TOEFL, IELTS</h3>
+                <p class="text-xl">Our team of experienced and professional tutors will coach and prepare you to achieve excellent results and higher scores. With higher scores, you'll increase your chances of securing a scholarship!</p>
             </div>
-            <div>
-                <div>Hotel Reservation</div>
-                <p>Find and book the perfect stay, from budget-friendly to luxury hotels.</p>
+            <img src="{% static 'images/man-2562325_1280.jpg' %}" class="w-full lg:max-w-96 h-auto max-h-64 object-cover">
+        </section>
+        
+        <section class="bg-slate-100 flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center">
+            <div class="responsive-padding lg:p-0 lg:w-1/2 lg:pl-20">
+                <h3 class="text-4xl font-extrabold mb-3"><span class="text-red-600 font-cursive">Enjoy</span> Flexible Learning Options</h3>
+                <p class="text-xl">Our services cater to both schools and individuals. For schools, we'll send a team of capable teachers to instruct students within their primary learning environment, ensuring a seamless integration with curricular activities. Individuals can join us at our conducive learning environment or opt for online courses, eliminating physical barriers.
+                </p>
             </div>
-            <div>
-                <div>Study Abroad</div>
-                <p>Secure admissions and visas for top universities worldwide.</p>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <h3><span class="text-red-600">Unlock</span> Your Global Academic Dream</h3>
-        <p>Are you a scholar seeking to explore new horizons, meet new people, and achieve academic excellence abroad? Look no further! At Eaglespoint Horizon Limited, we specialize in simplifying the study abroad process, ensuring a seamless and enjoyable experience for you.
-        </p>
-        <img>
-    </section>
-
-    <section>
-        <h3><span class="text-red-600">Worry-less</span> about SAT, TOEFL, IELTS</h3>
-        <p>Our team of experienced and professional tutors will coach and prepare you to achieve excellent results and higher scores. With higher scores, you'll increase your chances of securing a scholarship!
-        </p>
-        <img>
-    </section>
-
-    <section>
-        <h3><span class="text-red-600">Enjoy</span> Flexible Learning Options</h3>
-        <p>Our services cater to both schools and individuals. For schools, we'll send a team of capable teachers to instruct students within their primary learning environment, ensuring a seamless integration with curricular activities. Individuals can join us at our conducive learning environment or opt for online courses, eliminating physical barriers.
-
-        </p>
-        <img>
-    </section>
+            <img src="{% static 'images/co-learning.jpg' %}" class="w-full lg:max-w-96 h-auto max-h-64 lg:h-full object-cover">
+        </section>
+    </div>
 
     <section class="testimonial">
         <h3>Listen to our Trusted Clients ❤ ️</h3>
