@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..900;1,400..900&family=Architects+Daughter&display=swap');
 
-@import "tailwindcss" source(none);
+
 
 @source '../../core/templates/**/*.html';
 @source '../../users/templates/**/*.html';
@@ -55,6 +55,10 @@
       display: none;
     }
 
+    [x-cloak] {
+      display: none !important;
+    }
+    
   }
 
 
