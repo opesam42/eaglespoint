@@ -7,13 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Eaglespoint Horizon Limited {% endblock %}</title>
 
+    <script src="https://unpkg.com/alpinejs" defer></script>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    
+
 </head>
 <body class='font-base text-gray-900'>
 
-    <header class="w-full flex flex-row justify-between mb-6">
+    <!-- <header class="w-full flex flex-row justify-between mb-6">
         <div class="logo">
             <img src="{% static 'images/eaglespoint-logo.png' %}" width="72px">
         </div>
@@ -24,11 +25,95 @@
         <nav>
 
         </nav>
+    </header> -->
+    <header x-data="{ isOpen:false }" class="w-full bg-white border-gray-200 responsive-padding py-2.5 sticky top-0 z-30 drop-shadow-md">
+        <div class="relative flex  gap-6 items-center justify-center mx-auto">
+            
+            <!-- Logo Section -->
+            <a href="#" class="block">
+                <img src="{% static 'images/eaglespoint-logo.png' %}" width="72px" class="w-32" alt="EaglesPoint Logo" />
+            </a>
+    
+            <!-- Search Bar -->
+            <div class="flex items-stretch w-full h-10 border rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
+                <input type="search" class="block w-full px-4 py-2 focus:outline-none" 
+                       placeholder="Search Location or Properties">
+                <button class="bg-blue-600 text-white h-full p-2 rounded-r-lg"><i class="fa fa-search fa-lg"></i></button>
+            </div>
+    
+            <!-- Mobile Menu Toggle -->
+            <button @click="isOpen = !isOpen" type="button" class="inline-flex items-center p-2 text-sm 
+                text-gray-500 rounded-lg ml-auto lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                <span class="sr-only">Open main menu</span>
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                </svg>
+            </button>
+    
+            <!-- Navigation Menu -->
+            <nav :class="isOpen ? 'flex' : 'hidden'" class="absolute w-screen top-20 z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center *:font-semibold lg:font-normal" id="mobile-menu">
+                <ul class="flex flex-col mt-4 font-medium w-full md:w-full lg:w-max lg:flex-row lg:space-x-8 lg:mt-0">
+                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Home</a></li>
+                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Company</a></li>
+                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Marketplace</a></li>
+                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Features</a></li>
+                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Team</a></li>
+                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
     </header>
+    
 
     <div class="wrapper w-full">
         {% block content %} {% endblock %}
     </div>
+    
+    <footer class="bg-slate-100 responsive-padding py-12 flex flex-col gap-8">
+        <div class="flex flex-col gap-2">
+            <img src="{% static 'images/eaglespoint-logo.png' %}" width="72px"> 
+            <p>Your trusted partner in real estate, travel, and education consulting.</p>
+            <hr class="border-t border-gray-300 my-4">
+        </div>
+
+        <nav aria-label="Footer Navigation" class="flex flex-col">
+            <div class="flex flex-col md:flex-row gap-y-6 gap-x-12 md:self-center" >
+                <section>
+                    <h2 class="text-lg uppercase font-semibold">Services</h2>
+                    <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
+                        <li><a href="#">Real Estate</a></li>
+                        <li><a href="#">Travel and Study</a></li>
+                    </ul>
+                </section>
+                <section>
+                    <h2 class="text-lg uppercase font-semibold">Quick Links</h2>
+                    <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
+                        <li><a href="#">List with Us</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </section>
+                
+            </div>
+        </nav>
+
+        <div>
+            <hr class="border-t border-gray-300 my-4">
+            <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700">
+                <li><span class="font-bold">Telephone: </span><a class="hover:text-blue-600" href="tel:+2348165704879">+2348165704879</a></li>
+                <li><span class="font-bold">Email: </span><a class="hover:text-blue-600" href="mailto:eaglespointglobal@gmail.com">eaglespointglobal@gmail.com</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <p class="text-gray-700">&copy; <span x-data x-text="new Date().getFullYear()">2025</span> Eaglespoint Horizon Limited. All right reserved. </p>
+        </div>
+        {% block script %}{% endblock %}
+
+        
+    </footer>
+    
     
 </body>
 </html>

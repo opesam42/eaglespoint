@@ -9,7 +9,7 @@
     <section class="travel-hero w-full self-stretch bg-slate-100 py-6 pb-0">
         <div class="flex flex-col gap-7 lg:gap-12 responsive-padding">
             <div class="flex flex-col gap-4 items-center">
-                <h2 class="text-5xl lg:text-6xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h2>
+                <h1 class="text-5xl lg:text-6xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h1>
                 <p class="text-center text-lg">Want to <span class="text-red-600 font-cursive">study, work or visit</span>. Yeah! you are in the right place</p>
                 <div class="flex flex-row gap-3 border rounded-lg w-max p-1 border-slate-400">
                     {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %}
@@ -17,41 +17,33 @@
                 </div>
             </div>
 
-            <div class="relative w-full overflow-hidden">
-                <div class="image-container flex items-start gap-6 animate-scroll *:w-60 *:h-60 *:object-cover *:rounded-lg">
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
-                    <img src="{% static 'images/toronto-image.jpg' %} ">
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
-                    <img src="{% static 'images/toronto-image.jpg' %} ">
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
-                    <img src="{% static 'images/toronto-image.jpg' %} ">
-    
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
-                    <img src="{% static 'images/toronto-image.jpg' %} ">
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
-                    <img src="{% static 'images/toronto-image.jpg' %} ">
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %} ">
-                    <img src="{% static 'images/toronto-image.jpg' %} ">
+            <div class="relative w-full overflow-hidden inline-flex flex-nowrap">
+        
+                <div class="image-container w-max whitespace-nowrap flex items-start gap-6 animate-scroll *:w-60 *:h-60 *:object-cover *:rounded-lg">
                     
+                    <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                    <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+            
                 </div>
             </div>
+        
             
         </div>
 
     </section>
 
     <section class="responsive-padding flex flex-col lg:flex-row responsive-padding gap-3 lg:justify-between">
-        <div class="stats flex justify-start gap-10 items-center font-medium">
-            <div>
-                <div class="text-5xl">200</div>
-                <div class="text-sm">satisfied customers</div>
+        <dl class="stats flex justify-start gap-10 items-center font-medium">
+            <div class="flex flex-col gap-4 items-center">
+                <dt class="text-6xl">200+</dt>
+                <dd class="text-gray-700">Satisfied customers</dd>
             </div>
     
-            <div>
-                <div class="text-5xl">10+</div>
-                <div class="text-sm">years served</div>
+            <div class="flex flex-col gap-4 items-center">
+                <dt class="text-6xl">10+</dt>
+                <dd class="text-gray-700">Years served</dd>
             </div>
-        </div>
+        </dl>
 
         <div class="partners">
             <h4 class="font-bold">Our Partners</h4>
@@ -75,14 +67,14 @@
 
         <!-- Content -->
         <div class="relative z-10">
-            <h3 class="text-2xl font-bold mb-4">Are You Interested In Our Real Estate</h3>
+            <h2 class="text-2xl font-bold mb-4">Are You Interested In Our Real Estate</h2>
             {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
         </div>
 
     </section>
 
     <section class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center responsive-padding">
-        <h3 class="text-4xl lg:text-6xl font-extrabold text-center lg:w-1/4 lg:text-left"><span class="text-red-600 font-cursive">Explore</span> Our Travel Services</h3>
+        <h2 class="text-4xl lg:text-6xl font-extrabold text-center lg:w-1/4 lg:text-left"><span class="text-red-600 font-cursive">Explore</span> Our Travel Services</h2>
         <div class="flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-6 *:w-64 *:h-64 *:flex *:flex-col *:gap-2 *:items-center *:justify-center *:px-2 *:rounded-xl *:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
             <div>
                 <img src="{% static 'images/material-symbols-light-flight.svg' %}" class="w-16 h-16">
@@ -135,42 +127,72 @@
         </section>
     </div>
 
-    <section class="testimonial">
-        <h3>Listen to our Trusted Clients ❤ ️</h3>
-        <div class="card-container">
-            <div class="card">
-                <div>
-                    <img>
-                    <span>Mr. Gospel</span>
+    <section class="testimonial responsive-padding relative bg-repeat py-8 bg-[100px] text-white" style="background-image: url({% static 'images/pattern4.svg' %}); background-color:blue;">
+        <!-- overlay -->
+        <div class="absolute inset-0"></div>
+        <!-- content -->
+        <div class="relative z-10 flex flex-col gap-7 items-center">
+            <h3 class="text-4xl font-semibold">Listen to our Trusted Clients <span class="text-red-600">&hearts;</span></h3>
+            <div class="card-container flex flex-col md:flex-row md:flex-wrap justify-center gap-6 *:bg-white *:text-gray-700 *:py-6 *:px-4 *:w-full *:md:w-72 *:rounded-xl *:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] *:inline-flex *:flex-col *:items-start *:gap-4 *:overflow-hidden">
+                <div class="card">
+                    <img src="{% static 'images/quote-svgrepo-com.svg' %}" width="20px" class="w-14 h-14">
+                    <div class="body">
+                        I'd always dreamed of living and working abroad. Eaglespoint's expert guidance made it possible. They helped me navigate the Permanent Residence process, ensuring a flawless application. I highly recommend Eaglespoint to anyone seeking to relocate abroad. Their professionalism and expertise are unmatched. Thank you, Eaglespoint, for making my dream a reality!
+                    </div>
+                    <div>
+                        <img>
+                        <span class="border-b-1 border-gray-800 uppercase text-gray-950 font-semibold">Mr. Gospel</span>
+                    </div>
                 </div>
-                <div class="body">
-                    I'd always dreamed of living and working abroad. Eaglespoint's expert guidance made it possible. They helped me navigate the Permanent Residence process, ensuring a flawless application. I highly recommend Eaglespoint to anyone seeking to relocate abroad. Their professionalism and expertise are unmatched. Thank you, Eaglespoint, for making my dream a reality!
-                </div>
-            </div>
 
+                <div class="card">
+                    <img src="{% static 'images/quote-svgrepo-com.svg' %}" width="20px" class="w-14 h-14">
+                    <div class="body">
+                        I'm forever grateful to Eaglespoint Horizon Limited for guiding me through my international education journey. From securing admission to studying abroad, graduating, and now working as a lecturer, Eaglespoint has been an invaluable partner. Their competence, efficiency, and dedication to customer satisfaction are unparalleled. I highly recommend Eaglespoint to anyone seeking to study abroad or relocate internationally. They truly helped me achieve my dreams!
+                    </div>
+                    <div>
+                        <img>
+                        <span class="border-b-1 border-gray-800 uppercase text-gray-950 font-semibold">Mr. Bethel</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="{% static 'images/quote-svgrepo-com.svg' %}" width="20px" class="w-14 h-14">
+                    <div class="body">
+                        I'm forever grateful to Eaglespoint for making my study abroad dreams a reality! Their guidance and support throughout the application and visa process were invaluable. I'm now proudly holding a degree from a prestigious international university, and I couldn't have done it without Eaglespoint's expertise. Thank you for helping me soar to new heights!
+                    </div>
+                    <div>
+                        <img>
+                        <span class="border-b-1 border-gray-800 uppercase text-gray-950 font-semibold">Mr. Elle</span>
+                    </div>
+                </div>
+    
+                
+            </div>
+        </div>
+
+    </section>
+
+    <section class="responsive-padding flex flex-col gap-7">
+        <h2 class="text-4xl font-semibold">Stay Informed with Our Blog</h2>
+        <div class="flex flex-row flex-wrap gap-6 items-center justify-center">
+            {% component "blog_card" title="The Ultimate Guide to Stress-Free Travel Planning" tag="Travel" imageUrl="{% static 'images/aiplane-window.jpeg' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+
+            {% component "blog_card" title="The Ultimate Guide to Stress-Free Travel Planning" tag="Travel" imageUrl="{% static 'images/aiplane-window.jpeg' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+
+            {% component "blog_card" title="The Ultimate Guide to Stress-Free Travel Planning" tag="Travel" imageUrl="{% static 'images/aiplane-window.jpeg' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+            <!-- {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %} -->
             
-            <div class="card">
-                <div>
-                    <img>
-                    <span>Mr. Bethel</span>
-                </div>
-                <div class="body">                  
-                    I'm forever grateful to Eaglespoint Horizon Limited for guiding me through my international education journey. From securing admission to studying abroad, graduating, and now working as a lecturer, Eaglespoint has been an invaluable partner. Their competence, efficiency, and dedication to customer satisfaction are unparalleled. I highly recommend Eaglespoint to anyone seeking to study abroad or relocate internationally. They truly helped me achieve my dreams!
-                </div>
-            </div>
-
-            <div class="card">
-                <div>
-                    <img>
-                    <span>Mr. Elle</span>
-                </div>
-                <div class="body">                  
-                    I'm forever grateful to Eaglespoint for making my study abroad dreams a reality! Their guidance and support throughout the application and visa process were invaluable. I'm now proudly holding a degree from a prestigious international university, and I couldn't have done it without Eaglespoint's expertise. Thank you for helping me soar to new heights!
-                </div>
-            </div>
+             
         </div>
     </section>
 
 </div>
     
+{% endblock %}
+
+{% block script %}
+    <script>
+        console.log('hello')
+    </script>
 {% endblock %}
