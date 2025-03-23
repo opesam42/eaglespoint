@@ -1,0 +1,121 @@
+{% extends 'core/base.html'%}
+{% load static %}
+
+{% block title %} Contact Us - Eaglespoint Horizon Limited {% endblock %}
+
+{% block content %}
+<section class="contact responsive-padding flex flex-col lg:flex-row gap-6">
+    <h1 class="text-4xl font-bold mb-4">Contact Us</h1>
+    
+    <address class="lg:w-1/4">
+        <ul>
+            <li>
+                <i class="fa fa-map-pin"></i> <strong>Address:</strong>  
+                <span>123 Real Estate St, Abuja, Nigeria</span>
+            </li>
+            <li>
+                <i class="fa fa-phone"></i> <strong>Phone:</strong>  
+                <a href="tel:+2348012345678">+234 801 234 5678</a>
+            </li>
+            <li>
+                <i class="fa fa-envelope"></i> <strong>Email:</strong>  
+                <a href="mailto:info@example.com">info@example.com</a>
+            </li>
+        </ul>
+    </address>
+
+    <form>
+        <h1 class="text-4xl font-bold mb-4"><span class="font-cursive text-red-600">Reach</span> Out To Us Today</h1>
+        <p class="mb-8">
+            Fill out  your information and our representative will reach out to you.<br>
+            Do you have a simple question? Check out our <a href="#faq">Frequently Asked Questions</a>
+        </p>
+
+        <div class="flex flex-col gap-4 lg:gap-6">
+            <div>
+                <label for="name"class="label-primary">Full Name</label>
+                <input class="input-primary" type="text" id="name" name="name" required>
+            </div>
+
+            <div>
+                <label for="email" class="label-primary">Email</label>
+                <input class="input-primary" type="email" id="email" name="email" required>
+            </div>
+
+            <div>
+                <label for="phone" class="label-primary">Phone Number</label>
+                <input class="input-primary" type="tel" id="phone" name="phone">
+            </div>
+
+            <div>
+                <label for="message" class="label-primary">Your Message</label>
+                <textarea class="input-primary" id="message" name="message" rows="4" required></textarea>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            {% component "button" html_tag="button" label="Send Inquiry" type="primary" function="submit" %} {% endcomponent %}
+        </div>
+    </form>
+</section>
+
+<section class="responsive-padding mt-12">
+    <h1 class="text-4xl font-bold text-center">FAQ</h1>
+    <p class="text-center mb-4">Frequently Asked Questions</p>
+
+    <dl>
+        <dt>
+            <details>
+                <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
+                    <span>How does the billing work?</span>
+                    <span class="transition group-open:rotate-180">
+                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
+                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                            stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                            <path d="M6 9l6 6 6-6"></path>
+                        </svg>
+                    </span>
+                </summary>
+                <p class="group-open:animate-fadeIn mt-3 text-neutral-600">Our service offers monthly and annual subscription plans. Payments are processed via credit card or secure online payment gateways.</p>
+            </details>
+        </dt>
+
+        <dt>
+            <details>
+                <summary>Can I get a refund for my subscription?</summary>
+                <p>We provide a 30-day money-back guarantee on most plans. Refunds beyond 30 days are reviewed on a case-by-case basis.</p>
+            </details>
+        </dt>
+
+        <dt>
+            <details>
+                <summary>How do I cancel my subscription?</summary>
+                <p>Log into your account, go to "Subscription Settings," and click "Cancel Subscription."</p>
+            </details>
+        </dt>
+
+        <dt>
+            <details>
+                <summary>Is there a free trial?</summary>
+                <p>Yes! We offer a free trial with limited features so you can explore before subscribing.</p>
+            </details>
+        </dt>
+
+        <dt>
+            <details>
+                <summary>How do I contact support?</summary>
+                <p>Reach out to us via our support email at support@ourwebsite.com or use the contact form on our site.</p>
+            </details>
+        </dt>
+
+        <dt>
+            <details>
+                <summary>Do you offer any discounts or promotions?</summary>
+                <p>Yes! Follow us on social media or subscribe to our newsletter to stay updated on special offers.</p>
+            </details>
+        </dt>
+    </dl>
+</section>
+
+
+    
+{% endblock %}

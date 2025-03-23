@@ -11,6 +11,8 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    {% block styleblock %} {% endblock %}
+
 </head>
 <body class='font-base text-gray-900'>
 
@@ -24,11 +26,11 @@
             </a>
     
             <!-- Search Bar -->
-            <div class="flex items-stretch w-full h-10 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
-                <input type="search" class="block w-full px-4 py-2 focus:outline-none" 
+            <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex items-stretch w-full h-10 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
+                <input type="search" name="search_query" value="{{ search_query }}" aria-label="Search" class="block w-full px-4 py-2 focus:outline-none" 
                        placeholder="Search Location or Properties">
-                <button class="bg-blue-600 text-white h-full p-2 rounded-r-lg"><i class="fa fa-search fa-lg"></i></button>
-            </div>
+                <button class="bg-blue-600 text-white h-full p-2 rounded-r-lg" type="submit"><i class="fa fa-search fa-lg"></i></button>
+            </form>
     
             <!-- Mobile Menu Toggle -->
             <button @click="isOpen = !isOpen" type="button" class="inline-flex items-center p-2 text-sm 
@@ -48,7 +50,7 @@
             </button>
     
             <!-- Navigation Menu -->
-            <nav x-cloak :class="isOpen ? 'flex' : 'hidden'" class="absolute p-2 lg:p-0 w-screen top-18 z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center *:font-semibold lg:font-normal" id="mobile-menu">
+            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="absolute p-2 lg:p-0 w-screen top-18 z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center *:font-semibold lg:font-normal" id="mobile-menu">
                 <ul class="flex flex-col lg:items-center mt-4 font-medium w-full md:w-full lg:w-max lg:flex-row lg:space-x-8 lg:mt-0">
                     <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Home</a></li>
                     <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Travel</a></li>
@@ -68,7 +70,7 @@
         {% block content %} {% endblock %}
     </div>
     
-    <footer class="bg-slate-100 responsive-padding py-12 flex flex-col gap-8">
+    <footer class="bg-slate-100 responsive-padding py-12 mt-28 flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <img src="{% static 'images/eaglespoint-logo.png' %}" width="72px"> 
             <p>Your trusted partner in real estate, travel, and education consulting.</p>
@@ -108,12 +110,11 @@
 
         <div>
             <p class="text-gray-700">&copy; <span x-data x-text="new Date().getFullYear()">2025</span> Eaglespoint Horizon Limited. All rights reserved. </p>
-        </div>
-        {% block script %}{% endblock %}
-
-        
+        </div>        
     </footer>
     
+    <script src="{% static 'js/helper_func.js' %}"></script>
+    {% block script %}{% endblock %}
     
 </body>
 </html>

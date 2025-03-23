@@ -4,32 +4,46 @@
 {% block title %}Home - Eaglespoint Horizon Limited{% endblock %}
 
 {% block content %}
-<div class="flex flex-col gap-20">
+<main class="flex flex-col gap-20">
 
-    <section class="travel-hero w-full self-stretch bg-slate-100 py-6 pb-0">
-        <div class="flex flex-col gap-7 lg:gap-12 responsive-padding">
-            <div class="flex flex-col gap-4 items-center">
-                <h1 class="text-5xl lg:text-6xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h1>
-                <p class="text-center text-lg">Want to <span class="text-red-600 font-cursive">study, work or visit</span>. Yeah! you are in the right place</p>
+    <section class="travel-hero w-full self-stretch flex flex-col items-center gap-7 lg:gap-12 bg-slate-100 py-6 pb-0">
+            <div class="flex flex-col gap-2 lg:w-4/5 responsive-padding items-center justify-center ">
+                <div class="flex flex-col gap-2 items-center">
+                    <h1 class="text-5xl lg:text-6xl text-center font-extrabold">Your Global Future <span class="text-red-500 font-cursive">Start Here</span></h1>
+                    <p class="text-center text-lg">Looking to <span class="text-red-600 font-cursive">study, work or visit?</span>. We’ve got you covered!</p>
+                    <ul class="text-lg w-max">
+                        <li><i class="fa fa-check-circle text-green-400 ml-2"></i> University admissions & scholarships.</li>
+                        <li><i class="fa fa-check-circle text-green-400 ml-2"></i> Work visa & permanent residence guidance.</li>
+                        <li><i class="fa fa-check-circle text-green-400 ml-2"></i> Seamless travel arrangements.</li>
+                    </ul>
+                    {% comment %} <h1 class="text-5xl lg:text-6xl text-center font-extrabold">Plan Your Next <span class="text-red-500 font-cursive">Adventure</span></h1>
+                    <p class="text-center text-lg">Want to <span class="text-red-600 font-cursive">study, work or visit</span>. Yeah! you are in the right place</p> {% endcomment %}
+                </div>
+                <p></p>
+               
                 <div class="flex flex-row gap-3 border rounded-lg w-max p-1 border-slate-400">
                     {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %}
                     {% component "button" label="Study Abroad" type="tertiary" %} {% endcomponent %}
                 </div>
             </div>
-
-            <div class="relative w-full overflow-hidden inline-flex flex-nowrap">
         
-                <div class="image-container w-max whitespace-nowrap flex items-start gap-6 animate-scroll *:w-60 *:h-60 *:object-cover *:rounded-lg">
-                    
-                    <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
-                    <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
-            
-                </div>
+        <div class="relative w-full overflow-hidden inline-flex flex-nowrap">
+        
+            <div class="image-container w-max whitespace-nowrap flex items-start gap-6 animate-scroll *:w-60 *:h-60 *:object-cover *:rounded-lg">
+                
+                <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/paris-eiffel-tower.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+                <img src="{% static 'images/toronto-image.jpg' %}" class="w-60 h-60 object-cover rounded-lg">
+        
             </div>
-        
-            
         </div>
-
     </section>
 
     <section class="responsive-padding flex flex-col lg:flex-row responsive-padding gap-3 lg:justify-between">
@@ -63,7 +77,7 @@
     style="background-image: url('{% static 'images/house-duplex.jpg' %}');">
     
         <!-- Overlay -->
-        <div class="absolute inset-0 bg-black/50"></div> 
+        <div class="absolute inset-0 bg-blue-600/50"></div> 
 
         <!-- Content -->
         <div class="relative z-10">
@@ -99,7 +113,7 @@
         </div>
     </section>
 
-    <div class="flex flex-col gap-7 lg:gap-9">
+    <div class="flex flex-col gap-20">
         <section class="bg-slate-100 flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center">
             <div class="responsive-padding lg:p-0 lg:w-1/2 lg:pl-20">
                 <h3 class="text-4xl font-extrabold mb-3"><span class="text-red-600 font-cursive">Unlock</span> Your Global Academic Dream</h3>
@@ -186,12 +200,6 @@
         </div>
     </section>
 
-</div>
+</main>
     
-{% endblock %}
-
-{% block script %}
-    <script>
-        console.log('hello')
-    </script>
 {% endblock %}

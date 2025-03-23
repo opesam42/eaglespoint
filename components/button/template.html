@@ -1,11 +1,17 @@
-<{{tag|escape}} class="w-max px-4 py-3 rounded-lg flex justify-center items-center gap-2
-    {% if type == 'primary' %}
-        bg-blue-600 text-white
-    {% elif type == 'secondary' %}
-        bg-red-600 text-white
-    {% elif type == 'tertiary' %}
-        rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] bg-white 
-    {% endif %} {{ extraclass }}">
+<{{ tag|escape }}
+    class="{{ extraclass }}
+        {% if type == 'primary' %} bg-blue-600 text-white 
+        {% elif type == 'secondary' %} bg-red-600 text-white 
+        {% elif type == 'tertiary' %} rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] bg-white 
+        {% endif %}
 
+        {% if width == 'max' %}
+            w-max 
+        {% elif width == 'full' %}
+            w-full
+        {% endif %}
+        px-4 py-3 rounded-lg flex justify-center items-center gap-2 cursor-pointer"
+    {% if function is not None %} type="{{function}}" {% endif %}
+{{attr}}>
     {{ label }}
-</{{tag|escape}}>
+</{{ tag|escape }}>

@@ -23,6 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user/', include('user.urls', namespace='user')),
     path('', include('core.urls', namespace='core')),
+    path('listing/', include('listing.urls', namespace='listing')),
+
+    
     path("components/", include("django_components.urls")),
 ]
 

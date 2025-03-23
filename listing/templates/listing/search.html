@@ -1,0 +1,144 @@
+{% extends 'core/base.html'%}
+{% load static %}
+
+{% block title %} Search Result {% endblock %}
+
+{% block content %}
+<main class="mt-9">
+    <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" class="filter flex gap-6 mb-8" x-data>
+        <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search" class="block w-full px-4 py-2 focus:outline-none">
+        <select name="listing_type" class="block  outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200 bg-white">
+            <option value="">Any</option>
+            <option value="buy" {% if listing_type == 'buy' %}selected{% endif %}>Buy</option>
+            <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Rent</option>
+            <option value="land" {% if listing_type == 'land' %}selected{% endif %}>Land</option>
+        </select>
+    
+        <!-- for price -->
+        <div x-data="{ isOpen:false }" class="relative">
+            <button @click="isOpen = !isOpen" class="font-semibold bg-white outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200" type="button">Price</button>
+            
+            <div x-cloak x-show="isOpen" @click.away="isOpen = false" x-transition class="absolute transition bg-white shadow-xl rounded-md p-4 z-50 top-full -left-10 md:left-1/2 min-w-[250px] w-auto">
+                <div>
+                    <label for="min_price">Min:</label>
+                    <input class="input-primary" type="number" name="min_price" value="{{ min_price }}">
+                </div>
+                <div>
+                    <label for="max_price">Max:</label>
+                    <input class="input-primary" type="number" name="max_price" value="{{ max_price }}">
+                </div>
+            </div>
+        </div>
+
+        <!-- for states -->
+        <div x-data="{ isOpen:false, states: [] }" x-init="states = window.nigerianStates" class="relative">
+            <button @click="isOpen = !isOpen" class="font-semibold bg-white outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200" type="button">States</button>
+    
+            <div x-cloak x-show="isOpen" @click.away="isOpen = false" x-transition id="statesCheckBox" class="absolute transition bg-white shadow-xl rounded-md p-4 z-50 top-full -left-10 md:left-1/2 min-w-[250px] w-auto h-5/6">
+                <template x-if="states.length > 0">
+
+                    <template x-for="state in states" :key="state">
+                        <div>
+                            <input 
+                                type="radio" 
+                                :id="'radio-' + slugify(state)" 
+                                name="nigerian_state" 
+                                :value="state">
+                            <label 
+                                :for="'radio-' + slugify(state)" 
+                                x-text="state">
+                            </label>
+                        </div>
+                    </template>
+
+                </template>
+
+                <template x-if="states.length === 0">
+                    <p>Loading states...</p>
+                </template>
+            </div>
+        </div>
+
+        <!-- for lgas -->
+        <div x-data="{ isOpen:false }" class="relative">
+            <button @click="isOpen = !isOpen" class="font-semibold bg-white outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200" type="button">LGA</button>
+    
+            <div x-cloak x-show="isOpen" @click.away="isOpen = false" x-transition id="lgasCheckBox" class="absolute transition bg-white shadow-xl rounded-md p-4 z-50 top-full -left-10 md:left-1/2 min-w-[250px] w-auto">
+                
+            </div>
+        </div>
+        {% component "button" html_tag="button" label="Apply" type="primary" width="max" function="submit" %} {% endcomponent %}
+        
+    </form>
+
+
+    <div class="responsive-padding grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">   
+    
+        {% for result in results %}
+        {% component "listing_card" title="{{result.title}}" price="{{result.price}}" size="{{result.size}}" type="{{result.listing_type}}" imageUrl="/media/{{result.cover_image}}" address="{{result.street_address}}, {{result.lga}}, {{result.state}}" %} {% endcomponent %}
+        {% endfor %}
+    </div>
+</main>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+                    async function getStatesAndLGAS(){
+                /* 
+                    get the json file from the url
+                    if successful return the data in object format
+                    
+                    if not, throws errror
+                */
+                try{
+                    const response = await fetch( "{% url 'listing:get_states' %}" );
+                    if(response.ok){
+                        const data = await response.json();
+                        // console.log(data)
+                        return data;
+                    }
+                    else{
+                        throw new Error("Failed to reach data");
+                    }
+                } catch(error){
+                    console.error('Error:', error);
+                    return null;
+                }
+            }
+
+            window.nigerianStates = [];
+
+            (async function(){
+                /* 
+                    return states to frontend
+                    it takes the object from the getStatesAndLGAS function and take it key which have the states
+                    loop through it and place the state in a checkbox template
+                */
+                const data = await getStatesAndLGAS()
+                if (data) {
+                    window.nigerianStates = Object.keys(data);
+                    document.dispatchEvent(new Event("alpine:init")); // Force Alpine to update
+                }
+                
+                
+                
+            })();
+
+        document.addEventListener("DOMContentLoaded", function(){
+            const filter_form = document.querySelector('#filter-form');
+
+            filter_form.addEventListener('submit', function(e){
+                const inputs = filter_form.querySelectorAll('input, select');
+
+                inputs.forEach(input => {
+                    if(!input.value.trim()){
+                        input.removeAttribute("name"); 
+                    }
+                });
+            })
+        })
+
+
+    </script>
+{% endblock %}

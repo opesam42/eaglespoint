@@ -3,6 +3,26 @@ from django.conf import settings
 
 # Create your models here.
 
+class Feature(models.Model):
+    """ 
+    Table for individual features (e.g., Swimming Pool, Parking Space) 
+    """
+    name = models.CharField(max_length=50, unique=True)
+    icon = models.TextField(null=True, blank=True) #accept svg icons in code format not files
+    """ 
+    I am using Google Material fonts https://fonts.google.com/icons?selected=Material+Icons:wifi:&icon.query=wifi&icon.size=32&icon.color=%23%23101828&icon.platform=web
+    size: 32 x 32
+    color: #101828  
+    """
+    
+    
+
+    class Meta:
+        verbose_name_plural = "Features"
+
+    def __str__(self):
+        return f"{self.name}"
+
 class Listings(models.Model):
     """ 
     MODEL CLASS FOR LISTINGS TABLE AND SCHEMA
@@ -27,7 +47,7 @@ class Listings(models.Model):
     state = models.CharField(max_length=30, blank=False, null=False)
     country = models.CharField(max_length=30, blank=False, null=False)
 
-    features = models.JSONField(blank=True, null=True)
+    features = models.ManyToManyField(Feature, related_name='listings', blank=True)
     
     posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -52,3 +72,4 @@ class ListingImages(models.Model):
 
     def __str__(self):
         return f"Image for {self.listing.title}"
+    

@@ -1,0 +1,39 @@
+    <div class="relative mx-auto w-full rounded-xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
+      <a href="#" class="relative inline-block w-full">
+        <div class="rounded-lg bg-white shadow">
+          <div class="relative flex h-52 justify-center overflow-hidden rounded-lg">
+            <div class="w-full transform transition-transform duration-500 ease-in-out hover:scale-110">
+              <div class="absolute inset-0 bg-black bg-opacity-80">
+                <img class="object-cover w-full h-full" src="{{ imageUrl }}" alt="Cover image for {{title}}" />
+              </div>
+            </div>
+  
+            <div class="absolute bottom-0 left-5 mb-3 flex">
+              <p class="flex items-center font-medium text-white shadow-sm">
+                <i class="fa fa-camera mr-2 text-xl text-white"></i>
+                10
+              </p>
+            </div>
+  
+            <span class="absolute top-0 left-2 z-10 mt-3 ml-3 select-none text-sm font-bold px-3 py-1 bg-slate-200 rounded inline-flex justify-center items-center gap-2 overflow-hidde text-blue-700 uppercase"> {{ type }} </span>
+            <span class="absolute top-0 right-2 z-10 mt-3 ml-3 inline-flex select-none rounded-lg bg-transparent px-3 py-2 text-lg font-medium text-white"> <i class="fa fa-heart"></i> </span>
+          </div>
+          
+          <div class="flex flex-col p-3 gap-2">
+            <div class="">
+                <h2 class="line-clamp-1 text-2xl font-bold  md:text-lg leading-snug">{{ title }}</h2>
+                <p class="text-sm font-bold text-gray-800">
+                    {{ address }}
+                </p>
+              </div>
+              
+              <div class="flex justify-between">
+                <p class="text-blue-700 inline-block font-semibold leading-tight">&#8358; <span class="text-2xl"> {{price}} </span> </p>
+                <p class="text-blue-700 bg-gray-200 px-1 py-0.5 rounded inline-block font-semibold leading-tight">
+                    <span>{{ size }}</span> Sq.m
+                  </p>
+              </div>
+          </div>
+        </div>
+      </a>
+    </div>

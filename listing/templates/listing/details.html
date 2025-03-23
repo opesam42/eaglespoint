@@ -1,0 +1,95 @@
+{% extends 'core/base.html'%}
+{% load static %}
+
+{% block title %} {{listing.title}} {% endblock %}
+
+{% block content %}
+    <main class="responsive-padding grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-16 mt-0">
+        <section class="col-span-2 flex flex-col gap-8">
+            <div class="flex flex-col gap-3">
+                <figure class="relative max-h-96 w-full">
+                    <img src="/media/{{listing.cover_image}}" width="320px" alt="Cover Image for {{listing.title}}" class="h-full w-full block object-cover overflow-hidden">
+                </figure>
+                
+                <div class="flex gap-2 rounded-xl">
+                    <figure class="h-16 w-16">
+                        <img src="/media/{{listing.cover_image}}" width="320px" alt="Cover Image for {{listing.title}}" class="h-full w-full block object-cover overflow-hidden">
+                    </figure>
+                    {% for image in listing_images %}
+                        <figure class="h-16 w-16">
+                            <img src="/media/{{image.image}}" width="320px" alt="Cover Image for {{listing.title}}" class="h-full w-full block object-cover overflow-hidden">
+                        </figure>
+                        
+                    {% endfor %} 
+                </div>
+            </div>
+
+            <!-- title, address, price and size -->
+            <div class="flex flex-col lg:flex-row lg:justify-between lg:items-end">
+                <div class="flex flex-col gap-1">
+                    <h2 class="text-2xl font-bold">{{listing.title}}</h2>
+                    <p class="text-sm">{{listing.street_address}}, {{listing.lga}}, {{listing.state}}</p>
+                    <div class="text-blue-700 bg-gray-200 w-max px-1 py-0.5 rounded inline-block font-semibold leading-tight"><span>{{ listing.size }}</span> Sq.m</div>
+                </div>
+                        
+                <div class="text-blue-700 text-[32px] inline-block font-semibold leading-tight w-max">&#8358; <span class="text-2xl"> {{listing.price}} </span> </div>
+            </div>
+            
+            <div class="border-t border-gray-400">
+                <h3 class="text-xl font-bold">Description</h3>
+                <p>{{ listing.description }}</p>
+            </div>
+
+            <div class="border-t border-gray-400">
+                <h3 class="text-xl font-bold">Features</h3>
+                <ul class="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
+                {% for feature in features %}
+                    <li class="flex items-center justify-center gap-0.5">
+                        {{feature.icon | safe}}                      
+                        <span>
+                        {{feature.name}}
+                        </span>
+                          
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+            
+        </section>
+        
+
+        <section class="bg-white w-full lg:col-span-1 lg:sticky lg:top-12 lg:bottom-0 pt-8 self-start fixed bottom-5">
+            <div class="flex flex-col gap-6 overflow-hidden p-3 lg:p-8 rounded-xl shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] outline-1 outline-offset-[-1px] outline-[#314158]">
+                <div class="flex justify-between">
+                    <h2 class="w-2/3 text-xl font-bold">{{ listing.title }}</h2>
+
+                    <div class="flex gap-2">
+                        <button class="cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="gray" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21l-1.45-1.35C5.4 15.2 2 12.27 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A6.49 6.49 0 0116.5 3C19.58 3 22 5.42 22 8.5c0 3.77-3.4 6.7-8.55 11.15L12 21z"/>
+                            </svg>
+                        </button>
+
+                        <button class="cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="gray" class="w-6 h-6">
+                                <circle cx="18" cy="5" r="3" stroke="gray" stroke-width="2"/>
+                                <circle cx="6" cy="12" r="3" stroke="gray" stroke-width="2"/>
+                                <circle cx="18" cy="19" r="3" stroke="gray" stroke-width="2"/>
+                                <line x1="8.5" y1="10.5" x2="15.5" y2="6.5" stroke="gray" stroke-width="2"/>
+                                <line x1="8.5" y1="13.5" x2="15.5" y2="17.5" stroke="gray" stroke-width="2"/>
+                            </svg>
+                        </button>
+
+                    </div>
+                </div>
+
+                <div class="flex lg:flex-col flex-row gap-4">
+                    {% component "button" label="Enquire Now" type="primary" width="full" %} {% endcomponent %}
+                    {% component "button" label="<i class='fa fa-whatsapp text-white'></i> WhatsApp" type="primary" extraclass="bg-green-600" width="full" %} {% endcomponent %}
+                </div>
+            </div>
+
+            
+        </section>
+    </main>
+{% endblock %}

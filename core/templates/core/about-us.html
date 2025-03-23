@@ -1,0 +1,120 @@
+{% extends 'core/base.html'%}
+{% load static %}
+
+{% block title %} About Us - Eaglespoint Horizon Limited {% endblock %}
+
+{% block content %}
+    <section class="responsive-padding ">
+        <h1 class="text-4xl font-bold text-center mb-4">Know Everything About Us</h1>
+        <div class="flex flex-col lg:flex-row justify-center items-center gap-4 lg:gap-12">
+            <div class="text-lg order-3 text-center">
+                <p>
+                    At Eaglespoint Horizon Limited, we believe in making dreams a reality. Whether it's finding the perfect home, embarking on a seamless travel experience, or pursuing international education, our mission is to provide exceptional services tailored to your aspirations.
+                </p>
+                <p class="mt-4">
+                    With over 8 years of industry expertise and a proven track record of serving 200+ satisfied clients, we have positioned ourselves as a trusted name in Real Estate, Travel, and Education Consulting. Our commitment to integrity, excellence, and personalized service ensures that every client journey is smooth, rewarding, and transformative.
+                </p>
+            </div>
+            <img src="{% static 'images/staff.jpg' %}" class="block rounded-2xl w-full max-w-[480px] lg:order-5">
+        </div>   
+    </section>
+
+    <section class="py-8 responsive-padding mt-12">
+        <h1 class="text-4xl font-bold text-center mb-4">Meet Our Team</h1>
+        <div class="flex gap-3 justify-center items-center flex-nowrap overflow-x-auto">
+            <figure class="relative h-[408px] w-full max-w-64 rounded-lg overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <img src="{% static 'images/ceo-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
+                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
+                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
+                    <span>C.E.O and Founder</span>
+                </figcaption> 
+            </figure>
+    
+            <figure class="relative h-[408px] w-full max-w-64 rounded-lg overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <img src="{% static 'images/pr-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
+                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
+                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
+                    <span>C.E.O and Founder</span>
+                </figcaption> 
+            </figure>
+    
+            <figure class="relative h-[408px] w-full max-w-64 rounded-lg overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <img src="{% static 'images/accountant-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
+                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
+                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
+                    <span>C.E.O and Founder</span>
+                </figcaption> 
+            </figure>
+            <figure class="relative h-[408px] w-full max-w-64 rounded-lg overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                <img src="{% static 'images/customer-service-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
+                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
+                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
+                    <span>C.E.O and Founder</span>
+                </figcaption> 
+            </figure>
+        </div>
+        
+    </section>
+
+    <section class="responsive-padding flex flex-col lg:flex-row responsive-padding gap-3 lg:justify-between mt-12">
+        <dl class="stats flex justify-start gap-10 items-center font-medium">
+            <div class="flex flex-col gap-4 items-center">
+                <dt class="text-6xl">200+</dt>
+                <dd class="text-gray-700">Satisfied customers</dd>
+            </div>
+    
+            <div class="flex flex-col gap-4 items-center">
+                <dt class="text-6xl">10+</dt>
+                <dd class="text-gray-700">Years served</dd>
+            </div>
+        </dl>
+
+        <div class="partners">
+            <h4 class="font-bold">Our Partners</h4>
+            <div class="flex gap-4 *:h-16 *:w-16">
+                <img src="{% static 'images/slack-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/tinder-1-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/airbnb-2-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/soundcloud-logo-svgrepo-com.svg' %}">
+                <img src="{% static 'images/coca-cola-logo-svgrepo-com.svg' %}">
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="flex w-full mt-12">
+        <section class="w-full relative bg-cover bg-center text-white py-4 lg:py-10 responsive-padding" 
+        style="background-image: url('{% static 'images/house-duplex.jpg' %}');">
+        
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-blue-600/50"></div> 
+
+            <!-- Content -->
+            <div class="relative z-10">
+                <h2 class="text-2xl font-bold mb-4">Are You Interested In Our Real Estate</h2>
+                {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
+            </div>
+        </section>
+
+        <section class="w-full relative bg-cover bg-center text-white py-4 lg:py-10 responsive-padding" 
+    style="background-image: url('{% static 'images/airplane.jpg' %}');">
+    
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-red-500/70"></div> 
+
+            <!-- Content -->
+            <div class="relative z-10">
+                <h2 class="text-2xl font-bold mb-4">Interested in Travels or Study Abroad?</h2>
+                {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
+            </div>
+
+        </section>
+    </section>
+
+    
+{% endblock %}
