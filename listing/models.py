@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from .utils.choices import STATE_CHOICES, LISTING_TYPE
 
 # Create your models here.
 
@@ -27,11 +28,7 @@ class Listings(models.Model):
     """ 
     MODEL CLASS FOR LISTINGS TABLE AND SCHEMA
     """
-    LISTING_TYPE = (
-        ('buy', 'Buy'),
-        ('rent', 'Rent'),
-        ('land', 'Land'),
-    )
+
     # core details
     title = models.CharField(max_length=40, blank=False, null=False)
     listing_type = models.CharField(max_length=10, choices=LISTING_TYPE, blank=False, null=False)
@@ -44,7 +41,8 @@ class Listings(models.Model):
     # address
     street_address = models.CharField(max_length=100, blank=False, null=False)
     lga = models.CharField(max_length=30, blank=False, null=False)
-    state = models.CharField(max_length=30, blank=False, null=False)
+    # state = models.CharField(max_length=30, blank=False, null=False)
+    state = models.CharField(max_length=30, choices=STATE_CHOICES, blank=False, null=False)
     country = models.CharField(max_length=30, blank=False, null=False)
 
     features = models.ManyToManyField(Feature, related_name='listings', blank=True)

@@ -7,7 +7,12 @@ def home(request):
     return render(request, 'core/index.html')
 
 def real_estate_page(request):
-    return render(request, 'core/real_estate.html')
+    listings = Listings.objects.all().order_by('created_at')[:6]
+    context = {
+        'listings': listings,
+    }
+
+    return render(request, 'core/real_estate.html', context)
 
 def about_us_page(request):
     return render(request, 'core/about-us.html')

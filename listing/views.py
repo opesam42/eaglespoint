@@ -15,15 +15,18 @@ def get_states_api(request):
     
     return JsonResponse(data, safe=False)
 
+
 def search_listing(request):
+    listings = Listings.objects.all()
+
     search_query = request.GET.get('search_query', '').strip()  # Get search query from GET request
     if search_query:
-        listings = Listings.objects.filter(
-            Q(title__icontains=search_query) | 
-            Q(description__icontains=search_query) | 
-            Q(lga__icontains=search_query) |
-            Q(state__icontains=search_query)
-        )
+        search_words = search_query.split() #split search string to individual words
+        
+        query = Q()
+        for word in search_words:
+            query |=  Q(title__icontains=word) | Q(description__icontains=word) | Q(lga__icontains=word) | Q(state__icontains=word)
+        listings = listings.filter(query)
 
         #handle filters
         listing_type = request.GET.get('listing_type', '')
@@ -56,7 +59,7 @@ def search_listing(request):
         'min_price': min_price,
         'max_price': max_price,
         'lga': lga,
-        'state': state,
+        'selectedState': state,
     }
     
     return render(request, 'listing/search.html', context)

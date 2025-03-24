@@ -50,20 +50,22 @@
             </button>
     
             <!-- Navigation Menu -->
-            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="absolute p-2 lg:p-0 w-screen top-18 z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center *:font-semibold lg:font-normal" id="mobile-menu">
-                <ul class="flex flex-col lg:items-center mt-4 font-medium w-full md:w-full lg:w-max lg:flex-row lg:space-x-8 lg:mt-0">
-                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Home</a></li>
-                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Travel</a></li>
+            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="absolute p-2 lg:p-0 w-screen top-full z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center *:font-semibold lg:font-normal" id="mobile-menu">
+                <ul class="flex flex-col lg:items-center mt-4 font-medium w-full px-3 lg:px-0 md:w-full lg:w-max lg:flex-row lg:space-x-8 lg:mt-0">
+                    <li><a href="{% url 'core:home' %}" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Home</a></li>
+                    <li><a href="{% url 'core:real_estate' %}" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Real Estate</a></li>
+                    <li><a href="{% url 'core:home' %}" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Travel</a></li>
                     <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Blogs</a></li>
-                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">About Us</a></li>
-                    <li><a href="#" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Contact</a></li>
+                    <li><a href="{% url 'core:about' %}" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">About Us</a></li>
+                    <li><a href="{% url 'core:contact' %}" class="block text-gray-700 pl-2 py-2 lg:p-0 hover:bg-gray-100 lg:hover:bg-transparent lg:hover:underline">Contact</a></li>
                     <li>
-                        {% component "button" label="Sign Up/Login" type="primary" extraclass="w-full" %} {% endcomponent %}
+                        {% component "button" label="Sign Up/Login" type="primary" width="full" %} {% endcomponent %}
                     </li>
                 </ul>
             </nav>
         </div>
     </header>
+    
     
 
     <div class="wrapper w-full">
