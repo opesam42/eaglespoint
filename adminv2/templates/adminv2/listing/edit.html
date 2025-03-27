@@ -36,7 +36,7 @@
         
             <div x-data="{ image: '{{ listing.cover_image.url }}' !== 'None' ? '{{ listing.cover_image.url }}' : null }"> 
                 <label for="id_cover_image" class="label-primary">Cover Image</label>
-                <input x-ref="fileInput" class="input-primary" type="file" name="cover_image" accept="image/*" required id="id_cover_image" @change="image = URL.createObjectURL($event.target.files[0])">
+                <input x-ref="fileInput" class="input-primary" type="file" name="cover_image" accept="image/*" id="id_cover_image" @change="image = URL.createObjectURL($event.target.files[0])">
 
                 {% comment %} image preview {% endcomment %}
                 <template x-if="image">
@@ -190,14 +190,37 @@
 
         let uploadFiles = []
         listingImages = {{listing_images}}
+
+        async function fetchAndPushImages(imageList) {
+            for(const imageUrl of imageList){
+                try{
+                    const response = await fetch(imageUrl);
+                    const blob = await response.blob();
+
+                     // Extract filename from URL (after the last '/')
+                    const fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+                    const file = new File([blob], fileName, { type: blob.type });
+                    uploadFiles.push(file);
+                } catch(error){
+                    console.error(`Failed to fetch image ${image.url}`, error)
+                }
+            }
+            console.log('Converted files:', uploadFiles)
+        }
+
+        fetchAndPushImages(listingImages)
+
         // console.log(listingImages)
 
-        if(listingImages){
-            listingImages.forEach((image)=>{
-                uploadFiles.push(image)
-            })
-        }
-        console.log(uploadFiles)
+        // push images to upload
+        // if(listingImages){
+        //     listingImages.forEach((image)=>{
+        //         uploadFiles.push(image)
+        //     })
+        // }
+
+        
         function handleFileUpload(event, component){
             let selectedFiles = event.target.files //get all files
             let newImages = [];
@@ -207,7 +230,7 @@
             for(i=0; i < selectedFiles.length; i++){
                 newImages.push(URL.createObjectURL(selectedFiles[i])); //for display
                 // newFiles.push(selectedFiles[i]) //for upload
-                uploadFiles.push(selectedFiles[i])
+                uploadFiles.push(selectedFiles[i]);
             }
 
             component.images = [...component.images, ...newImages]; //add new images while preserving the already stored images
@@ -238,14 +261,18 @@
                     formData.append('multiple_images[]', file)
                 });
             }
-
+            
+            // check if the image is changed
+            coverImage = formData.get('cover_image');
+            if(!coverImage || coverImage.size == 0){
+                console.log('No image selected, keeping existing one')
+                formData.delete('cover_image');
+            }
             console.log(...formData)
-
-            // for (let [key, value] of formData.entries()) {
-            //     console.log(key + ':', value); // Log each key-value pair
-            // }
-
+            console.log(uploadFiles)
         }
+
+
         function submitForm(event){
             event.preventDefault()
 
@@ -253,12 +280,21 @@
             // print(form)
             formData = new FormData(form)
 
+            // Handling Cover Image Field
+            coverImage = formData.get('cover_image');
+            if(!coverImage || coverImage.size == 0){
+                console.log('No image selected, keeping existing one')
+                formData.delete('cover_image');
+            }
+
+            // Handling Multiple Image Field
             formData.delete('multiple_images[]')
 
             if(uploadFiles){
                 uploadFiles.forEach((file) => {
                     formData.append('multiple_images[]', file)
                 });
+            }
                 // return;
 
                 fetch(form.action, {
@@ -268,7 +304,6 @@
                 .then(response => response.json())
                 .then(data => console.log(data))
                 .catch(error => console.log('Upload failed', error));
-            }
 
         }
     </script>

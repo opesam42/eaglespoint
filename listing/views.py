@@ -81,7 +81,7 @@ def search_listing(request):
 
 def listing_details(request, property_id):
     property = get_object_or_404(Listings, id=property_id)
-    property_images = ListingImages.objects.filter(listing_id=property_id).values('image', flat="True")
+    property_images = ListingImages.objects.filter(listing_id=property_id).values()
     features = property.features.all()
 
     context = {
