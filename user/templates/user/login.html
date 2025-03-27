@@ -1,38 +1,50 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
-<body>
-    <h2>Login</h2>
-    <form method="POST" action="">
-        {% csrf_token %}
+{% extends "core/base.html" %}
 
-        <!-- Show Non-Field Errors -->
-        {% if form.errors %}
-        <div class="alert alert-danger">
-            <ul>
-                {% for field, errors in form.errors.items %}
-                    {% for error in errors %}
-                        <li>{{ field }}{{ error }}</li>
-                    {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-        <h2>Login</h2>
-        {{form.as_p}}
-        {% comment %} <div>
-            <p>Email</p>
-            {{form.username}}
-        </div>
-        <div>
-            <p>Password</p>
-            {{form.password}}
-        </div> {% endcomment %}
-        <input type="submit", value="Login">
-    </form>
-</body>
-</html>
+{% block styleblock %} 
+    <style>
+        header form{
+            display: none;
+        }
+        header nav{
+            display: none;
+        }
+        header #headerWrapper{
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        header #logo{
+            width: 80px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <main class="responsive-padding flex flex-col mt-9 justify-center items-center">
+        <form method="POST" action="" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 ">
+            {% csrf_token %}
+
+            <div class="mb-6">
+                <h1 class="text-4xl font-bold mb-1.5">Login</h1>
+                <p>New user? <a class="text-blue-700 underline" href="{% url 'user:register'%}">Sign up</a> </p>
+            </div>
+
+            <div class="flex flex-col gap-3 lg:gap-4">
+                <div>
+                    <label class="label-primary" for="id_username">Email:</label>
+                    <input class="input-primary" type="email" name="username" autofocus maxlength="254" required id="id_username">
+                </div>
+        
+                <div>
+                    <label class="label-primary" for="id_password">Password:</label>
+                    <input class="input-primary" type="password" name="password" autocomplete="current-password" required id="id_password">
+                </div>
+                
+                {% component "button" html_tag="button" label="Login" type="primary" width="full" function="submit" %} {% endcomponent %}
+            </div>
+    
+
+        </form>
+    </main>
+  
+{% endblock  %}
+

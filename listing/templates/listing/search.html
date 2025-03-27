@@ -35,45 +35,32 @@
 
             <!-- for states -->
             <div x-data="{ isOpen:false, states: [] }" x-init="states = window.nigerianStates" class="relative">
-                <button @click="isOpen = !isOpen" class="font-semibold bg-white outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200" type="button">States</button>
+                <button @click="isOpen = !isOpen" class="font-semibold bg-white outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200" type="button">Location</button>
         
                 <div x-cloak x-show="isOpen" @click.away="isOpen = false" x-transition id="statesCheckBox" class="absolute transition bg-white shadow-xl rounded-md p-4 z-50 top-full min-w-[250px] w-auto flex flex-col gap-4">
 
                 <div class="flex flex-col gap-2">
                     <label for="state_location" class="font-semibold">State</label>
-                    <select x-data="{ states: [] }" x-init="states = window.nigerianStates" id="state_location" name="state_location" class="block font-semibold h-max outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200 bg-white">
+                    <select id="state_location" name="state" class="block font-semibold h-max outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200 bg-white">
                         <option value="">Any</option>
-                        <template x-if="states.length > 0">
-                            <template x-for="state in states" :key="state">
-        
-                                <option :value="slugify(state)" x-text="state" :selected="slugify(state) === '{{ selectedState }}'"></option>
-        
-                            
-                            </template>
-                        </template>
+                        {% for state in nigeria_states %}
+                            <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
+                        {% endfor %}
                     </select>
                 </div>
                     
-
+<!-- 
                     <div class="flex flex-col gap-2">
                         <label for="lga_location" class="font-semibold">LGA</label>
                         <select x-data="{ states: [] }" x-init="states = window.nigerianStates" id="lga_location" name="lga_location" class="block font-semibold h-max outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200 bg-white">
                             <option value="">Any</option>
                         </select>
-                    </div>
+                    </div> -->
                     
 
                 </div>
             </div>
 
-            <!-- for lgas -->
-            <div x-data="{ isOpen:false }" class="relative">
-                <button @click="isOpen = !isOpen" class="font-semibold bg-white outline-1 outline-gray-600 px-4 py-1 rounded-lg hover:bg-gray-200" type="button">LGA</button>
-        
-                <div x-cloak x-show="isOpen" @click.away="isOpen = false" x-transition id="lgasCheckBox" class="absolute transition bg-white shadow-xl rounded-md p-4 z-50 top-full -left-10 md:left-1/2 min-w-[250px] w-auto">
-                    
-                </div>
-            </div>
         </div>
         
         {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="submit" extraclass="px-4 py-1" %} {% endcomponent %}
@@ -81,7 +68,7 @@
     </form>
 
 
-    <div class="responsive-padding grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">   
+    <div id="listing-container" class="responsive-padding grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">   
     
         {% if results %}
             {% for result in results %}
@@ -91,67 +78,55 @@
             <p>No search result... </p>
         {% endif %}
     </div>
+
+    {% if results.has_next %}
+        <div id="load-more-container" class="mt-7 flex flex-col items-center">
+            {% component "button" type="primary" html_tag="button" label="Load more" width="max" attr="data-next-page='{{ results.next_page_number }}' id='load-more'"%} {% endcomponent %}
+            <!-- <button id="load-more" data-next-page="{{ results.next_page_number }}">Load More</button> -->
+        </div>
+    {% endif %}
+
+   
 </main>
 
 {% endblock %}
 
 {% block script %}
-    <script>
-                    async function getStatesAndLGAS(){
-                /* 
-                    get the json file from the url
-                    if successful return the data in object format
-                    
-                    if not, throws errror
-                */
-                try{
-                    const response = await fetch( "{% url 'listing:get_states' %}" );
-                    if(response.ok){
-                        const data = await response.json();
-                        // console.log(data)
-                        return data;
-                    }
-                    else{
-                        throw new Error("Failed to reach data");
-                    }
-                } catch(error){
-                    console.error('Error:', error);
-                    return null;
+<script>
+    document.getElementById('load-more').addEventListener('click', function() {
+        let nextPage = this.getAttribute('data-next-page');
+        let loadMoreContainer = document.getElementById('load-more-container'); 
+        //hold original text
+        originalText = this.innerHTML
+        
+        this.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Loading...`;
+
+        fetch(`?page=${nextPage}`, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+            .then(response => response.text())
+            .then(data => {
+                // since the data is a full html stuff, we need to extract the innerHTML of the body
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(data, 'text/html');
+                
+                let newListings = doc.body.innerHTML;
+                console.log(newListings)
+                document.getElementById('listing-container').innerHTML += newListings;
+
+
+                // Find the updated next-page data from the new content
+                let nextPageData = doc.querySelector('#next-page-data');
+                if(nextPageData){
+                    console.log(nextPageData.getAttribute('data-next-page'))
+                    this.setAttribute('data-next-page', nextPageData.getAttribute('data-next-page'))
                 }
-            }
-
-            window.nigerianStates = [];
-
-            (async function(){
-                /* 
-                    return states to frontend
-                    it takes the object from the getStatesAndLGAS function and take it key which have the states
-                    loop through it and place the state in a checkbox template
-                */
-                const data = await getStatesAndLGAS()
-                if (data) {
-                    window.nigerianStates = Object.keys(data);
-                    document.dispatchEvent(new Event("alpine:init")); // Force Alpine to update
+                else{
+                    this.remove()
                 }
                 
-                
-                
-            })();
-
-        document.addEventListener("DOMContentLoaded", function(){
-            const filter_form = document.querySelector('#filter-form');
-
-            filter_form.addEventListener('submit', function(e){
-                const inputs = filter_form.querySelectorAll('input, select');
-
-                inputs.forEach(input => {
-                    if(!input.value.trim()){
-                        input.removeAttribute("name"); 
-                    }
-                });
+            }).finally(() => {
+                // document.getElementById('loading-text').remove()
+                this.innerHTML = originalText
             })
-        })
-
-
-    </script>
-{% endblock %}
+    });
+</script>
+{% endblock  %}

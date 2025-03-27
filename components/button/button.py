@@ -4,7 +4,7 @@ from django_components import Component, register
 class Buttons(Component):
     template_file = "button/template.html"
 
-    def get_context_data(self, html_tag="a", label="Click Me", href="#", type="primary", extraclass=None, function=None, width="max", attr=None):
+    def get_context_data(self, html_tag="a", label="Click Me", href="#", type="primary", extraclass="", function=None, width="max", attr=None):
         """ 
     Generates context data for a button or hyperlink component.
 

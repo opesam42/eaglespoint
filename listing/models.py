@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from .utils.choices import STATE_CHOICES, LISTING_TYPE
+from utils.choices import STATE_CHOICES, LISTING_TYPE
 
 # Create your models here.
 
@@ -43,7 +43,7 @@ class Listings(models.Model):
     lga = models.CharField(max_length=30, blank=False, null=False)
     # state = models.CharField(max_length=30, blank=False, null=False)
     state = models.CharField(max_length=30, choices=STATE_CHOICES, blank=False, null=False)
-    country = models.CharField(max_length=30, blank=False, null=False)
+    country = models.CharField(max_length=30, default="Nigeria", blank=False, null=False)
 
     features = models.ManyToManyField(Feature, related_name='listings', blank=True)
     

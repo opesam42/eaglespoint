@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'core',
     'user',
     'listing',
+    'adminv2',
 
     'django_components',
 ]

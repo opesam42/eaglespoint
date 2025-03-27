@@ -1,50 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-</head>
-<body>
-    <h2>Register</h2>
-    <form method="POST" action="">
-        {% csrf_token %}
+{% extends "core/base.html" %}
 
-        <!-- Show Non-Field Errors -->
-        {% if form.errors %}
-        <div class="alert alert-danger">
-            <ul>
-                {% for field, errors in form.errors.items %}
-                    {% for error in errors %}
-                        <li>{{ field }}{{ error }}</li>
+{% block styleblock %} 
+    <style>
+        header form{
+            display: none;
+        }
+        header nav{
+            display: none;
+        }
+        header #headerWrapper{
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        header #logo{
+            width: 80px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+    <main class="responsive-padding flex flex-col mt-9 justify-center items-center">
+        <form method="POST" action="" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 ">
+            {% csrf_token %}
+    
+            <!-- Show Non-Field Errors -->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul>
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ field }}{{ error }}</li>
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
-        <h2>Register</h2>
+                </ul>
+            </div>
+        {% endif %}
+            
+            <div class="mb-6">
+                <h1 class="text-4xl font-bold mb-1.5">Sign Up</h1>
+                <p>Already have an account? <a class="text-blue-700 underline" href="{% url 'user:login'%}">Login</a> </p>
+            </div>
+             
+    
+            <div class="flex flex-col gap-3 lg:gap-4">
+                <div>
+                    <label for="id_first_name" class="label-primary">First Name</label>
+                    <input class="input-primary" type="text" name="first_name" maxlength="150" id="id_first_name">
+                </div>
+                <div>
+                    <label for="id_last_name" class="label-primary">Last Name</label>
+                    <input class="input-primary" type="text" name="last_name" maxlength="150" id="id_last_name">
+                </div>
+                <div>
+                    <label for="id_email" class="label-primary">Email</label>
+                    <input class="input-primary" type="email" name="email" maxlength="254" autofocus required id="id_email">
+                </div>
+                <div>
+                    <label for="id_password1" class="label-primary">Password</label>
+                    <input class="input-primary" type="password" name="password1" autocomplete="new-password" required aria-describedby="id_password1_helptext" id="id_password1">
+                </div>
+                <div>
+                    <label for="id_password2" class="label-primary">Confirm Password</p>
+                    <input class="input-primary" type="password" name="password2" autocomplete="new-password" required aria-describedby="id_password2_helptext" id="id_password2">
+                </div>
+        
+                {% component "button" html_tag="button" label="Register" type="primary" width="full" function="submit" %} {% endcomponent %}
+            </div>
+    
+            
+        </form>
+    </main>
+    
 
-        <div>
-            <p>First Name</p>
-            {{form.first_name}}
-        </div>
-        <div>
-            <p>First Name</p>
-            {{form.last_name}}
-        </div>
-        <div>
-            <p>Email</p>
-            {{form.email}}
-        </div>
-        <div>
-            <p>Password</p>
-            {{form.password1}}
-        </div>
-        <div>
-            <p>Confirm Password</p>
-            {{form.password2}}
-        </div>
-        <input type="submit", value="Register">
-    </form>
-</body>
-</html>
+{% endblock %}

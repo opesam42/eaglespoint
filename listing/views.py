@@ -2,13 +2,15 @@ from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .models import Listings, ListingImages
 from django.db.models import Q
 from django.conf import settings
+from django.core.paginator import Paginator
 import os
 import json
 from django.http import JsonResponse
+from utils.choices import STATE_CHOICES
 
 # Create your views here.
 def get_states_api(request):
-    file_path = os.path.join(settings.BASE_DIR, 'listing', 'data', 'states_and_lgas.json')
+    file_path = os.path.join(settings.BASE_DIR, 'data', 'states_and_lgas.json')
 
     with open(file_path, 'r') as f:
         data =json.load(f)
@@ -17,7 +19,7 @@ def get_states_api(request):
 
 
 def search_listing(request):
-    listings = Listings.objects.all()
+    listings = Listings.objects.all().order_by('-created_at')
 
     search_query = request.GET.get('search_query', '').strip()  # Get search query from GET request
     if search_query:
@@ -28,29 +30,39 @@ def search_listing(request):
             query |=  Q(title__icontains=word) | Q(description__icontains=word) | Q(lga__icontains=word) | Q(state__icontains=word)
         listings = listings.filter(query)
 
-        #handle filters
-        listing_type = request.GET.get('listing_type', '')
-        min_price = request.GET.get('min_price', '')
-        max_price = request.GET.get('max_price', '')
-        lga = request.GET.get('lga', '')
-        state = request.GET.get('state', '')
+    #handle filters
+    listing_type = request.GET.get('listing_type', '')
+    min_price = request.GET.get('min_price', '')
+    max_price = request.GET.get('max_price', '')
+    lga = request.GET.get('lga', '')
+    state = request.GET.get('state', '')
+    page_number = request.GET.get('page')
 
-        if listing_type:
-            listings = listings.filter(listing_type=listing_type)
+    if listing_type:
+        listings = listings.filter(listing_type=listing_type)
 
-        if min_price:
-            listings = listings.filter(price__gte=min_price)
+    if min_price:
+        listings = listings.filter(price__gte=min_price)
 
-        if max_price:
-            listings = listings.filter(price__lte=max_price)
+    if max_price:
+        listings = listings.filter(price__lte=max_price)
 
-        if lga:
-            listings = listings.filter(lga__icontains=lga)
+    if lga:
+        listings = listings.filter(lga__icontains=lga)
 
-        if state:
-            listings = listings.filter(state__icontains=state)
-
-        # results = Listings.objects.filter(title__icontains=search_query) if search_query else []  # Filter results
+    if state:
+        listings = listings.filter(state__icontains=state)
+    
+    paginator = Paginator(listings, 3) #show 20 listing per page
+    listings = paginator.get_page(page_number)
+    
+    #handle ajax request
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, 'listing/partials/listing-items.html', {
+            'results': listings,
+            'has_next': listings.has_next(),
+            'next_page': listings.next_page_number() if listings.has_next() else None,
+            })
 
     context = {
         'results': listings,
@@ -60,6 +72,8 @@ def search_listing(request):
         'max_price': max_price,
         'lga': lga,
         'selectedState': state,
+        'nigeria_states': Listings.objects.values_list('state', flat=True).order_by('state').distinct()
+
     }
     
     return render(request, 'listing/search.html', context)
@@ -67,7 +81,7 @@ def search_listing(request):
 
 def listing_details(request, property_id):
     property = get_object_or_404(Listings, id=property_id)
-    property_images = ListingImages.objects.filter(listing_id=property_id).values()
+    property_images = ListingImages.objects.filter(listing_id=property_id).values('image', flat="True")
     features = property.features.all()
 
     context = {

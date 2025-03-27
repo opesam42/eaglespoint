@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %} Admin Dashboard {% endblock  %}</title>
+
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <aside>
+        <a href="{% url 'adminv2:dashboard' %}">Dashboard</a>
+        <a href="{% url 'adminv2:listing' %}">Listing</a>
+    </aside>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+   
+</body>
+<script src="{% static 'js/helper_func.js' %}"></script>
+{% block script %}{% endblock  %}
+</html>

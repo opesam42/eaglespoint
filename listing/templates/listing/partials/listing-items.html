@@ -1,0 +1,7 @@
+{% for result in results %}
+    {% component "listing_card" title="{{result.title}}" href="{% url 'listing:property_details' result.id %}" price="{{result.price}}" size="{{result.size}}" type="{{result.listing_type}}" imageUrl="/media/{{result.cover_image}}" address="{{result.street_address}}, {{result.lga}}, {{result.state}}" %} {% endcomponent %}
+{% endfor %}
+{% comment %} to pass to the load more button {% endcomment %}
+{% if has_next %}
+    <span hidden id="next-page-data" data-next-page="{{ next_page }}"></span>
+{% endif %}

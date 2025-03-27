@@ -1,17 +1,1 @@
-<{{ tag|escape }}
-    class="{{ extraclass }}
-        {% if type == 'primary' %} bg-blue-600 text-white hover:bg-blue-700 
-        {% elif type == 'secondary' %} bg-red-600 text-white hover:bg-red-700 
-        {% elif type == 'tertiary' %} rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] bg-white text-gray-800 hover:bg-gray-300
-        {% endif %}
-
-        {% if width == 'max' %}
-            w-max 
-        {% elif width == 'full' %}
-            w-full
-        {% endif %}
-        px-4 py-3 rounded-lg flex justify-center items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out"
-    {% if function is not None %} type="{{function}}" {% endif %}
-{{attr}}>
-    {{ label }}
-</{{ tag|escape }}>
+<{{ tag|escape }} class="{{ extraclass }} {% if type == 'primary' %}bg-blue-600 text-white hover:border-2 hover:border-blue-700 hover:text-blue-700 hover:bg-white {% elif type == 'secondary' %}border-2 border-red-600 hover:bg-red-700 hover:text-white{% elif type == 'tertiary' %}rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] bg-white text-gray-800 hover:bg-gray-300{% endif %} {% if width == 'max' %}w-max{% elif width == 'full' %}w-full{% endif %} px-4 py-3 rounded-lg flex justify-center items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out" {% if function is not None %}type="{{function}}"{% endif %} {{attr}}>{{ label }}</{{ tag|escape }}>

@@ -1,0 +1,249 @@
+{% extends 'adminv2/base.html'%}
+{% load static %}
+
+{% block title %}{% endblock %}
+
+{% block content %} 
+    <h1>Add Listing</h1>
+    <p>Manage employees, employers, and company data here.</p>
+
+    <form method="post" enctype="multipart/form-data" class="max-w-2xl responsive-padding" onsubmit="submitForm(event)">
+        {% csrf_token %}        
+        <div class="flex flex-col gap-3 lg:gap-4">
+            <div>
+                <label for="id_title" class="label-primary">Title</label>
+                <input class="input-primary" type="text" name="title" maxlength="40" required id="id_title">
+            </div>
+        
+            <div>
+                <label for="id_listing_type" class="label-primary">Listing Type </label>
+                <select class="input-primary" name="listing_type" required id="id_listing_type">
+                    <option value="" selected>Select an option</option>
+                    {% for value, label in listing_types %}
+                        <option value="{{ value }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        
+            <div>
+                <label for="id_description" class="label-primary">Description</label>
+                <textarea class="input-primary resize-none" name="description" cols="40" rows="4" maxlength="2000" required id="id_description"></textarea>
+            </div>
+        
+            <div>
+                <label for="id_price" class="label-primary">Price</label>
+                <input class="input-primary" type="number" name="price" step="0.01" required id="id_price">
+            </div>
+        
+            <div x-data="{ image:null }"> 
+                <label for="id_cover_image" class="label-primary">Cover Image</label>
+                <input x-ref="fileInput" class="input-primary" type="file" name="cover_image" accept="image/*" required id="id_cover_image" @change="image = URL.createObjectURL($event.target.files[0])">
+
+                {% comment %} image preview {% endcomment %}
+                <template x-if="image">
+                    <div class="relative mt-2 h-32 w-32 rounded-sm">
+                        <img :src="image" class="w-32 h-32 object-cover mt-2 border">
+                        <button @click="image = null; $refs.fileInput.value=''" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                </template>
+            </div>
+        
+            <div>
+                <label for="id_units" class="label-primary">Units</label>
+                <input class="input-primary" type="number" name="units" id="id_units">
+            </div>
+        
+            <div>
+                <label for="id_street_address" class="label-primary">Street Address</label>
+                <input class="input-primary" type="text" name="street_address" maxlength="100" required id="id_street_address">
+            </div>
+        
+            <div>
+                <label for="id_state" class="label-primary">State</label>
+                <select class="input-primary" name="state" required id="id_state">
+                    <option value="" selected>Please select state</option>
+                    {% for value, label in nigeria_states %}
+                        <option value="{{ label }}">{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <p x-text="getLGAs(selectedState)"></p>
+            </div>
+
+            <div>
+                <label for="id_lga" class="label-primary" x-show="lgas.length">LGA</label>
+                <select class="input-primary" type="text" name="lga" required id="id_lga">
+                    <option value="" selected>Select LGA</option>
+                </select>
+            </div>
+
+            <div x-data="{ images: [], files:[] }">
+                <label for="id_images" class="label-primary">Select Images:</label>
+                <input x-ref="fileInput" class="input-primary" type="file" id="id_images" name="multiple_images[]" accept="image/*" multiple @change="handleFileUpload($event, $data)"> 
+                
+                {% comment %} image preview {% endcomment %}
+                <template x-for="(image,index) in images" :key="index">
+                    <div class="relative mt-2 h-32 w-32 rounded-sm">
+                        <img :src="image" class="w-32 h-32 object-cover mt-2 border">
+                        <button @click="removeImage(index, $data)" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                </template>
+            <div>
+                <label class="label-primary">Select Features:</label>
+                <div class="flex flex-wrap gap-2">
+                    {% for feature in features %}
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" name="features" value="{{ feature.id }}">
+                            <span>{{ feature.name }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <a onclick="test()">hello</a>
+            </div>
+
+                
+            {% component "button" html_tag="button" label="Add Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
+        </div>
+    </form>
+{% endblock %}
+
+{% block script %}
+    <script>
+
+        const stateField = document.querySelector('#id_state');
+        const lgaField = document.querySelector('#id_lga');
+        stateField.addEventListener('change', async ()=>{
+            let state = stateField.value
+            // if (stateField.value == 'fct'){
+            //     state = state.toUpperCase()
+            // }
+            console.log(state)
+            let lgas = await fetchLGAs(state)
+
+            if(lgas){
+                lgaField.innerHTML = lgas.map(lga => 
+                    `<option value="${ (lga) }">${ lga }</option>`
+                ).join('');
+            }
+        }) 
+
+        // function getLGAs(element){
+        //     state = element.value
+        //     state = unslugify(state);
+        //     let lgas = fetchLGAs(state);
+        //     return lgas[1];
+        // }
+
+
+        async function fetchLGAs(state){
+            /* get the json file from the url
+                if successful return the an array of local govt area for the state
+                if not, throws errror*/
+
+            // if(!state) return []
+
+            try{
+                const response = await fetch( "{% url 'listing:get_states' %}" );
+                if(response.ok){
+                    const data = await response.json();
+                    console.log(data)
+                    const lgas = data[state];
+                    console.log(lgas)
+                    return lgas;
+                }
+                else{
+                    throw new Error("Failed to reach data");
+                }
+            } catch(error){
+                console.error('Error:', error);
+                return [];
+            }
+        }
+
+        let uploadFiles = []
+
+        function handleFileUpload(event, component){
+            let selectedFiles = event.target.files //get all files
+            let newImages = [];
+            // let newFiles = [];
+            
+            for(i=0; i < selectedFiles.length; i++){
+                newImages.push(URL.createObjectURL(selectedFiles[i])); //for display
+                // newFiles.push(selectedFiles[i]) //for upload
+                uploadFiles.push(selectedFiles[i])
+            }
+
+            component.images = [...component.images, ...newImages]; //add new images while preserving the already stored images
+            // component.files = [...component.files, ...newFiles];
+            // console.log(component.files)
+            console.log(uploadFiles)
+        }
+
+        function removeImage(index, component){
+            component.images.splice(index, 1)
+            // component.files.splice(index, 1)
+            uploadFiles.splice(index, 1)
+
+            if (component.images.length == 0){
+                component.$refs.fileInput.value = "";
+            }
+            console.log(uploadFiles)
+        }
+
+        function test(){
+            let form = document.querySelector('form');
+            formData = new FormData(form);
+
+            formData.delete('multiple_images[]');
+            
+            if(uploadFiles){
+                uploadFiles.forEach((file) => {
+                    formData.append('multiple_images[]', file)
+                });
+            }
+
+            console.log(...formData)
+
+            // for (let [key, value] of formData.entries()) {
+            //     console.log(key + ':', value); // Log each key-value pair
+            // }
+
+        }
+        function submitForm(event){
+            event.preventDefault()
+
+            let form = event.target;
+            // print(form)
+            formData = new FormData(form)
+
+            formData.delete('multiple_images[]')
+
+            if(uploadFiles){
+                uploadFiles.forEach((file) => {
+                    formData.append('multiple_images[]', file)
+                });
+                // return;
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.log('Upload failed', error));
+            }
+
+        }
+    </script>
+{% endblock %}
