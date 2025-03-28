@@ -38,7 +38,7 @@
                 <label for="id_cover_image" class="label-primary">Cover Image</label>
                 <input x-ref="fileInput" class="input-primary" type="file" name="cover_image" accept="image/*" id="id_cover_image" @change="image = URL.createObjectURL($event.target.files[0])">
 
-                {% comment %} image preview {% endcomment %}
+                {% comment %} image preview start {% endcomment %}
                 <template x-if="image">
                     <div class="relative mt-2 h-32 w-32 rounded-sm">
                         <img :src="image" class="w-32 h-32 object-cover mt-2 border">
@@ -49,8 +49,8 @@
                             </svg>
                         </button>
                     </div>
-                    
                 </template>
+                {% comment %} image previw end {% endcomment %}
             </div>
         
             <div>
@@ -81,19 +81,11 @@
                 </select>
             </div>
 
-            {% comment %} <div>
-                {% for image in listing_images %}
-                    <img src="/media/{{ image }}" alt="Listing Image">
-                {% endfor %}
-
-            </div>
-             {% endcomment %}
-             {% comment %} <p>{{listing_images}}</p> {% endcomment %}
             <div x-data="{ images:{{ listing_images|safe }}, files:[] }">
                 <label for="id_images" class="label-primary">Select Images:</label>
                 <input x-ref="fileInput" class="input-primary" type="file" id="id_images" name="multiple_images[]" accept="image/*" multiple @change="handleFileUpload($event, $data)"> 
                 
-                {% comment %} image preview {% endcomment %}
+                {% comment %} image preview start {% endcomment %}
                 <template x-for="(image,index) in images" :key="index">
                     <div class="relative mt-2 h-32 w-32 rounded-sm">
                         <img :src="image" class="w-32 h-32 object-cover mt-2 border">
@@ -104,8 +96,10 @@
                             </svg>
                         </button>
                     </div>
-                    
                 </template>
+                {% comment %} image preview end {% endcomment %}
+            </div>
+
             <div>
                 <label class="label-primary">Select Features:</label>
                 <div class="flex flex-wrap gap-2">
@@ -116,10 +110,10 @@
                         </label>
                     {% endfor %}
                 </div>
-                <a onclick="test()">hello</a>
             </div>
 
-                
+            <a onclick="test()">hello</a>
+            {% comment %} submit btn {% endcomment %}
             {% component "button" html_tag="button" label="Add Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
         </div>
     </form>
@@ -132,66 +126,29 @@
         const stateField = document.querySelector('#id_state');
         const lgaField = document.querySelector('#id_lga');
 
-        document.addEventListener("DOMContentLoaded", async ()=>{
-            let state = stateField.value
-            let lgas = await fetchLGAs(state)
+        //function to update Local Government Area based on the selected Nigerian Satate
+        async function updateLGAOptions(state){
+            const lgas = await fetchLGAs(state);
+            if(!lgas) return;
 
-            if(lgas){
-                lgaField.innerHTML = lgas.map(lga => 
-                    `<option value="${ (lga) }" ${lga == selectedLGA ? 'selected' : ''}>${ lga }</option>`
-                ).join('');
-            }
-        })
-
-        stateField.addEventListener('change', async ()=>{
-            let state = stateField.value
-            let lgas = await fetchLGAs(state)
-
-            if(lgas){
-                lgaField.innerHTML = lgas.map(lga => 
-                    `<option value="${ (lga) }" ${lga == selectedLGA ? 'selected' : ''}>${ lga }</option>`
-                ).join('');
-            }
-        }) 
-
-        // function getLGAs(element){
-        //     state = element.value
-        //     state = unslugify(state);
-        //     let lgas = fetchLGAs(state);
-        //     return lgas[1];
-        // }
-
-
-        async function fetchLGAs(state){
-            /* get the json file from the url
-                if successful return the an array of local govt area for the state
-                if not, throws errror*/
-
-            // if(!state) return []
-
-            try{
-                const response = await fetch( "{% url 'listing:get_states' %}" );
-                if(response.ok){
-                    const data = await response.json();
-                    console.log(data)
-                    const lgas = data[state];
-                    console.log(lgas)
-                    return lgas;
-                }
-                else{
-                    throw new Error("Failed to reach data");
-                }
-            } catch(error){
-                console.error('Error:', error);
-                return [];
-            }
+            lgaField.innerHTML = lgas.map(lga => 
+                `<option value="${ (lga) }" ${lga == selectedLGA ? 'selected' : ''}>${ lga }</option>` 
+            ).join('');
         }
 
+        document.addEventListener("DOMContentLoaded", async ()=>{
+            await updateLGAOptions(stateField.value);
+        });
+
+
+        stateField.addEventListener('change', async ()=>{
+            await updateLGAOptions(stateField.value);
+        }); 
 
         let uploadFiles = []
-        listingImages = {{listing_images}}
+        listingImages = {{listing_images}} //from django context
 
-        async function fetchAndPushImages(imageList) {
+        async function fetchAndConvertImagesToBlob(imageList) {
             for(const imageUrl of imageList){
                 try{
                     const response = await fetch(imageUrl);
@@ -209,34 +166,20 @@
             console.log('Converted files:', uploadFiles)
         }
 
-        fetchAndPushImages(listingImages)
-
-        // console.log(listingImages)
-
-        // push images to upload
-        // if(listingImages){
-        //     listingImages.forEach((image)=>{
-        //         uploadFiles.push(image)
-        //     })
-        // }
-
+        fetchAndConvertImagesToBlob(listingImages)
         
+
+        // function for alpine js to handle showing of uploaded images and also the uploadedFiles for formData
         function handleFileUpload(event, component){
             let selectedFiles = event.target.files //get all files
-            let newImages = [];
-            
-            // let newFiles = [];
-            
+            newImages = [];
             for(i=0; i < selectedFiles.length; i++){
                 newImages.push(URL.createObjectURL(selectedFiles[i])); //for display
-                // newFiles.push(selectedFiles[i]) //for upload
-                uploadFiles.push(selectedFiles[i]);
+                uploadFiles.push(selectedFiles[i]); //for form data
             }
 
             component.images = [...component.images, ...newImages]; //add new images while preserving the already stored images
-            // component.files = [...component.files, ...newFiles];
-            // console.log(component.files)
-            console.log(uploadFiles)
+            // console.log(uploadFiles)
         }
 
         function removeImage(index, component){
@@ -247,63 +190,41 @@
             if (component.images.length == 0){
                 component.$refs.fileInput.value = "";
             }
-            console.log(uploadFiles)
+            // console.log(uploadFiles)
         }
 
-        function test(){
-            let form = document.querySelector('form');
-            formData = new FormData(form);
-
-            formData.delete('multiple_images[]');
-            
-            if(uploadFiles){
-                uploadFiles.forEach((file) => {
-                    formData.append('multiple_images[]', file)
-                });
-            }
-            
-            // check if the image is changed
-            coverImage = formData.get('cover_image');
-            if(!coverImage || coverImage.size == 0){
-                console.log('No image selected, keeping existing one')
-                formData.delete('cover_image');
-            }
-            console.log(...formData)
-            console.log(uploadFiles)
-        }
-
-
-        function submitForm(event){
-            event.preventDefault()
-
-            let form = event.target;
-            // print(form)
+        function prepareFormData(form){
             formData = new FormData(form)
 
             // Handling Cover Image Field
             coverImage = formData.get('cover_image');
             if(!coverImage || coverImage.size == 0){
-                console.log('No image selected, keeping existing one')
                 formData.delete('cover_image');
             }
 
             // Handling Multiple Image Field
             formData.delete('multiple_images[]')
-
             if(uploadFiles){
                 uploadFiles.forEach((file) => {
                     formData.append('multiple_images[]', file)
                 });
             }
-                // return;
 
-                fetch(form.action, {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => console.log('Upload failed', error));
+            return formData
+        }
+
+        function submitForm(event){
+            event.preventDefault()
+            const form = event.target;
+            const formData = prepareFormData(form)
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => console.log(data))
+            .catch(error => console.log('Updatate failed', error));
 
         }
     </script>
