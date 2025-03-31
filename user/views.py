@@ -3,7 +3,11 @@ from .forms import SignUpForm, LoginForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 import json
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.contrib.auth import get_user_model
+from django.utils.http import urlsafe_base64_decode
+from .tokens import email_verification_token
+from .utils import send_verification_email
 
 
 def sign_up(request):
@@ -23,8 +27,12 @@ def sign_up(request):
                 form = SignUpForm(data)
 
                 if form.is_valid():
-                    form.save()
-                    return JsonResponse({'message': 'Registration successful'}, status=201)
+                    user = form.save(commit=False)
+                    user.is_active = False
+                    user.save()
+                    send_verification_email(request, user)
+
+                    return JsonResponse({'message': 'Verification email sent'}, status=201)
                     # return redirect('user:login')
                 else:
                     return JsonResponse({'errors': form.errors}, status=400)
@@ -98,3 +106,24 @@ def user_login(request):
 def logout_view(request):
     logout(request)
     return redirect('user:login')
+
+
+def activate_account(request, uidb64, token):
+    """ verify user account using token """
+
+    User = get_user_model()
+
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = User.objects.get(pk=uid)
+    except (User.DoesNotExist, ValueError, TypeError):
+        user = None
+
+    #check token validity
+    if user and email_verification_token.check_token(user, token):
+        user.is_active = True #activate user
+        user.save()
+        return redirect('user:login')
+    
+    else:
+        return HttpResponse("Invalid link")
