@@ -20,7 +20,7 @@ def sign_up(request):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             try:
                 data = json.loads(request.body)
-                form = signUpForm(data)
+                form = SignUpForm(data)
 
                 if form.is_valid():
                     form.save()
@@ -72,7 +72,7 @@ def user_login(request):
                 login(request, user)
                 return JsonResponse({'message': 'Login successful'}, status=200)
             else:
-                return JsonResponse({'message': 'Invalid login details'}, status=401)
+                return JsonResponse({'error': 'Invalid login details'}, status=401)
 
         else:
             form = LoginForm(data=request.POST)

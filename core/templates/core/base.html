@@ -145,7 +145,7 @@
                         <div class="flex flex-col gap-3 lg:gap-4">
                             <div>
                                 <label class="label-primary" for="id_username">Email</label>
-                                <input class="input-primary" type="email" name="username" autofocus maxlength="254" required id="id_username" placeholder="Enter your email">
+                                <input class="input-primary" type="email" name="username" maxlength="254" required id="id_username" placeholder="Enter your email">
                             </div>
 
                             <div>
@@ -158,7 +158,7 @@
                     </form>
 
                     <!-- Signup Form (Separated from Login Form) -->
-                    <form method="POST" onsubmit="handleSignUp(event)" class="p-4" x-show="!isLogin" x-cloak class="p-4">
+                    <form method="POST" onsubmit="handleSignUp(event)" class="p-4" x-show="!isLogin" x-cloak>
                         <div class="mb-6">
                             <h2 class="text-xl font-bold">Sign Up</h2>
                             <div id="error-message" class="text-red-500 bg-pink-500 text-center font-medium hidden"></div>
@@ -167,15 +167,15 @@
                         <div class="flex flex-col gap-3 lg:gap-4">
                             <div>
                                 <label for="id_first_name" class="label-primary">First Name</label>
-                                <input class="input-primary" type="text" name="first_name" maxlength="150" id="id_first_name">
+                                <input class="input-primary" type="text" name="first_name" maxlength="150" id="id_first_name" required>
                             </div>
                             <div>
                                 <label for="id_last_name" class="label-primary">Last Name</label>
-                                <input class="input-primary" type="text" name="last_name" maxlength="150" id="id_last_name">
+                                <input class="input-primary" type="text" name="last_name" maxlength="150" id="id_last_name" required>
                             </div>
                             <div>
                                 <label for="id_email" class="label-primary">Email</label>
-                                <input class="input-primary" type="email" name="email" maxlength="254" autofocus required id="id_email">
+                                <input class="input-primary" type="email" name="email" maxlength="254" required id="id_email">
                             </div>
                             <div>
                                 <label for="id_password1" class="label-primary">Password</label>

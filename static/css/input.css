@@ -5,6 +5,7 @@
 @source '../../**/templates/**/*.html';
 @source '../../components/**/*.html';
 @source '../../components/**/*.js';
+@source '../../static/js/**/*.js';
 
 
 
