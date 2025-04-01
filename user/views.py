@@ -6,8 +6,9 @@ import json
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.http import require_POST
 from .tokens import email_verification_token
-from .utils import send_verification_email
+from .utils import send_verification_email, is_user_active
 
 
 def sign_up(request):
@@ -32,8 +33,7 @@ def sign_up(request):
                     user.save()
                     send_verification_email(request, user)
 
-                    return JsonResponse({'message': 'Verification email sent'}, status=201)
-                    # return redirect('user:login')
+                    return JsonResponse({'message': 'A verification link has been sent to your email. Please check your inbox and spam folder.'}, status=201)
                 else:
                     return JsonResponse({'errors': form.errors}, status=400)
             
@@ -73,14 +73,25 @@ def user_login(request):
             email = data.get('username')
             password = data.get('password')
 
-            print(f"AJAX Login Attempt: email={email}, password={password}")
-            user = authenticate(request, email=email, password=password)  # Authenticate with email
+            # check if user is active
+            # try:
+            #     if not is_user_active(email):
+            #         return JsonResponse({'message': 'Your account is not active'}, status=403)
+            # except ValueError:  
+            #     pass  
+
+            user = authenticate(request, email=email, password=password)
             
-            if user:
+            
+            if user: 
+                print(user)             
                 login(request, user)
                 return JsonResponse({'message': 'Login successful'}, status=200)
             else:
-                return JsonResponse({'error': 'Invalid login details'}, status=401)
+                if not is_user_active(email):
+                    return JsonResponse({'message': 'Your account is not active'}, status=403)
+                
+                return JsonResponse({'message': 'Invalid login details'}, status=401)
 
         else:
             form = LoginForm(data=request.POST)
@@ -125,5 +136,27 @@ def activate_account(request, uidb64, token):
         user.save()
         return redirect('user:login')
     
+    return render(request, "user/activation_invalid.html", {"message": "Invalid activation link", "user_id": uid})
+
+@require_POST
+def resend_activation_token(request, uid):
+    """ resending actiivation token """
+
+    User = get_user_model()
+
+    print(uid)
+
+    try:
+        user = User.objects.get(pk=uid)
+    except User.DoesNotExist:
+        return JsonResponse({'message': 'User not found', 'type': 'error_message'}, status=400)
+
+    if user.is_active:
+        return JsonResponse({'message': 'User is already active', 'type': 'success_message'}, status=400)
+    
+    email_sent = send_verification_email(request, user)
+    print("Email response", email_sent)
+    if email_sent:
+        return JsonResponse({'message': 'Email sent', 'type': 'success_message'}, status=201)
     else:
-        return HttpResponse("Invalid link")
+        return JsonResponse({'message': 'Error sending mail', 'type': 'error_message'}, status=500)

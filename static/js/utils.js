@@ -29,19 +29,16 @@ async function handleSignUp(event){
 
         const result = await response.json();
 
-        // const errorMessageContainer = form.querySelector('#error-message')
-        // console.log(errorMessageContainer)
-
         if(!response.ok){
-            // errorMessageContainer.textContent = result.error;
-            // errorMessageContainer.classList.remove("hidden");
             displayFormError(result.errors, form);
             console.log(result.errors);
             return;
         } 
         
-        // if successful
-        // errorMessageContainer.classList.add("hidden");
+        const notification_div = form.querySelector("#notification");
+        notification_div.classList.remove("hidden");
+        notification_div.classList.add("bg-green-100", "text-green-500");
+        notification_div.innerText = result.message;
         console.log(result.message);
 
     } catch(error){
@@ -52,13 +49,14 @@ async function handleSignUp(event){
 
 
 function displayFormError(errors, form){
-    // console.log(Object.keys(errors));
+    form.querySelectorAll('.error-message').forEach(error => error.remove());
+
     Object.keys(errors).forEach(fieldName => {
         const field = form.querySelector(`[name="${fieldName}"]`);
         
         if(field){
             const errorDiv = document.createElement('div');
-            errorDiv.className = "error-message, text-red-500, text-sm";
+            errorDiv.className = "error-message text-red-500 text-sm";
             errorDiv.innerText = errors[fieldName].join(",");
             field.after(errorDiv);
         }
@@ -90,7 +88,14 @@ async function handleLogin(event){
         console.log(errorMessageContainer)
 
         if(!response.ok){
-            errorMessageContainer.textContent = result.error;
+            console.log(result.message)
+            if(result.message == "Your account is not active"){
+                errorMessageContainer.innerHTML = "Your account has not been verified. <a href='/user/signup/'>Verify your account now</a>";
+                errorMessageContainer.classList.remove("hidden");
+                return;
+            }
+
+            errorMessageContainer.innerHTML = result.message;
             errorMessageContainer.classList.remove("hidden");
             return;
         } 

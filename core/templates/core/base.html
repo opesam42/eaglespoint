@@ -141,7 +141,7 @@
                     <form method="POST" onsubmit="handleLogin(event)" class="p-4" x-show="isLogin" x-cloak>
                         <div class="mb-6">
                             <h2 class="text-xl font-bold">Login</h2>
-                            <div id="error-message" class="text-red-500 bg-pink-500 text-center font-medium hidden"></div>
+                            <div id="error-message" class="text-red-500 bg-red-100 text-center text-sm p-2 w-max hidden"></div>
                         </div>
                         
                         <div class="flex flex-col gap-3 lg:gap-4">
@@ -163,7 +163,7 @@
                     <form method="POST" onsubmit="handleSignUp(event)" class="p-4" x-show="!isLogin" x-cloak>
                         <div class="mb-6">
                             <h2 class="text-xl font-bold">Sign Up</h2>
-                            <div id="error-message" class="text-red-500 bg-pink-500 text-center font-medium hidden"></div>
+                            <div id="notification" class="text-center text-sm border-xlg p-2 mt-2 hidden"></div>
                         </div>
 
                         <div class="flex flex-col gap-3 lg:gap-4">
@@ -184,7 +184,7 @@
                                 <input class="input-primary" type="password" name="password1" autocomplete="new-password" required aria-describedby="id_password1_helptext" id="id_password1">
                             </div>
                             <div>
-                                <label for="id_password2" class="label-primary">Confirm Password</p>
+                                <label for="id_password2" class="label-primary">Confirm Password</label>
                                 <input class="input-primary" type="password" name="password2" autocomplete="new-password" required aria-describedby="id_password2_helptext" id="id_password2">
                             </div>
                     

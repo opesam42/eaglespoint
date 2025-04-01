@@ -5,6 +5,9 @@ from django.urls import reverse
 from django.template.loader import render_to_string
 from .tokens import email_verification_token
 from django.core.mail import EmailMessage
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 def send_verification_email(request, user):
     """ Send email verification to user """
@@ -22,10 +25,28 @@ def send_verification_email(request, user):
     activation_link = f"http://{current_site.domain}{reverse('users:activate', kwargs={'uidb64' : uid, 'token' : token})}"
 
     print("Activation link", activation_link)
-    # message = render_to_string("emails/email_verification_html", {
-    #     "user": user,
-    #     "activation_link": activation_link,
-    # })
+    message = render_to_string("emails/email_verification.html", {
+        "user": user,
+        "activation_link": activation_link,
+    })
 
-    # email = EmailMessage(subject, message, to=[user.email])
-    # email.send()
+    try:
+        email = EmailMessage(subject, message, to=[user.email])
+        email.content_subtype = "html"
+        email.send()
+        print('email sent')
+
+        return True
+    except Exception as e:
+        print("Error sending email: {e}")
+        return False
+    
+def is_user_active(email):
+    try:
+        user = User.objects.get(email=email)
+        if user.is_active:
+            return True
+        else:
+            return False
+    except User.DoesNotExist:
+        return False

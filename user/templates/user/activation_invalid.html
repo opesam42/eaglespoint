@@ -1,0 +1,120 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Expired or Invalid Verification Token{% endblock  %}
+
+{% block styleblock %} 
+    <style>
+        header form{
+            display: none;
+        }
+        header nav{
+            display: none;
+        }
+        header #headerWrapper{
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+        header #logo{
+            width: 80px;
+        }
+        footer{
+            display: none;
+        }
+        .notifyDiv a{
+            text-decoration: underline;
+            color: blue;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    
+    <main class="responsive-padding flex flex-col items-center mt-9">
+        <div class="border-2 border-blue-400 rounded-2xl p-8 flex flex-col items-center w-full max-w-[400px] text-center gap-2">
+            {% if user_id %}
+                <h1 class="text-2xl font-bold">Expired or Invalid Verification Link</h1>
+                <p>Oops! This activation link is either invalid or has already been used.</p>
+                <p>If you believe this is an error, please request a new activation email.</p>
+        
+                {% component "button" html_tag="button" label="Resend Verification Link" type="primary" width="max" attr="onclick='resend_activation_token()'" %} {% endcomponent %}
+            {% endif %}
+            
+        </div>
+    </main>
+   
+    
+{% endblock %}
+
+{% block script %}
+    <script>
+        function sendNotification(message, message_type){
+            const main = document.querySelector('main');
+            main.querySelectorAll('.notifyDiv').forEach(error => error.remove());
+
+            const notifyDiv = document.createElement('div');
+            notifyDiv.className = "notifyDiv text-center text-sm border-xlg p-2 mb-4";
+            
+            if(message == "User not found"){
+                notifyDiv.innerHTML = "Your account could not be found, please <a href='{% url 'user:register' %}'>sign up</a>";
+            }
+
+            if(message == "User is already active"){
+                notifyDiv.innerHTML = "Your account is already activated. Please <a href='{% url 'user:login' %}'>login</a> to your account";
+            }
+
+            if(message == "Email sent"){
+                notifyDiv.innerText = "A verification link has been sent to your email. Please check your inbox and spam folder.";
+            }
+
+            if(message == "Error sending mail"){
+                notifyDiv.innerText = "An error occured, please try again later";
+            }
+
+            if(message_type == 'success_message'){
+                notifyDiv.classList.add("bg-green-100", "text-green-500");
+            }
+
+            if(message_type == 'error_message'){
+                notifyDiv.classList.add("bg-red-100", "text-red-500");
+            }
+
+
+            main.prepend(notifyDiv);
+        }
+
+        async function resend_activation_token(){
+            const userId = {{ user_id}};
+            try{
+
+                const response = await fetch(`/user/resend-activation/1`, {
+                    method: "POST",
+                    headers:{
+                        "X-Requested-With": "XMLHttpRequest",
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCsrfToken(),
+                    }, 
+                });
+
+                const result = await response.json();
+
+                if(!response.ok){
+                    message = result.message;
+                    console.log(result.type)
+                    console.log(message);
+                    sendNotification(result.message, result.type);
+                    return;
+                }
+
+                message = result.message;
+                console.log(message);
+                sendNotification(result.message, result.type);
+            
+            } catch(error){
+                console.log("Errors", error)
+                sendNotification("Something went wrong. Please try again later.", "error");
+            }
+        }
+
+    </script>
+{% endblock %}

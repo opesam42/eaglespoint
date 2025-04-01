@@ -15,17 +15,22 @@
         header #logo{
             width: 80px;
         }
+        #error-message a{
+            text-decoration: underline;
+            color: blue;
+        }
     </style>
 {% endblock %}
 
 {% block content %}
     <main class="responsive-padding flex flex-col mt-9 justify-center items-center">
-        <form method="POST" action="" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 ">
+        <form method="POST" action="" onsubmit="handleLogin(event)" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 ">
             {% csrf_token %}
 
             <div class="mb-6">
                 <h1 class="text-4xl font-bold mb-1.5">Login</h1>
                 <p>New user? <a class="text-blue-700 underline" href="{% url 'user:register'%}">Sign up</a> </p>
+                <div id="error-message" class="text-red-500 bg-red-100 text-center text-sm p-2 w-max hidden"></div>
             </div>
 
             <div class="flex flex-col gap-3 lg:gap-4">
