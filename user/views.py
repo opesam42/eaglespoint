@@ -13,6 +13,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth.views import PasswordResetView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
+from django.views.generic import TemplateView
+from django.contrib.auth.forms import SetPasswordForm
+from django.contrib.auth.tokens import default_token_generator
 from .tokens import email_verification_token
 from .utils import send_verification_email, is_user_active
 
@@ -180,17 +183,6 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     def get_subject(self):
         return 'Reset Your Password'
 
-    """     def get_email_context(self, user):
-            
-            return {
-                "user": user,
-                "email": user.email,  # Pass email explicitly if needed
-                "domain": self.request.get_host(),
-                "protocol": "https" if self.request.is_secure() else "http",
-                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-                "token": default_token_generator.make_token(user),
-            }
-    """
     def form_valid(self, form):
 
         if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
@@ -217,3 +209,31 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
                 'message': 'There was an issue with your email. Please try again.'
             }, status=400)
         return super().form_invalid(form)
+
+
+
+""" 
+# for reseting password
+class CustomPasswordResetConfirmView(TemplateView):
+    template_name = 'user/password_reset_confirm.html'
+
+    def post(self, request, *args, **kwargs):
+        uidb64 = kwargs.get('uidb64')
+        token = kwargs.get('token')
+        try:
+            # Decode the user ID from the uidb64
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return JsonResponse({'error': 'Invalid link'}, status=400)
+
+        # Validate token
+        if not default_token_generator.check_token(user, token):
+            return JsonResponse({'error': 'Invalid token'}, status=400)
+
+        form = SetPasswordForm(user, request.POST)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': 'Password reset successfully!'})
+        else:
+            return JsonResponse({'error': form.errors}, status=400) """
