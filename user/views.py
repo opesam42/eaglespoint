@@ -7,8 +7,16 @@ from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.http import require_POST
+from django.contrib import messages
+from django.urls import reverse
+from django.urls import reverse_lazy
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.core.exceptions import ValidationError
 from .tokens import email_verification_token
 from .utils import send_verification_email, is_user_active
+
+User = get_user_model()
 
 
 def sign_up(request):
@@ -57,10 +65,11 @@ def user_login(request):
     """
     Handles user authentication and login.
     """
-
+    domain_name = request.get_host() 
     next_url = request.GET.get('next', 'core:home') #2nd arg is fallback if their is no next
     if next_url == '/user/logout':
-        next_url = 'core:home' #redirect to homepage
+        next_url = 'core:home' 
+    full_url = f"{request.scheme}://{domain_name}{reverse(next_url)}"
 
     if request.user.is_authenticated:
         return redirect('core:home') #redirect if login
@@ -71,14 +80,7 @@ def user_login(request):
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             data = json.loads(request.body)
             email = data.get('username')
-            password = data.get('password')
-
-            # check if user is active
-            # try:
-            #     if not is_user_active(email):
-            #         return JsonResponse({'message': 'Your account is not active'}, status=403)
-            # except ValueError:  
-            #     pass  
+            password = data.get('password') 
 
             user = authenticate(request, email=email, password=password)
             
@@ -86,12 +88,15 @@ def user_login(request):
             if user: 
                 print(user)             
                 login(request, user)
-                return JsonResponse({'message': 'Login successful'}, status=200)
-            else:
+                return JsonResponse({'message': 'Login successful', 'next_url': full_url}, status=200)
+
+            user = User.objects.filter(email=email).first()
+            if user:
                 if not is_user_active(email):
-                    return JsonResponse({'message': 'Your account is not active'}, status=403)
+                    send_verification_email(request, user)
+                    return JsonResponse({'message': 'Verification email sent'}, status=403)
                 
-                return JsonResponse({'message': 'Invalid login details'}, status=401)
+            return JsonResponse({'message': 'Invalid login details'}, status=401)
 
         else:
             form = LoginForm(data=request.POST)
@@ -113,6 +118,8 @@ def user_login(request):
 
     return render(request, 'user/login.html', {'form':form, 'next':next_url})
 
+
+
 @login_required
 def logout_view(request):
     logout(request)
@@ -121,8 +128,6 @@ def logout_view(request):
 
 def activate_account(request, uidb64, token):
     """ verify user account using token """
-
-    User = get_user_model()
 
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -134,9 +139,11 @@ def activate_account(request, uidb64, token):
     if user and email_verification_token.check_token(user, token):
         user.is_active = True #activate user
         user.save()
+        messages.add_message(request, messages.SUCCESS, "Your account has been activated.")
         return redirect('user:login')
     
     return render(request, "user/activation_invalid.html", {"message": "Invalid activation link", "user_id": uid})
+
 
 @require_POST
 def resend_activation_token(request, uid):
@@ -160,3 +167,53 @@ def resend_activation_token(request, uid):
         return JsonResponse({'message': 'Email sent', 'type': 'success_message'}, status=201)
     else:
         return JsonResponse({'message': 'Error sending mail', 'type': 'error_message'}, status=500)
+
+
+# forget password
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'user/password_reset.html'
+    email_template_name = 'emails/password_reset_email.txt'
+    # subject_template_name = None
+    success_message = "We have sent password reset instructions to your email."
+    success_url = reverse_lazy('user:password_reset')
+
+    def get_subject(self):
+        return 'Reset Your Password'
+
+    """     def get_email_context(self, user):
+            
+            return {
+                "user": user,
+                "email": user.email,  # Pass email explicitly if needed
+                "domain": self.request.get_host(),
+                "protocol": "https" if self.request.is_secure() else "http",
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": default_token_generator.make_token(user),
+            }
+    """
+    def form_valid(self, form):
+
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            email = form.cleaned_data.get('email')
+            
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return JsonResponse({
+                    'message': 'This email is not registered with us.'
+                }, status=400)
+
+            response = super().form_valid(form)
+            return JsonResponse({
+                'message': 'We have sent password reset instructions to your email.'
+            }, status=201)
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        # If the form is invalid, return an error message in JSON
+        if self.request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'message': 'There was an issue with your email. Please try again.'
+            }, status=400)
+        return super().form_invalid(form)

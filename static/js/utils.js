@@ -9,6 +9,53 @@ function getCsrfToken() {
     return csrfToken;
 }
 
+
+async function handlePasswordReset(event) {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const messageBox = form.querySelector('#message')
+    messageBox.innerHTML = "";
+    // messageBox.classList.innerHTML = "";
+
+    try{
+        const response = await fetch('/user/password-reset/', {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                // "Content-Type": "application/json", // i am not sending json data
+                "X-CSRFToken": getCsrfToken(),
+            },
+            body: formData,
+        });
+
+        const result = await response.json();
+
+        if(!response.ok){
+            console.log(result.message);
+            messageBox.classList.remove('hidden');
+            messageBox.classList.add('text-red-800', 'bg-red-100');
+            messageBox.innerHTML = result.message;
+            return;
+        } 
+
+        // if successful
+        messageBox.classList.remove('hidden')
+        messageBox.classList.add('text-green-800', 'bg-green-100');
+        messageBox.innerHTML = result.message;
+        console.log(result.message);
+        return;
+
+    } catch (error) {
+        messageBox.classList.remove('hidden');
+        messageBox.classList.add('text-red-800', 'bg-red-100');
+        messageBox.innerHTML = "An unexpected error occurred. Please try again.";
+        console.error('Error:', error);
+    }
+
+}
+
 async function handleSignUp(event){
     event.preventDefault();
 
@@ -89,10 +136,13 @@ async function handleLogin(event){
 
         if(!response.ok){
             console.log(result.message)
-            if(result.message == "Your account is not active"){
-                errorMessageContainer.innerHTML = "Your account has not been verified. <a href='/user/signup/'>Verify your account now</a>";
+            if(result.message == "Verification email sent"){
+                errorMessageContainer.innerHTML = "Your account has not been verified. A verification mail has been sent to your email";
                 errorMessageContainer.classList.remove("hidden");
                 return;
+            }
+            if(result.message == "Invalid login details"){
+                errorMessageContainer.innerHTML = "Invalid login details. Check your email and password";
             }
 
             errorMessageContainer.innerHTML = result.message;
@@ -102,7 +152,9 @@ async function handleLogin(event){
         
         // if successful
         errorMessageContainer.classList.add("hidden");
+        window.location.href = result.next_url
         console.log(result.message);
+        console.log(result.next_url);
 
     } catch(error){
         console.error("Error:", error);

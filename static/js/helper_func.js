@@ -20,3 +20,6 @@ function unslugify(slug) {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
         .join(' '); // Join words with spaces
 }
+
+
+DOMAIN_URL = 'http://127.0.0.1:8000'

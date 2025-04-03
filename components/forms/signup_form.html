@@ -1,0 +1,46 @@
+<form method="POST"
+      {% if not is_js_submission %} action="{% url 'user:register' %}" {% endif %}
+      {% if is_js_submission %} onsubmit="handleSignUp(event)" {% endif %}
+      class="{{ form_class }}">
+      
+    {% csrf_token %}
+    
+    <div class="mb-6">
+        <h1 class="text-4xl font-bold mb-1.5">{{ form_title }}</h1>
+        
+        {% if show_login_link %}
+        <p>Already have an account? <a class="text-blue-700 underline" href="{% url 'user:login' %}">Login</a></p>
+        {% endif %}
+        
+        <div id="notification" class="text-center text-sm border-xlg p-2 mt-2 hidden"></div>
+    </div>
+
+    <div class="flex flex-col gap-3 lg:gap-4">
+        <div>
+            <label for="id_first_name" class="label-primary">First Name</label>
+            <input class="input-primary" type="text" name="first_name" maxlength="150" id="id_first_name" required>
+        </div>
+
+        <div>
+            <label for="id_last_name" class="label-primary">Last Name</label>
+            <input class="input-primary" type="text" name="last_name" maxlength="150" id="id_last_name" required>
+        </div>
+
+        <div>
+            <label for="id_email" class="label-primary">Email</label>
+            <input class="input-primary" type="email" name="email" maxlength="254" required id="id_email" {% if autofocus %}autofocus{% endif %}>
+        </div>
+
+        <div>
+            <label for="id_password1" class="label-primary">Password</label>
+            <input class="input-primary" type="password" name="password1" autocomplete="new-password" required id="id_password1">
+        </div>
+
+        <div>
+            <label for="id_password2" class="label-primary">Confirm Password</label>
+            <input class="input-primary" type="password" name="password2" autocomplete="new-password" required id="id_password2">
+        </div>
+
+        {% component "button" html_tag="button" label="Register" type="primary" width="full" function="submit" %} {% endcomponent %}
+    </div>
+</form>

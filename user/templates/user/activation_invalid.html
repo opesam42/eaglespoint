@@ -53,14 +53,14 @@
             main.querySelectorAll('.notifyDiv').forEach(error => error.remove());
 
             const notifyDiv = document.createElement('div');
-            notifyDiv.className = "notifyDiv text-center text-sm border-xlg p-2 mb-4";
+            notifyDiv.className = "notifyDiv text-center text-sm font-medium border-xlg p-2 mb-4";
             
             if(message == "User not found"){
                 notifyDiv.innerHTML = "Your account could not be found, please <a href='{% url 'user:register' %}'>sign up</a>";
             }
 
             if(message == "User is already active"){
-                notifyDiv.innerHTML = "Your account is already activated. Please <a href='{% url 'user:login' %}'>login</a> to your account";
+                notifyDiv.innerHTML = "Your account is already activated. Proceed to <a href='{% url 'user:login' %}'>login</a>";
             }
 
             if(message == "Email sent"){
@@ -72,11 +72,11 @@
             }
 
             if(message_type == 'success_message'){
-                notifyDiv.classList.add("bg-green-100", "text-green-500");
+                notifyDiv.classList.add("bg-green-100", "text-green-800");
             }
 
             if(message_type == 'error_message'){
-                notifyDiv.classList.add("bg-red-100", "text-red-500");
+                notifyDiv.classList.add("bg-red-100", "text-red-800");
             }
 
 
@@ -84,10 +84,10 @@
         }
 
         async function resend_activation_token(){
-            const userId = {{ user_id}};
+            const user_id = {{ user_id }};
             try{
 
-                const response = await fetch(`/user/resend-activation/1`, {
+                const response = await fetch(`/user/resend-activation/${user_id}`, {
                     method: "POST",
                     headers:{
                         "X-Requested-With": "XMLHttpRequest",
