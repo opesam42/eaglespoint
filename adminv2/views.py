@@ -31,6 +31,7 @@ def delete_listing(request, listing_id):
     
     return redirect('adminv2:listing')
 
+
 @user_passes_test(is_admin)
 def add_listing(request):
     if request.method == "POST":

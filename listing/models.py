@@ -49,6 +49,7 @@ class Listings(models.Model):
     
     posted_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_listed = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Listings"

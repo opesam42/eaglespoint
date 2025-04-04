@@ -32,7 +32,7 @@
             </thead>
             <tbody>
                 {% for result in results %}
-                <tr class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
+                <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
                     <td class="px-6 py-4">
                         <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
                     </td>
@@ -45,19 +45,76 @@
                     <td class="px-6 py-4">
                         {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
                     </td>
-                    <td class="px-6 py-4">
-                        <form action="{% url 'adminv2:delete-listing' result.id %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
-                        </form>
+                    <td class="px-6 py-4 flex gap-2">
+                        {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
+                        <button 
+                            class="toggle-listing-btn text-red-500 hover:text-red-700 cursor-pointer"
+                            data-listing-id="{{ result.id }}"
+                            data-is-listed="{{ result.is_listed }}">Unlist
+                        </button>
                     </td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-        
-        
-    
+         
 {% endblock %}
 
+{% block script %}
+    <script>
+
+
+        toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
+
+
+        toggleStatusBtns.forEach((btn) => {
+
+            if(btn.getAttribute('data-is-listed') == "True"){
+                btn.className = "text-red-500 hover:text-red-700 cursor-pointer p-1";
+                btn.textContent = "Unlist";
+            }else{
+                btn.className = "text-green-500 hover:text-green-700 cursor-pointer p-1 ";
+                btn.textContent = "List";
+            }
+
+            btn.addEventListener('click', function(){
+                
+                const listingId = this.getAttribute('data-listing-id');
+                const listingStatus = this.getAttribute('data-is-listed');
+                url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
+
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success){
+                        if(data.is_listed){
+                            this.textContent = "Unlist";
+                            this.classList.remove("text-green-500", "hover:text-green-700");
+                            this.classList.add("text-red-500", "hover:text-red-700");
+                        }
+                        else{
+                            this.textContent = "List";
+                            this.classList.remove("text-red-500", "hover:text-red-700");
+                            this.classList.add("text-green-500", "hover:text-green-700");
+                        }
+                        this.setAttribute("data-is-listed", data.is_listed);
+
+                        console.log('success');
+                    }
+                    else{
+                        console.log('error');
+                    }
+                })
+                .catch(error => console.log("Error", error));
+
+            })
+        })
+    </script>
+{% endblock  %}

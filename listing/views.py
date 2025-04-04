@@ -6,6 +6,8 @@ from django.core.paginator import Paginator
 import os
 import json
 from django.http import JsonResponse
+from django.contrib.auth.decorators import user_passes_test
+from utils.role_check import is_admin
 from utils.choices import STATE_CHOICES
 
 # Create your views here.
@@ -91,3 +93,27 @@ def listing_details(request, property_id):
     }
 
     return render(request, "listing/details.html", context)
+
+
+@user_passes_test(is_admin)
+def toggle_listing_status(request, listing_id):
+    listing = get_object_or_404(Listings, id=listing_id)
+
+    if request.method == "POST":
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if listing.is_listed == False:
+                listing.is_listed = True
+            else:
+                listing.is_listed = False
+            
+            listing.save()
+
+            return JsonResponse({
+                "success": True,
+                "is_listed": listing.is_listed,
+                "message": f'Listing status of {listing.title} has been changed to {listing.is_listed}',
+            })
+    return JsonResponse({
+        "success": False,
+        "message": "Invalid request",
+    }, status=400)

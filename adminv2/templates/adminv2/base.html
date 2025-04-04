@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Admin Dashboard {% endblock  %}</title>
 
     <script src="https://unpkg.com/alpinejs" defer></script>
@@ -12,27 +14,36 @@
     <div x-data="{ isOpen:false }" class="wrapper relative grid grid-cols-1 lg:grid-cols-4 bg-slate-200 lg:p-4">
 
         <!-- Nav bar -->
-        <nav x-cloak :class="isOpen ? 'absolute' : 'hidden'" class="w-2/3 md:max-w-56 lg:w-full lg:block lg:relative h-screen bg-white flex flex-col gap-3 rounded-2xl px-4 lg;col-span-1">
+        <nav x-cloak :class="isOpen ? 'absolute' : 'hidden'" class="w-2/3 md:max-w-56 lg:w-full lg:block lg:relative h-screen bg-white flex flex-col gap-5 p-4 lg:col-span-1 z-[100000]">
             <div class="flex gap-2">
-                <img class="block w-8" src="{% static 'images/eaglespoint-logo.png' %}">
-                <span>EaglesPoint</span>
+                <img class="block w-16" src="{% static 'images/eaglespoint-logo.png' %}">
+                <!-- <span>EaglesPoint</span> -->
             </div>
-            <ul class="flex flex-col *:py-2 *px-1 *:rounded-md *:hover:bg-slate-100">
-                <li><a class="w-full block" href="{% url 'adminv2:dashboard' %}"><i class="fa fa-home"></i> Dashboard</a></li>
-                <li><a 
-                    class="w-full block " 
-                    href="{% url 'adminv2:listing' %}">
-                    <i class="fa fa-building"></i> Listing</a>
+            <ul class="flex flex-col gap-1 h-full *:font-medium *:py-2 *px-1 *:rounded-md *:hover:bg-slate-100">
+                <li>
+                    <a class="w-full flex gap-1" href="{% url 'adminv2:dashboard' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M140-520v-300h300v300H140Zm0 380v-300h300v300H140Zm380-380v-300h300v300H520Zm0 380v-300h300v300H520ZM200-580h180v-180H200v180Zm380 0h180v-180H580v180Zm0 380h180v-180H580v180Zm-380 0h180v-180H200v180Zm380-380Zm0 200Zm-200 0Zm0-200Z"/></svg>
+                        <span>Dashboard</span>
+                    </a>
+            </li>
+                <li><a class="w-full flex gap-1 " href="{% url 'adminv2:listing' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M760-384.61v-270L550-801.54 340-654.61v83.84h-60v-113.46l270-192.69 270 192.69v299.62h-60ZM550-801.54Zm21.92 170.39h36.16v-36.16h-36.16v36.16Zm-80 0h36.16v-36.16h-36.16v36.16Zm80 80h36.16v-36.16h-36.16v36.16Zm-80 0h36.16v-36.16h-36.16v36.16ZM268.08-216.92l290.3 82.15 238.77-74q-3.07-13.61-12.69-20.88t-21.77-7.27H566.8q-26.18 0-44.49-2-18.31-2-37.62-8.77l-90.3-29.85 17.76-58.77 81 28.16q18.16 6.15 41.93 8.38 23.77 2.23 67.61 2.85 0-14.85-6.69-25.62-6.69-10.77-17.62-14.54l-232.07-85.23q-1.16-.38-2.12-.57-.96-.2-2.11-.2h-74v206.16ZM68.08-100v-383.07h273.54q6.3 0 12.76 1.38 6.47 1.39 12 3.23l233.08 85.85q27.23 10.07 45.23 35.65 18 25.58 18 60.04h100q43.08 0 70.19 27.81Q860-241.31 860-196.92v32.3L560.38-71.54l-292.3-83.38V-100h-200Zm60-60h80v-263.08h-80V-160Z"/></svg>  
+                    <span>Listings</span></a>
                 </li> 
                 <li>
-                    <a class="w-full block " 
-                    href="{% url 'adminv2:listing' %}">
-                    <i class="fa fa-user"></i> User</a></li> 
-                <li>
+                    <a class="w-full flex gap-1" href="{% url 'adminv2:listing' %}">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M240.92-268.31q51-37.84 111.12-59.77Q412.15-350 480-350t127.96 21.92q60.12 21.93 111.12 59.77 37.3-41 59.11-94.92Q800-417.15 800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 62.85 21.81 116.77 21.81 53.92 59.11 94.92ZM480.01-450q-54.78 0-92.39-37.6Q350-525.21 350-579.99t37.6-92.39Q425.21-710 479.99-710t92.39 37.6Q610-634.79 610-580.01t-37.6 92.39Q534.79-450 480.01-450ZM480-100q-79.15 0-148.5-29.77t-120.65-81.08q-51.31-51.3-81.08-120.65Q100-400.85 100-480t29.77-148.5q29.77-69.35 81.08-120.65 51.3-51.31 120.65-81.08Q400.85-860 480-860t148.5 29.77q69.35 29.77 120.65 81.08 51.31 51.3 81.08 120.65Q860-559.15 860-480t-29.77 148.5q-29.77 69.35-81.08 120.65-51.3 51.31-120.65 81.08Q559.15-100 480-100Zm0-60q54.15 0 104.42-17.42 50.27-17.43 89.27-48.73-39-30.16-88.11-47Q536.46-290 480-290t-105.77 16.65q-49.31 16.66-87.92 47.2 39 31.3 89.27 48.73Q425.85-160 480-160Zm0-350q29.85 0 49.92-20.08Q550-550.15 550-580t-20.08-49.92Q509.85-650 480-650t-49.92 20.08Q410-609.85 410-580t20.08 49.92Q450.15-510 480-510Zm0-70Zm0 355Z"/></svg>  
                     
+                        <span>User</span>
+                    </a>
+                </li>
+
+                <li class="mt-auto">  
                     <form method="POST" action="{% url 'user:logout' %}">
                         {% csrf_token %}
-                        <button type="submit" class="text-red-500 text-left py-2 w-full"><i class="fa fa-sign-out"></i> Logout</button>
+                        <button type="submit" class="flex gap-1 text-red-500 text-left py-2 w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M212.31-140Q182-140 161-161q-21-21-21-51.31v-535.38Q140-778 161-799q21-21 51.31-21h268.07v60H212.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v535.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85h268.07v60H212.31Zm436.92-169.23-41.54-43.39L705.08-450H363.85v-60h341.23l-97.39-97.38 41.54-43.39L820-480 649.23-309.23Z"/></svg> 
+                            <span>Logout</span></button>
                     </form>
                 </li>
             </ul>
