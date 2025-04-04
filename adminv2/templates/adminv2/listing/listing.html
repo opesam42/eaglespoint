@@ -3,13 +3,33 @@
 
 {% block title %}{% endblock %}
 
+{% block section_title %} Listings {% endblock %}
+
 {% block content %} 
-    <h1>Listing</h1>
-    <p>Manage employees, employers, and company data here.</p>
+    <div>
+        
+    </div>
+    <div class="flex mb-6">
+        {% component "button" extraclass="ml-auto" label="<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='#ffffff'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
+        <span>Add Listing</span>" type="primary" width="max" href="{% url 'adminv2:add_listing' %}" %} {% endcomponent %}
+    </div>
+    
+    
+    <form class="max-w-md mx-auto mb-6">   
+        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+        <div class="relative">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                </svg>
+            </div>
+            <input type="search" id="listing-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Listings..." />
+        </div>
+    </form>
+    
 
-    <a href="{% url 'adminv2:add_listing' %}">Add Listing</a>
 
-    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div id="listing-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
@@ -66,8 +86,6 @@
 
 
         toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
-
-
         toggleStatusBtns.forEach((btn) => {
 
             if(btn.getAttribute('data-is-listed') == "True"){
@@ -79,7 +97,8 @@
             }
 
             btn.addEventListener('click', function(){
-                
+
+                this.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
                 const listingId = this.getAttribute('data-listing-id');
                 const listingStatus = this.getAttribute('data-is-listed');
                 url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
@@ -113,8 +132,52 @@
                     }
                 })
                 .catch(error => console.log("Error", error));
-
             })
         })
+
+
+        document.getElementById('listing-search').addEventListener('keyup', function(){
+            
+            query = this.value;
+            if(query){
+                url = `/adminv2/listing-search/${query}`;
+            } else{
+                url = `/adminv2/listing-search/`;
+            }
+
+
+            this.delay = setTimeout(() => {
+
+                fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+                .then(response => response.text())
+                .then(data => {
+                    // since the data is a full html stuff, we need to extract the innerHTML of the body
+                    let parser = new DOMParser();
+                    let doc = parser.parseFromString(data, 'text/html');
+                    
+                    let newListings = doc.body.innerHTML;
+                    document.getElementById('listing-container').innerHTML = newListings;
+
+
+                    // Find the updated next-page data from the new content
+                    /* let nextPageData = doc.querySelector('#next-page-data');
+                    if(nextPageData){
+                        console.log(nextPageData.getAttribute('data-next-page'))
+                        this.setAttribute('data-next-page', nextPageData.getAttribute('data-next-page'))
+                    }
+                    else{
+                        this.remove()
+                    } */
+                    
+                })/* .finally(() => {
+                    // document.getElementById('loading-text').remove()
+                    this.innerHTML = originalText
+                }) */
+
+            }, 400);            
+
+        });
+            
+        
     </script>
 {% endblock  %}

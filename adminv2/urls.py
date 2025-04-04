@@ -10,6 +10,8 @@ urlpatterns = [
     path('listing/', views.listing, name="listing"),
     path('listing/add/', views.add_listing, name="add_listing"),
     path('listing/edit/<int:property_id>', views.edit_listing, name="edit-listing"),
+    path('listing-search/<str:search_query>', views.search_listing, name="search_listing"),
+    path('listing-search/', views.search_listing, name='search_listing_all'),
 
     path('listing/delete/<int:listing_id>', views.delete_listing, name="delete-listing"),
 ]

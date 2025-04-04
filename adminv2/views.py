@@ -7,6 +7,8 @@ from .forms import ListingForm
 from listing.models import Listings, Feature, ListingImages
 from utils.choices import LISTING_TYPE, STATE_CHOICES
 from utils.role_check import is_admin
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 # Create your views here.
 @user_passes_test(is_admin)
@@ -17,9 +19,8 @@ def dashboard(request):
 @user_passes_test(is_admin)
 def listing(request):
     listings = Listings.objects.all()
-    
-
     return render(request, 'adminv2/listing/listing.html', {'results': listings})
+
 
 @user_passes_test(is_admin)
 def delete_listing(request, listing_id):
@@ -139,3 +140,48 @@ def edit_listing(request, property_id):
     }
 
     return render(request, 'adminv2/listing/edit.html', context)
+
+
+def search_listing(request, search_query=None):
+     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+
+        listings = Listings.objects.all().order_by('-created_at')
+
+        if search_query:
+            search_words = search_query.split() #split search string to individual words
+            
+            query = Q()
+            for word in search_words:
+                query |=  Q(title__icontains=word) | Q(description__icontains=word) | Q(lga__icontains=word) | Q(state__icontains=word)
+            listings = listings.filter(query)
+
+        #handle filters
+        listing_type = request.GET.get('listing_type', '')
+        min_price = request.GET.get('min_price', '')
+        max_price = request.GET.get('max_price', '')
+        lga = request.GET.get('lga', '')
+        state = request.GET.get('state', '')
+        page_number = request.GET.get('page')
+
+        if listing_type:
+            listings = listings.filter(listing_type=listing_type)
+
+        if min_price:
+            listings = listings.filter(price__gte=min_price)
+
+        if max_price:
+            listings = listings.filter(price__lte=max_price)
+
+        if lga:
+            listings = listings.filter(lga__icontains=lga)
+
+        if state:
+            listings = listings.filter(state__icontains=state)
+        
+
+        return render(request, 'adminv2/listing/partials/listing-items.html', {
+            'results': listings,
+            })
+     
+    
+   
