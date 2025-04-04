@@ -63,6 +63,12 @@ async function handleSignUp(event){
     const formData = new FormData(form);
     const jsonData  = JSON.stringify(Object.fromEntries(formData));
 
+    // loading effect on frontend
+    const submitBtn = form.querySelector('button[type="submit"]');
+    originalText = submitBtn.innerHTML   
+    submitBtn.disabled = true; //prevent double click 
+    submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Creating account...`;
+
     try{
         const response = await fetch("/user/register/", {
             method: "POST",
@@ -90,6 +96,9 @@ async function handleSignUp(event){
 
     } catch(error){
         console.error("Error:", error);
+    } finally{
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     }
 
 }
@@ -117,6 +126,12 @@ async function handleLogin(event){
     const form = event.target;
     const formData = new FormData(form);
     const jsonData  = JSON.stringify(Object.fromEntries(formData));
+
+    // loading effect on frontend
+    const submitBtn = form.querySelector('button[type="submit"]');
+    originalText = submitBtn.innerHTML   
+    submitBtn.disabled = true; //prevent double click 
+    submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Login in...`;
 
     try{
         const response = await fetch("/user/login/", {
@@ -158,6 +173,9 @@ async function handleLogin(event){
 
     } catch(error){
         console.error("Error:", error);
+    } finally{
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
     }
 }
 

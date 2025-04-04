@@ -8,31 +8,47 @@
     <p>Manage employees, employers, and company data here.</p>
 
     <a href="{% url 'adminv2:add_listing' %}">Add Listing</a>
-    
-    <div>
-        <table border="1">
-            <thead>
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <table class="w-full text-sm text-left text-gray-500">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
-                    <th>Title</th>
-                    <th>Price</th>
-                    <th>Size</th>
-                    <th>Listing Type</th>
-                    <th>Address</th>
-                    <th>Actions</th>
+                    <th scope="col" class="px-6 py-3">
+                        Title
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Price
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Listing Type
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Address
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Actions
+                    </th>
                 </tr>
             </thead>
             <tbody>
                 {% for result in results %}
-                <tr>
-                    <td><a href="{% url 'listing:property_details' result.id %}">{{ result.title }}</a></td>
-                    <td>{{ result.price }}</td>
-                    <td>{{ result.size }}</td>
-                    <td>{{ result.listing_type }}</td>
-                    <td>{{ result.street_address }}, {{ result.lga }}, {{ result.state }}</td>
-                    <td>
+                <tr class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
+                    <td class="px-6 py-4">
+                        <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
+                    </td>
+                    <td class="px-6 py-4">
+                        &#8358; {{ result.price }}
+                    </td>
+                    <td class="px-6 py-4 capitalize">
+                        {{ result.listing_type }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
+                    </td>
+                    <td class="px-6 py-4">
                         <form action="{% url 'adminv2:delete-listing' result.id %}" method="POST">
                             {% csrf_token %}
-                            <button type="submit">Delete</button>
+                            <button type="submit" class="text-red-500 hover:text-red-700">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -40,6 +56,8 @@
             </tbody>
         </table>
     </div>
+        
+        
     
 {% endblock %}
 

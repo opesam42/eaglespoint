@@ -53,7 +53,7 @@ def search_listing(request):
     if state:
         listings = listings.filter(state__icontains=state)
     
-    paginator = Paginator(listings, 3) #show 20 listing per page
+    paginator = Paginator(listings, 20) #show 20 listing per page
     listings = paginator.get_page(page_number)
     
     #handle ajax request
