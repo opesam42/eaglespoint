@@ -4,6 +4,10 @@ from django.utils.translation import gettext_lazy as _
 
 from .managers import CustomUserManager
 
+
+def user_directory_path(instance, filename):
+    return f'user/user_{instance.id}/{filename}'
+
 # Create your models here.
 class CustomUser(AbstractUser):
 
@@ -18,6 +22,11 @@ class CustomUser(AbstractUser):
     country_code = models.CharField(max_length=5)
     phone_number = models.CharField(max_length=15)
     user_role = models.CharField(max_length=10, choices=USER_TYPE, default='customer')
+    profileImage = models.ImageField(
+        upload_to=user_directory_path,
+        blank=True,
+        null=True,
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

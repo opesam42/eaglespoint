@@ -1020,6 +1020,9 @@
   .text-center {
     text-align: center;
   }
+  .text-left {
+    text-align: left;
+  }
   .text-right {
     text-align: right;
   }
@@ -1425,6 +1428,11 @@
       padding-block: calc(var(--spacing) * 6);
     }
   }
+  .\*\:pl-2 {
+    :is(& > *) {
+      padding-left: calc(var(--spacing) * 2);
+    }
+  }
   .\*\:font-medium {
     :is(& > *) {
       --tw-font-weight: var(--font-weight-medium);
@@ -1569,6 +1577,22 @@
     &:hover {
       @media (hover: hover) {
         text-decoration-line: none;
+      }
+    }
+  }
+  .hover\:underline {
+    &:hover {
+      @media (hover: hover) {
+        text-decoration-line: underline;
+      }
+    }
+  }
+  .\*\:hover\:bg-gray-100 {
+    :is(& > *) {
+      &:hover {
+        @media (hover: hover) {
+          background-color: var(--color-gray-100);
+        }
       }
     }
   }
@@ -1747,6 +1771,11 @@
       }
     }
   }
+  .lg\:absolute {
+    @media (width >= 64rem) {
+      position: absolute;
+    }
+  }
   .lg\:relative {
     @media (width >= 64rem) {
       position: relative;
@@ -1845,6 +1874,11 @@
   .lg\:w-4\/5 {
     @media (width >= 64rem) {
       width: calc(4/5 * 100%);
+    }
+  }
+  .lg\:w-32 {
+    @media (width >= 64rem) {
+      width: calc(var(--spacing) * 32);
     }
   }
   .lg\:w-max {
@@ -2027,6 +2061,13 @@
       }
     }
   }
+  .\*\:lg\:p-0 {
+    :is(& > *) {
+      @media (width >= 64rem) {
+        padding: calc(var(--spacing) * 0);
+      }
+    }
+  }
   .lg\:hover\:bg-transparent {
     @media (width >= 64rem) {
       &:hover {
@@ -2041,6 +2082,28 @@
       &:hover {
         @media (hover: hover) {
           text-decoration-line: underline;
+        }
+      }
+    }
+  }
+  .\*\:lg\:hover\:bg-transparent {
+    :is(& > *) {
+      @media (width >= 64rem) {
+        &:hover {
+          @media (hover: hover) {
+            background-color: transparent;
+          }
+        }
+      }
+    }
+  }
+  .\*\:lg\:hover\:underline {
+    :is(& > *) {
+      @media (width >= 64rem) {
+        &:hover {
+          @media (hover: hover) {
+            text-decoration-line: underline;
+          }
         }
       }
     }
