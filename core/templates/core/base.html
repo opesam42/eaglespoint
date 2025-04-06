@@ -62,7 +62,7 @@
                     <li><a href="{% url 'core:contact' %}">Contact</a></li>
 
                     {% if request.user.is_authenticated %}
-                    <li x-data="{ open: false }" @click.away="open = false" class="lg:relative cursor-pointer">
+                    <li x-cloak x-data="{ open: false }" @click.away="open = false" class="lg:relative cursor-pointer">
                         <!-- Trigger (User Icon) -->
                          <div class="flex gap-1 items-center" @click="open = !open">
                             {% if user.profileImage %}
