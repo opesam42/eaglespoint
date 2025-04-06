@@ -56,7 +56,7 @@
                     <td class="px-6 py-4">
                         <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
                     </td>
-                    <td class="px-6 py-4">
+                    <td class="px-6 py-4 title">
                         &#8358; {{ result.price }}
                     </td>
                     <td class="px-6 py-4 capitalize">
@@ -68,9 +68,14 @@
                     <td class="px-6 py-4 flex gap-2">
                         {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
                         <button 
-                            class="toggle-listing-btn text-red-500 hover:text-red-700 cursor-pointer"
+                            class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
                             data-listing-id="{{ result.id }}"
                             data-is-listed="{{ result.is_listed }}">Unlist
+                            {% if result.is_listed %}
+                                Unlist
+                            {% else %}
+                                List
+                            {% endif %}
                         </button>
                     </td>
                 </tr>
@@ -84,67 +89,84 @@
 {% block script %}
     <script>
 
+        // function for handling the status of a listing
+        function attachEventListeners(){
 
-        toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
-        toggleStatusBtns.forEach((btn) => {
+            toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
+            toggleStatusBtns.forEach((btn) => {
 
-            if(btn.getAttribute('data-is-listed') == "True"){
-                btn.className = "text-red-500 hover:text-red-700 cursor-pointer p-1";
-                btn.textContent = "Unlist";
-            }else{
-                btn.className = "text-green-500 hover:text-green-700 cursor-pointer p-1 ";
-                btn.textContent = "List";
-            }
+                if(btn.getAttribute('data-is-listed') == "True"){
+                    btn.className = "toggle-listing-btn text-red-500 hover:text-red-700 cursor-pointer p-1";
+                    btn.textContent = "Unlist";
+                }else{
+                    btn.className = "toggle-listing-btn text-green-500 hover:text-green-700 cursor-pointer p-1 ";
+                    btn.textContent = "List";
+                }
 
-            btn.addEventListener('click', function(){
+                btn.addEventListener('click', function(){
 
-                this.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
-                const listingId = this.getAttribute('data-listing-id');
-                const listingStatus = this.getAttribute('data-is-listed');
-                url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
+                    this.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
+                    const listingId = this.getAttribute('data-listing-id');
+                    const listingStatus = this.getAttribute('data-is-listed');
+                    url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
 
-                fetch(url, {
-                    method: "POST",
-                    headers: {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "X-CSRFToken": "{{ csrf_token }}"
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if(data.success){
-                        if(data.is_listed){
-                            this.textContent = "Unlist";
-                            this.classList.remove("text-green-500", "hover:text-green-700");
-                            this.classList.add("text-red-500", "hover:text-red-700");
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": "{{ csrf_token }}"
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success){
+                            if(data.is_listed){
+                                this.textContent = "Unlist";
+                                this.classList.remove("text-green-500", "hover:text-green-700");
+                                this.classList.add("text-red-500", "hover:text-red-700");
+                            }
+                            else{
+                                this.textContent = "List";
+                                this.classList.remove("text-red-500", "hover:text-red-700");
+                                this.classList.add("text-green-500", "hover:text-green-700");
+                            }
+                            this.setAttribute("data-is-listed", data.is_listed);
+
+                            console.log('success');
                         }
                         else{
-                            this.textContent = "List";
-                            this.classList.remove("text-red-500", "hover:text-red-700");
-                            this.classList.add("text-green-500", "hover:text-green-700");
+                            console.log('error');
                         }
-                        this.setAttribute("data-is-listed", data.is_listed);
-
-                        console.log('success');
-                    }
-                    else{
-                        console.log('error');
-                    }
+                    })
+                    .catch(error => console.log("Error", error));
                 })
-                .catch(error => console.log("Error", error));
             })
-        })
+        }
+
+        document.addEventListener("DOMContentLoaded", attachEventListeners);
 
 
+
+        // for live search
         document.getElementById('listing-search').addEventListener('keyup', function(){
             
             query = this.value;
             if(query){
-                url = `/adminv2/listing-search/${query}`;
+                // url = `/adminv2/listing-search/${query}`;
+                url = '/adminv2/listing-search/bedroom?listing_type=&min_price=&max_price=&state=FCT'
             } else{
                 url = `/adminv2/listing-search/`;
             }
 
+            let params = new URLSearchParams({
+                listing_type: listingType,
+                min_price: minPrice,
+                max_price: maxPrice,
+                lga: lga,
+                state: state
+            });
+
+            url = url + '?' + params.toString();
 
             this.delay = setTimeout(() => {
 
@@ -158,21 +180,10 @@
                     let newListings = doc.body.innerHTML;
                     document.getElementById('listing-container').innerHTML = newListings;
 
+                    // Reinitialize event listeners for new elements
+                    attachEventListeners();
 
-                    // Find the updated next-page data from the new content
-                    /* let nextPageData = doc.querySelector('#next-page-data');
-                    if(nextPageData){
-                        console.log(nextPageData.getAttribute('data-next-page'))
-                        this.setAttribute('data-next-page', nextPageData.getAttribute('data-next-page'))
-                    }
-                    else{
-                        this.remove()
-                    } */
-                    
-                })/* .finally(() => {
-                    // document.getElementById('loading-text').remove()
-                    this.innerHTML = originalText
-                }) */
+                })
 
             }, 400);            
 

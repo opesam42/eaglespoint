@@ -105,7 +105,7 @@
                 <h3 class="text-xl font-bold">Features</h3>
                 <ul class="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-center">
                 {% for feature in features %}
-                    <li class="flex items-center justify-center gap-0.5">
+                    <li class="flex justify-start gap-0.5">
                         {{feature.icon | safe}}                      
                         <span>
                         {{feature.name}}
@@ -152,6 +152,21 @@
             
         </section>
     </main>
+
+    
+    
+    <script>
+        // Select the close button and modal element
+        const modal = document.querySelector('#modal-{{ modal_type }}'); // Use the dynamic modal ID
+        const closeBtn = document.querySelector('#modal-close-btn-{{ modal_type }}');
+    
+    
+        // Add event listener to the close button
+        closeBtn.addEventListener('click', () => {
+        modal.style.display = 'none'; // Hides the modal
+        });
+    </script>
+
 {% endblock %}
 
 {% block script %}

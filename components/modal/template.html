@@ -1,0 +1,40 @@
+<div id="modal-{{ modal_type }}" class="fixed inset-0 hidden items-center justify-center bg-gray-800/80 z-[1000000]">
+    <div class="bg-white rounded-lg w-full max-w-[400px] shadow-lg mx-4">
+        <div class="flex border-b border-gray-300 px-4">
+            <div class="text-xl">{{ modal_title }}</div>
+            <!-- Make sure the close button's ID is unique -->
+            <button id="modal-close-btn-{{ modal_type }}" class="ml-auto text-gray-600 p-2 rounded-lg hover:bg-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+       
+        {% slot "children" %}
+
+        {% endslot %}
+
+    </div>
+</div>
+
+
+<script>
+
+
+    // Select the close button and modal element
+    const modal = document.querySelector('#modal-{{ modal_type }}'); // Use the dynamic modal ID
+    const closeBtn = document.querySelector('#modal-close-btn-{{ modal_type }}');
+
+
+    // Add event listener to the close button
+    closeBtn.addEventListener('click', () => {
+        modal.classList.remove('flex')
+        modal.classList.add('hidden') // Hides the modal
+    });
+
+    function openModal_{{modal_type}}(){
+        modal.classList.remove('hidden')
+        modal.classList.add('flex');
+    }
+</script>

@@ -24,7 +24,7 @@
             <td class="px-6 py-4">
                 <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
             </td>
-            <td class="px-6 py-4">
+            <td class="px-6 py-4 title">
                 &#8358; {{ result.price }}
             </td>
             <td class="px-6 py-4 capitalize">
@@ -36,9 +36,9 @@
             <td class="px-6 py-4 flex gap-2">
                 {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
                 <button 
-                    class="toggle-listing-btn text-red-500 hover:text-red-700 cursor-pointer"
+                    class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
                     data-listing-id="{{ result.id }}"
-                    data-is-listed="{{ result.is_listed }}">
+                    data-is-listed="{{ result.is_listed }}">Unlist
                     {% if result.is_listed %}
                         Unlist
                     {% else %}

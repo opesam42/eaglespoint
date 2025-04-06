@@ -64,7 +64,7 @@
                     {% if request.user.is_authenticated %}
                     <li x-data="{ open: false }" @click.away="open = false" class="lg:relative cursor-pointer">
                         <!-- Trigger (User Icon) -->
-                         <div class="flex gap-1" @click="open = !open">
+                         <div class="flex gap-1 items-center" @click="open = !open">
                             {% if user.profileImage %}
                                 <img src="{{user.profileImage.url}}" alt="{{user.firstname}}" width="24px" class="rounded-full">
                             {% else %}
@@ -78,6 +78,9 @@
                         <ul x-show="open" x-transition 
                             class="lg:absolute right-0 mt-2 w-full lg:w-32 bg-white border border-gray-300 rounded-md shadow-lg">
                             <li class="px-4 py-2 hover:bg-gray-100"><a href="#" class="w-full">Settings</a></li>
+                            {%if user.user_role == 'admin'%}
+                            <li class="px-4 py-2 hover:bg-gray-100"><a href="{% url 'adminv2:dashboard' %}" class="w-full">Control Panel</a></li>
+                            {% endif %}
                             <li>
                                 <form method="POST" action="{% url 'user:logout' %}">
                                     {% csrf_token %}
@@ -152,8 +155,8 @@
     <template x-if="openLoginModal">
         <div id="modal" class="fixed inset-0 flex items-center justify-center bg-gray-800/80 z-[1000000]">
             <div x-data="{ isLogin:true }" class="bg-white rounded-lg w-full max-w-[400px] shadow-lg">
-                <div class="flex border-b py-2 px-4">
-                    <button @click="openLoginModal = false"class="items-end ml-auto mt-4 rounded-lg">
+                <div class="flex border-b border-gray-300 px-4 ">
+                    <button @click="openLoginModal = false"class="ml-auto text-gray-600 p-2 rounded-lg hover:bg-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -161,9 +164,9 @@
                     </button>
                 </div>
 
-                <div class="w-full flex gap-4 justify-center *:w-24 *:border-b *:border-2 *:border-gray-300 *:rounded-sm *:px-4 *:py-2">
-                    <button :class="!isLogin ? 'bg-gray-300' : 'bg-white'" @click="isLogin = false">Sign Up</button>
-                    <button :class="isLogin ? 'bg-gray-300' : 'bg-white'" @click="isLogin = true">Login</button>
+                <div class="w-full flex gap-4 justify-center mt-2 *:w-24 *:px-4 *:py-2">
+                    <button :class="!isLogin ? 'border-blue-600 border-b-2' : 'bg-white'" @click="isLogin = false">Sign Up</button>
+                    <button :class="isLogin ? 'border-blue-600 border-b-2' : 'bg-white'" @click="isLogin = true">Login</button>
                 </div>
 
                 <div class="overflow-y-auto max-h-[80vh]">
