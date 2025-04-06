@@ -66,9 +66,9 @@
                         <!-- Trigger (User Icon) -->
                          <div class="flex gap-1 items-center" @click="open = !open">
                             {% if user.profileImage %}
-                                <img src="{{user.profileImage.url}}" alt="{{user.firstname}}" width="24px" class="rounded-full">
+                                <img src="{{user.profileImage.url}}" alt="{{user.firstname}}" width="24px" class="rounded-full object-cover border-2 border-blue-600 p-0.5">
                             {% else %}
-                                <img src="{% static 'images/default-user.svg' %}" width="24px">
+                                <img src="{% static 'images/default-user.svg' %}" class="rounded-full border-2 border-blue-600 hover:p-0.5" width="24px">
                             {% endif %}
                             <span>Profile</span>
                         </div>

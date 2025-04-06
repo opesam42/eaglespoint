@@ -9,17 +9,30 @@ from utils.choices import LISTING_TYPE, STATE_CHOICES
 from utils.role_check import is_admin
 from django.db.models import Q
 from django.core.paginator import Paginator
+from django.contrib.auth import get_user_model
+from listing.models import Listings
 
+
+User = get_user_model()
 # Create your views here.
 @user_passes_test(is_admin)
 def dashboard(request):
-    # print(f"Logged-in user: {request.user.email}, Role: {request.user.user_role}")
-    return render(request, 'adminv2/dashboard.html')
+    users_count = User.objects.count()
+    listings_count = Listings.objects.count()
+    context = {
+        'users_count': users_count,
+        'listings_count': listings_count,
+    }
+    return render(request, 'adminv2/dashboard.html', context)
 
 @user_passes_test(is_admin)
 def listing(request):
     listings = Listings.objects.all()
-    return render(request, 'adminv2/listing/listing.html', {'results': listings})
+    nigeria_states = Listings.objects.values_list('state', flat=True).order_by('state').distinct()
+    return render(request, 'adminv2/listing/listing.html', {
+        'results': listings,
+        'nigeria_states': nigeria_states,
+    })
 
 
 @user_passes_test(is_admin)

@@ -10,12 +10,12 @@
         
     </div>
     <div class="flex mb-6">
-        {% component "button" extraclass="ml-auto" label="<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='#ffffff'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
-        <span>Add Listing</span>" type="primary" width="max" href="{% url 'adminv2:add_listing' %}" %} {% endcomponent %}
+        {% component "button" extraclass="ml-auto" label="<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
+        <span>Add Listing</span>" type="secondary" width="max" href="{% url 'adminv2:add_listing' %}" %} {% endcomponent %}
     </div>
     
     
-    <form class="max-w-md mx-auto mb-6">   
+    <form class="max-w-md mx-auto mb-6">
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
         <div class="relative">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -23,11 +23,15 @@
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                 </svg>
             </div>
-            <input type="search" id="listing-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Listings..." />
+            <input type="text" id="listing-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Listings..." />
+    
+            <!-- Filters Button with similar classes as Search -->
+            <button type="button" class="absolute end-2.5 bottom-2.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_search_fiters()'>
+                <i class="fa fa-filter"></i> Filters
+            </button>
         </div>
     </form>
     
-
 
     <div id="listing-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500">
@@ -83,7 +87,62 @@
             </tbody>
         </table>
     </div>
-         
+      
+    
+
+    {% component "modal" modal_type="search_fiters" modal_title="Filters" %}
+        {% fill "children" %}
+        <form method="GET" id="filter-form" class="p-4 flex flex-col gap-2" x-data>
+            <section>
+                <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search">
+                <h5 class="font-bold">Type</h5>
+                <select name="listing_type" class="block input-primary">
+                    <option value="">Any</option>
+                    <option value="buy" {% if listing_type == 'buy' %}selected{% endif %}>Buy</option>
+                    <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Rent</option>
+                    <option value="land" {% if listing_type == 'land' %}selected{% endif %}>Land</option>
+                </select>
+            </section>
+
+            <!-- for price -->
+            <section>
+                <h5 class="font-bold">Price</h5>
+                <div class="flex gap-x-2">
+                    <div>
+                        <input class="input-primary" type="number" name="min_price" value="{{ min_price }}">
+                        <label class="label-primary" for="min_price">Min:</label>
+                    </div>
+                    <div>
+                        <input class="input-primary" type="number" name="max_price" value="{{ max_price }}">
+                        <label class="label-primary" for="max_price">Max:</label>
+                    </div>
+                </div>
+            </section>
+
+
+                    
+                    
+            <!-- for states -->
+            <section>
+                <div class="flex flex-col gap-2">
+                    <label for="state_location" class="font-bold">State</label>
+                    <select id="state_location" name="state" class="input-primary">
+                        <option value="">Any</option>
+                        {% for state in nigeria_states %}
+                            <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </section>
+
+            {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="button" extraclass="mt-4 px-4 py-1 ml-auto" %} {% endcomponent %}
+        </form>
+            
+        
+
+        {% endfill %}
+    {% endcomponent %}
+
 {% endblock %}
 
 {% block script %}
@@ -148,25 +207,26 @@
 
 
         // for live search
-        document.getElementById('listing-search').addEventListener('keyup', function(){
-            
+        
+        function handleLiveSearch(){    
             query = this.value;
             if(query){
-                // url = `/adminv2/listing-search/${query}`;
-                url = '/adminv2/listing-search/bedroom?listing_type=&min_price=&max_price=&state=FCT'
+                url = `/adminv2/listing-search/${query}`;
+                // url = '/adminv2/listing-search/bedroom?listing_type=&min_price=&max_price=&state=FCT'
             } else{
                 url = `/adminv2/listing-search/`;
             }
 
             let params = new URLSearchParams({
-                listing_type: listingType,
-                min_price: minPrice,
-                max_price: maxPrice,
-                lga: lga,
-                state: state
+                listing_type: document.querySelector('select[name="listing_type"]').value,
+                min_price: document.querySelector('input[name="min_price"]').value,
+                max_price: document.querySelector('input[name="max_price"]').value,
+                state: document.querySelector('select[name="state"]').value,  
             });
-
             url = url + '?' + params.toString();
+
+            console.log(url);
+            // return;
 
             this.delay = setTimeout(() => {
 
@@ -187,7 +247,12 @@
 
             }, 400);            
 
-        });
+        }
+
+        document.getElementById('listing-search').addEventListener('keyup', handleLiveSearch);
+        console.log(document.querySelector('#filter-form button[type="button"]'))
+        document.querySelector('#filter-form button[type="button"]').addEventListener('click', handleLiveSearch);
+
             
         
     </script>
