@@ -54,8 +54,8 @@
             </div>
         
             <div>
-                <label for="id_units" class="label-primary">Units</label>
-                <input class="input-primary" type="number" name="units" id="id_units" value="{{ listing.units }}">
+                <label for="id_size" class="label-primary">Size</label>
+                <input class="input-primary" type="number" name="size" id="id_size" value="{{ listing.size }}">
             </div>
         
             <div>
@@ -227,5 +227,6 @@
             .catch(error => console.log('Updatate failed', error));
 
         }
+
     </script>
 {% endblock %}

@@ -4,13 +4,23 @@ from django_components import Component, register
 class Buttons(Component):
     template_file = "listingCard/template.html"
 
-    def get_context_data(self, imageUrl, href, title, price, size, type, address):
+    def get_context_data(self, imageUrl, href, title, price, size, type, address, images_count=0):
+        if size is None:
+            size = "---"
+        elif type == "land":
+            size = f"{size} Sq.m"
+        else:
+            size = f"{size} Units"
+
+        
+
         return {
             'imageUrl': imageUrl,
             'href': href,
             'title': title,
-            'price': price,
+            'price': format(price, ','),
             'size': size,
             'type': type,
             'address': address,
+            'images_count': images_count + 1,
         }

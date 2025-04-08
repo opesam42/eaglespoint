@@ -193,3 +193,22 @@ async function fetchLGAs(state){
         return [];
     }
 }
+
+
+/* FOR DYNAMICALLY CHANGING SIZE TO UNITS IF THE PROPERTY IS NOT A LAND */
+const listing_type_field = document.querySelector('#id_listing_type')
+const sizeLabel = document.querySelector('label[for="id_size"]');
+if(listing_type_field && sizeLabel){
+
+    listing_type_field.addEventListener('change', function(){
+        console.log('hello')
+        if(listing_type_field.value == 'land'){
+            sizeLabel.textContent = "Size";
+        }
+        if(listing_type_field.value == 'buy' || listing_type_field.value == 'rent'){
+            sizeLabel.textContent = "Units";
+        }
+    });
+
+}
+ /* END FOR DYNAMICALLY CHANGING SIZE TO UNITS IF THE PROPERTY IS NOT A LAND */

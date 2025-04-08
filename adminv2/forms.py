@@ -5,4 +5,4 @@ class ListingForm(forms.ModelForm):
     
     class Meta:
         model = Listings
-        fields = ['title', 'listing_type', 'description', 'price', 'cover_image', 'units', 'street_address', 'lga', 'state', 'features']
+        fields = ['title', 'listing_type', 'description', 'price', 'cover_image', 'size', 'street_address', 'lga', 'state', 'features']
