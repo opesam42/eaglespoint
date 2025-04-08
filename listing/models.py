@@ -71,3 +71,14 @@ class ListingImages(models.Model):
     def __str__(self):
         return f"Image for {self.listing.title}"
     
+class Favourites(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    listing = models.ForeignKey('Listings', on_delete=models.CASCADE, related_name='favourites')
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'listing')
+        verbose_name_plural = "Favourite Listings"
+    
+    def __str__(self):
+        return f"{self.user.username} loves {self.Listing.title}"

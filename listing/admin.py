@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Listings, ListingImages, Feature
+from .models import Listings, ListingImages, Feature, Favourites
 
 @admin.register(Feature)
 class FeatureAdmin(admin.ModelAdmin):
@@ -15,4 +15,5 @@ class ListingsAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     filter_horizontal = ('features',)  # Allows selecting multiple features in a better UI
 
+admin.site.register(Favourites)
 admin.site.register(ListingImages)
