@@ -55,14 +55,18 @@ class Listings(models.Model):
 
     def __str__(self):
         return f"{self.listing_type} - {self.title}" 
-    
+
+def listing_images_directory_path(instance, filename):
+    # leave it for django, it will handle it
+    # filename = f'/profile.jpg'
+    return f'listing-images/listing_{instance.listing.id}/{filename}'
 
 class ListingImages(models.Model):
     """ 
     Table for mapping images to their respective listings 
     """
     listing = models.ForeignKey(Listings, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='listing-images/')
+    image = models.ImageField(upload_to=listing_images_directory_path, max_length=500)
     uploaded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -81,4 +85,4 @@ class Favourites(models.Model):
         verbose_name_plural = "Favourite Listings"
     
     def __str__(self):
-        return f"{self.user.username} loves {self.Listing.title}"
+        return f"{self.user.first_name} loves {self.listing.title}"

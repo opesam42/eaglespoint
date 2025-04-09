@@ -1,29 +1,48 @@
 import pymysql
-import environ
 from eaglespoint.settings import BASE_DIR, env
 import os
+from .models import ListingImages
+from .models import Listings
 
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
 
-def mysqlconnect():
-    conn = pymysql.connect(
-        host=env('DB_HOST'),
-        user=env('DB_USER'),
-        password=env('DB_PASSWORD'),
-        database=env('DB_NAME'),
-        port=int(env('DB_PORT')),
-        # ssl_ca = str(BASE_DIR / 'cert/ca.pem'),
-        ssl={'ca': str(BASE_DIR / 'cert/ca.pem')}
-    )
+def move_files():
 
-    cur = conn.cursor() 
-    sql = "SELECT * FROM listing_listings"
-    cur.execute(sql) 
-    output = cur.fetchall() 
-    print(output) 
-      
-    # To close the connection 
-    conn.close() 
+    for listing in Listings.objects.all():
+        # print(listing.pk)
+        listing_images = ListingImages.objects.filter(listing_id=listing)
+        if listing_images:
+            folder_path = f'{MEDIA_ROOT}/listing-images/listing_{listing.pk}/'
+            if not os.path.exists(folder_path):
+                os.makedirs(folder_path)
+            for listing_image in listing_images:
+                # print(listing_image.image)
+                image_name = os.path.basename(listing_image.image.path)
+                new_image_path = os.path.join(folder_path, image_name)
+                print(new_image_path)
+                # print(image)
+                if( os.rename(listing_image.image.path, new_image_path) ):
+                    print(f"{new_image_path} created successfully")
+                
+            
+        else:
+            print("No images!")
 
-mysqlconnect()
+def change_file_path_in_db():
+    for listing in Listings.objects.all():
+        listing_images = ListingImages.objects.filter(listing_id=listing)
+        if listing_images:
+            folder_path = f'listing-images/listing_{listing.pk}/'
+            for listing_image in listing_images:
+                if 'listing_' not in listing_image.image.path:
+                    image_name = os.path.basename(listing_image.image.path)
+                    new_path = os.path.join(folder_path, image_name)
+                    print(new_path)
 
+                    listing_image.image.name = new_path
+                    listing_image.save()
+
+change_file_path_in_db()
