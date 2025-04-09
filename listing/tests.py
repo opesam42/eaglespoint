@@ -45,4 +45,30 @@ def change_file_path_in_db():
                     listing_image.image.name = new_path
                     listing_image.save()
 
-change_file_path_in_db()
+
+def transfer_cover_image():
+    listings = Listings.objects.all()
+    for listing in listings:
+        print(listing.pk)
+        folder_path = f'{MEDIA_ROOT}/listing-images/listing_{listing.pk}/cover-image'
+        if not os.path.exists(folder_path):
+            os.makedirs(folder_path)
+        image_name = os.path.basename(listing.cover_image.path)
+        new_image_path = os.path.join(folder_path, image_name)
+        print(new_image_path)
+
+        if( os.rename(listing.cover_image.path, new_image_path) ):
+            print(f"{new_image_path} created successfully")
+        
+def change_file_path_in_db_cover_image():
+    listings = Listings.objects.all()
+    
+    for listing in listings:
+        # folder_path = f'listing-images/listing_{listing.pk}/cover-image/'
+        image_name = os.path.basename(listing.cover_image.path)
+        new_path = f'listing-images/listing_{listing.pk}/cover-image/{image_name}'
+        print(new_path)
+        print(f"Updating listing {listing.pk}: {new_path}")
+
+        listing.cover_image = new_path
+        listing.save()

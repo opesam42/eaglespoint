@@ -10,14 +10,14 @@
             <div x-data="{            
                 slides: [                
                     {
-                        imgSrc: '/media/{{listing.cover_image}}',
-                        imgAlt: 'Vibrant abstract painting with swirling blue and light pink hues on a canvas.',                
+                        imgSrc: '{{listing.cover_image.url}}',
+                        imgAlt: '{{listing.title}} cover-image',                
                     },  
 
                     {% for image in listing_images %}
                         {                    
                         imgSrc: '/media/{{image.image}}' ,                    
-                        imgAlt: 'Vibrant abstract painting with swirling red, yellow, and pink hues on a canvas.',                
+                        imgAlt: '{{listing.title}} image',                
                     },                          
                     {% endfor %}
         

@@ -3,6 +3,12 @@ from django.conf import settings
 from utils.choices import STATE_CHOICES, LISTING_TYPE
 
 # Create your models here.
+def listing_images_directory_path(instance, filename):
+    return f'listing-images/listing_{instance.listing.id}/{filename}'
+
+def cover_image_directory_path(instance, filename):
+    return f'listing-images/listing_{instance.id}/cover-image/{filename}'
+
 
 class Feature(models.Model):
     """ 
@@ -34,7 +40,7 @@ class Listings(models.Model):
     listing_type = models.CharField(max_length=10, choices=LISTING_TYPE, blank=False, null=False)
     description = models.TextField(max_length=2000, blank=False, null=False)
     price = models.DecimalField(decimal_places=2, max_digits=20, blank=False, null=False)
-    cover_image = models.ImageField(upload_to='listing-cover/', blank=False, null=False)
+    cover_image = models.ImageField(upload_to=cover_image_directory_path, blank=False, null=False, max_length=500)
     size = models.IntegerField(blank=True, null=True) # represent size in square meter for land and units for rented/sold housing 
 
     # address
@@ -56,10 +62,6 @@ class Listings(models.Model):
     def __str__(self):
         return f"{self.listing_type} - {self.title}" 
 
-def listing_images_directory_path(instance, filename):
-    # leave it for django, it will handle it
-    # filename = f'/profile.jpg'
-    return f'listing-images/listing_{instance.listing.id}/{filename}'
 
 class ListingImages(models.Model):
     """ 
