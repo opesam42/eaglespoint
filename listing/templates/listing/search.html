@@ -12,7 +12,7 @@
             {% for result in results %}
                 {% component "listing_card" 
                     title=result.title 
-                    href=href_url|default:"/listing/{{ result.id }}/" 
+                    href="/listing/property/{{ result.id }}/" 
                     price=result.price 
                     size=result.size 
                     type=result.listing_type 

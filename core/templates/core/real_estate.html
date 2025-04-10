@@ -28,12 +28,12 @@
                 {% for result in listings %}
                     {% component "listing_card" 
                         title=result.title 
-                        href=href_url|default:"/listing/{{ result.id }}/" 
+                        href="/listing/property/{{ result.id }}/" 
                         price=result.price 
                         size=result.size 
                         type=result.listing_type 
                         imageUrl=result.cover_image.url 
-                        address=result.street_address|stringformat:", %s"|add:result.lga|stringformat:", %s"|add:result.state 
+                        address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
                         listing=result 
                         id=result.pk 
                         user_favourites=user_favourites 
