@@ -4,7 +4,7 @@ from django_components import Component, register
 class Buttons(Component):
     template_file = "listingCard/template.html"
 
-    def get_context_data(self, imageUrl, href, title, price, size, type, address, images_count=0):
+    def get_context_data(self, id, listing, user_favourites, imageUrl, href, title, price, size, type, address, images_count=0):
         if size is None:
             size = "---"
         elif type == "land":
@@ -15,7 +15,10 @@ class Buttons(Component):
         
 
         return {
+            'id': id,
+            'listing': listing,
             'imageUrl': imageUrl,
+            'user_favourites': user_favourites,
             'href': href,
             'title': title,
             'price': format(price, ','),

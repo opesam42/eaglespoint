@@ -10,7 +10,19 @@
     
         {% if results %}
             {% for result in results %}
-            {% component "listing_card" title="{{result.title}}" href="{% url 'listing:property_details' result.id %}" price="{{result.price}}" size="{{result.size}}" type="{{result.listing_type}}" imageUrl="/media/{{result.cover_image}}" address="{{result.street_address}}, {{result.lga}}, {{result.state}}" %} {% endcomponent %}
+                {% component "listing_card" 
+                    title=result.title 
+                    href=href_url|default:"/listing/{{ result.id }}/" 
+                    price=result.price 
+                    size=result.size 
+                    type=result.listing_type 
+                    imageUrl=result.cover_image.url 
+                    address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+                    listing=result 
+                    id=result.pk 
+                    user_favourites=user_favourites 
+                %}
+                {% endcomponent %}            
             {% endfor %}
         {% else %}
             <p>No search result... </p>

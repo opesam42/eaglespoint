@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from .models import Listings, ListingImages
+from .models import Listings, ListingImages, Favourites
 from django.db.models import Q
 from django.conf import settings
 from django.core.paginator import Paginator
 import os
 import json
 from django.http import JsonResponse
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
 from utils.role_check import is_admin
 from utils.choices import STATE_CHOICES
 
@@ -22,6 +22,7 @@ def get_states_api(request):
 
 def search_listing(request):
     listings = Listings.objects.all().order_by('-created_at')
+    user_favourites = Listings.objects.filter(favourites__user=request.user)
 
     search_query = request.GET.get('search_query', '').strip()  # Get search query from GET request
     if search_query:
@@ -74,8 +75,8 @@ def search_listing(request):
         'max_price': max_price,
         'lga': lga,
         'selectedState': state,
-        'nigeria_states': Listings.objects.values_list('state', flat=True).order_by('state').distinct()
-
+        'nigeria_states': Listings.objects.values_list('state', flat=True).order_by('state').distinct(),
+        'user_favourites': user_favourites,
     }
     
     return render(request, 'listing/search.html', context)
@@ -93,6 +94,21 @@ def listing_details(request, property_id):
     }
 
     return render(request, "listing/details.html", context)
+
+
+@login_required
+def toggle_favourite(request):
+    listing_id = request.POST.get("product_id")
+    listing = Listings.objects.get(id=listing_id)
+    favourite, created = Favourites.objects.get_or_create(user=request.user, listing=listing)
+
+    if not created:
+        favourite.delete()
+        is_favourite = False
+    else:
+        is_favourite = True
+
+    return JsonResponse({'is_favourite': is_favourite})
 
 
 @user_passes_test(is_admin)

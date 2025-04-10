@@ -212,3 +212,49 @@ if(listing_type_field && sizeLabel){
 
 }
  /* END FOR DYNAMICALLY CHANGING SIZE TO UNITS IF THE PROPERTY IS NOT A LAND */
+
+const fav_icons = document.querySelectorAll('.fav-icon')
+console.log(fav_icons)
+
+if (fav_icons){
+    fav_icons.forEach(fav_icon => {
+        fav_icon.addEventListener('click', function(event){
+            event.preventDefault();
+            icon = fav_icon.querySelector('i');
+            productId = fav_icon.getAttribute('data-listing-id')
+            
+            if (icon.classList.contains("text-white")) {
+                icon.classList.remove("text-white");
+                icon.classList.add("text-red-600");
+            } else {
+                icon.classList.remove("text-red-600");
+                icon.classList.add("text-white");
+            }
+
+            fetch('/listing/toggle-favourite/', {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": getCsrfToken(),  // Make sure this function returns the correct CSRF token
+                },
+                body: `product_id=${encodeURIComponent(productId)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Response data", data);
+                if (data.is_favourite) {
+                    icon.classList.remove("text-white");
+                    icon.classList.add("text-red-600");
+                } else {
+                    icon.classList.remove("text-red-600");
+                    icon.classList.add("text-white");
+                }
+            })
+            .catch(error => {
+                console.error('Error', error)
+            });
+
+        });
+    });
+}

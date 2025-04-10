@@ -8,6 +8,7 @@ urlpatterns = [
     path('search/', views.search_listing, name='search_listing'),
     path('property/<int:property_id>/', views.listing_details, name="property_details" ),
     path('toggle-listing-status/<int:listing_id>/', views.toggle_listing_status, name="toggle_listing_status"),
+    path('toggle-favourite/', views.toggle_favourite, name='toggle_favourite'),
 
     path('get-states/', views.get_states_api, name='get_states')
 ]

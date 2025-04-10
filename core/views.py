@@ -8,8 +8,10 @@ def home(request):
 
 def real_estate_page(request):
     listings = Listings.objects.all().order_by('-created_at')[:6]
+    user_favourites = Listings.objects.filter(favourites__user=request.user)
     context = {
         'listings': listings,
+        'user_favourites': user_favourites,
     }
 
     return render(request, 'core/real_estate.html', context)

@@ -18,7 +18,7 @@
             -->
   
             <span class="absolute top-0 left-2 z-10 mt-3 ml-3 select-none text-sm font-bold px-3 py-1 bg-slate-200 rounded inline-flex justify-center items-center gap-2 overflow-hidden text-blue-700 uppercase"> {{ type }} </span>
-            <span class="absolute top-0 right-2 z-10 mt-3 ml-3 inline-flex select-none rounded-lg bg-transparent px-3 py-2 text-lg font-medium text-white"> <i class="fa fa-heart"></i> </span>
+            <span data-listing-id='{{ id }}' class="fav-icon absolute top-0 right-2 z-10 mt-3 ml-3 inline-flex select-none rounded-lg bg-transparent px-3 py-2 text-lg font-medium {% if listing in user_favourites %} text-red-600 {% else %} text-white {% endif %} "> <i class="fa fa-heart"></i> </span>
           </div>
           
           <div class="flex flex-col p-3 gap-2">
