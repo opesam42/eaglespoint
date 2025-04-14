@@ -16,7 +16,7 @@
 
                     {% for image in listing_images %}
                         {                    
-                        imgSrc: '/media/{{image.image}}' ,                    
+                        imgSrc: '{{image}}' ,                    
                         imgAlt: '{{listing.title}} image',                
                     },                          
                     {% endfor %}

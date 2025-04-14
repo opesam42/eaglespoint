@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = 'django-insecure-fr85#p0^htm)3g+wm8@^f@7_l-z#sb1(uw42hv-33fsfma$aab'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['.vercel.app', '*']
 
@@ -179,8 +179,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #ADDED SETTINGS
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+# MEDIA_URL = '/media/'
+B2_MEDIA_URL = "https://eaglespoint-website.s3.eu-central-003.backblazeb2.com/"
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media') 
+# MEDIA_ROOT = "https://eaglespoint-website.s3.eu-central-003.backblazeb2.com/"
 
 from django_components import ComponentsSettings
 
@@ -201,7 +203,17 @@ STATICFILES_FINDERS = [
 """ for whitenoise caching """
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        # "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        "OPTIONS": {
+            "access_key": env('B2_ACCESS_KEY'),
+            "secret_key": env('B2_SECRET_KEY'),
+            "bucket_name": env('B2_BUCKET_NAME'),
+            "region_name": env('B2_REGION'),
+            "endpoint_url": env('B2_ENDPOINT'),
+            "default_acl": None,  
+            "file_overwrite": False, 
+        },
     },
     "staticfiles": {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",

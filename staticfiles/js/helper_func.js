@@ -21,5 +21,13 @@ function unslugify(slug) {
         .join(' '); // Join words with spaces
 }
 
+function getFileName(fullUrl){
+    const url = new URL(fullUrl);
+    const pathParts = url.pathname.split('/');
+    const fileName = pathParts[pathParts.length - 1]
+
+    return fileName
+}
+
 
 DOMAIN_URL = 'http://127.0.0.1:8000'

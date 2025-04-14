@@ -9,6 +9,7 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test, login_required
 from utils.role_check import is_admin
 from utils.choices import STATE_CHOICES
+from utils.storage import get_signed_b2_url
 
 # Create your views here.
 def get_states_api(request):
@@ -87,10 +88,17 @@ def listing_details(request, property_id):
     property_images = ListingImages.objects.filter(listing_id=property_id).values()
     features = property.features.all()
 
+    # Generate signed URLs for images from backblaze
+    signed_image_urls = []
+    for image in property_images:
+        image_url = get_signed_b2_url(image['image']) 
+        signed_image_urls.append(image_url)
+
     context = {
         'listing': property,
-        'listing_images': property_images,
+        'listing_images': signed_image_urls,
         'features': features,
+        'B2_MEDIA_URL': settings.B2_MEDIA_URL,
     }
 
     return render(request, "listing/details.html", context)

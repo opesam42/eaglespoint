@@ -42,7 +42,7 @@
                 <template x-if="image">
                     <div class="relative mt-2 h-32 w-32 rounded-sm">
                         <img :src="image" class="w-32 h-32 object-cover mt-2 border">
-                        <button @click="image = null; $refs.fileInput.value=''" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
+                        <button type="button" @click="image = null; $refs.fileInput.value=''" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <line x1="18" y1="6" x2="6" y2="18"></line>
                                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -81,7 +81,7 @@
                 </select>
             </div>
 
-            <div x-data="{ images:{{ listing_images|safe }}, files:[] }">
+            <div x-data="{ images:JSON.parse('{{ listing_images|escapejs }}'), files:[] }">
                 <label for="id_images" class="label-primary">Select Images:</label>
                 <input x-ref="fileInput" class="input-primary" type="file" id="id_images" name="multiple_images[]" accept="image/*" multiple @change="handleFileUpload($event, $data)"> 
                 
@@ -112,7 +112,7 @@
                 </div>
             </div>
 
-            <a onclick="test()">hello</a>
+            <a onclick="prepareFormData()">hello</a>
             {% comment %} submit btn {% endcomment %}
             {% component "button" html_tag="button" label="Add Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
         </div>
@@ -145,28 +145,45 @@
             await updateLGAOptions(stateField.value);
         }); 
 
-        let uploadFiles = []
-        listingImages = {{listing_images}} //from django context
+        let uploadFiles = [];
+        const listingImages = {{ listing_images|safe}};
 
-        async function fetchAndConvertImagesToBlob(imageList) {
-            for(const imageUrl of imageList){
-                try{
-                    const response = await fetch(imageUrl);
-                    const blob = await response.blob();
-
-                     // Extract filename from URL (after the last '/')
-                    const fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
-
-                    const file = new File([blob], fileName, { type: blob.type });
-                    uploadFiles.push(file);
-                } catch(error){
-                    console.error(`Failed to fetch image ${image.url}`, error)
-                }
-            }
-            console.log('Converted files:', uploadFiles)
+        async function urlToFile(url, filename, mimeType = 'image/jpeg') {
+            const res = await fetch(url);
+            const blob = await res.blob();
+            return new File([blob], filename, { type: mimeType });
         }
 
-        fetchAndConvertImagesToBlob(listingImages)
+        (async () => {
+            for (const imageUrl of listingImages) {
+                const fileName = imageUrl.split('/').pop().split('?')[0];
+                const imageFile = await urlToFile(imageUrl, fileName);
+                uploadFiles.push(imageFile);
+                console.log(uploadFiles)
+            }
+        })();
+
+ 
+
+        // async function fetchAndConvertImagesToBlob(imageList) {
+        //     for(const imageUrl of imageList){
+        //         try{
+        //             const response = await fetch(imageUrl);
+        //             const blob = await response.blob();
+
+        //              // Extract filename from URL (after the last '/')
+        //             const fileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+        //             const file = new File([blob], fileName, { type: blob.type });
+        //             uploadFiles.push(file);
+        //         } catch(error){
+        //             console.error(`Failed to fetch image ${image.url}`, error)
+        //         }
+        //     }
+        //     console.log('Converted files:', uploadFiles)
+        // }
+
+        // fetchAndConvertImagesToBlob(listingImages)
         
 
         // function for alpine js to handle showing of uploaded images and also the uploadedFiles for formData
@@ -179,6 +196,7 @@
             }
 
             component.images = [...component.images, ...newImages]; //add new images while preserving the already stored images
+            // console.log(component.images)
             // console.log(uploadFiles)
         }
 
@@ -210,6 +228,9 @@
                 });
             }
 
+            console.log(...formData)
+
+            console.log(uploadFiles)
             return formData
         }
 

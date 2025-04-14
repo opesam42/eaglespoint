@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from listing.models import Listings
-
+from utils.storage import delete_cover_image_folder, get_signed_b2_url
 
 User = get_user_model()
 # Create your views here.
@@ -50,12 +50,17 @@ def delete_listing(request, listing_id):
 def add_listing(request):
     if request.method == "POST":
         form = ListingForm(request.POST, request.FILES)
+        cover_image = request.FILES.get('cover_image')
         multiple_images = request.FILES.getlist('multiple_images[]')
         
         if form.is_valid():
             listing = form.save(commit=False)
             listing.posted_by = request.user
             listing.save()
+            #i save cover image here so as to take the id of the instance of listing created
+            if cover_image:
+                listing.cover_image = cover_image
+                listing.save()
 
             form.save_m2m() #save features
 
@@ -63,6 +68,7 @@ def add_listing(request):
                 ListingImages.objects.create(listing=listing, image=image)
 
             return JsonResponse({"success": True, "message": "Listing added successfully!"})
+        
         else:
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
                 
@@ -87,11 +93,13 @@ def edit_listing(request, property_id):
     
     listingEdit = get_object_or_404(Listings, id=property_id)
     
-    listingImages = list(ListingImages.objects.filter(listing_id=property_id).values_list('image', flat=True))
-    listingImagesJson =  mark_safe(json.dumps(listingImages)) #convert to json string in json format
-    listingImagesList = json.loads(listingImagesJson) #convert back to list
-    listingImagesJson2 = [f"/media/{image}" for image in listingImagesList]
-    listingImageArray = mark_safe(json.dumps(listingImagesJson2).replace('"', "'")) #replace double quote with single for it to be accepted by alpine js
+    # listingImages = [f"/media/{image}" for image in ListingImages.objects.filter(listing_id=property_id).values_list('image', flat=True)]
+    # listingImageArray = mark_safe(json.dumps(listingImages).replace('"', "'"))
+
+    property_images = ListingImages.objects.filter(listing_id=property_id).values_list('image', flat=True)
+    signed_image_urls = [get_signed_b2_url(img) for img in property_images]
+    listingImageArray = mark_safe(json.dumps(signed_image_urls))
+
     
     form = ListingForm(instance=listingEdit)
 
@@ -103,13 +111,25 @@ def edit_listing(request, property_id):
             listing = form.save(commit=False)
 
             # Keep existing cover image if no new file is uploaded
-            if "cover_image" not in request.FILES:
-                listing.cover_image = listing.cover_image  # Keep old image
+            if "cover_image" in request.FILES:
+                delete_cover_image_folder(listing.id)
+                listing.cover_image = request.FILES["cover_image"]
             
-            listing.save()
+            form.save()
+
+            # if "cover_image" in request.FILES:
+            #     print(f"Cover image uploaded: {request.FILES['cover_image']}")
+            #     listing.cover_image = request.FILES["cover_image"]
+            #     listing.save()
+                
+            #     if listing.cover_image:
+            #         print(f"Old cover image: {listing.cover_image}")
+            #         listing.cover_image.delete(save=False)
+    
+            #     listing.save()
 
             form.save_m2m() #save features
-
+            
             # Get the list of existing images
             existing_images = ListingImages.objects.filter(listing_id=property_id)
 

@@ -1,8 +1,7 @@
-from django.test import TestCase
-
-# Create your tests here.
+import django
 from django.conf import settings
 import os
+import sys
 import boto3
 from dotenv import load_dotenv
 from django.conf import settings
@@ -10,6 +9,13 @@ from botocore.exceptions import ClientError
 
 # Load environment variables
 load_dotenv()
+
+# Set the Django settings module environment variable
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eaglespoint.settings')  # adjust as needed
+
+# Setup Django
+django.setup()
 
 # Get environment variables from .env file
 BACKBLAZE_ENDPOINT = os.getenv("B2_ENDPOINT")
@@ -50,5 +56,4 @@ def upload_all_media_files():
             # Upload each file
             upload_file_to_b2(file_path, relative_file_path)
 
-print('hello')
 upload_all_media_files()

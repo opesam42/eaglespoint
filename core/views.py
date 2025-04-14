@@ -8,7 +8,10 @@ def home(request):
 
 def real_estate_page(request):
     listings = Listings.objects.all().order_by('-created_at')[:6]
-    user_favourites = Listings.objects.filter(favourites__user=request.user)
+    if request.user.is_authenticated:
+        user_favourites = Listings.objects.filter(favourites__user=request.user)
+    else:
+        user_favourites = []
     context = {
         'listings': listings,
         'user_favourites': user_favourites,
