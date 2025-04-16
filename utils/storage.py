@@ -4,6 +4,8 @@ from botocore.exceptions import ClientError
 from django.conf import settings
 import os
 from django.core.files.storage import default_storage
+import requests
+import json
 
 B2_ENDPOINT = os.getenv('B2_ENDPOINT')
 B2_ACCESS_KEY = os.getenv('B2_ACCESS_KEY')
@@ -11,6 +13,7 @@ B2_SECRET_KEY = os.getenv('B2_SECRET_KEY')
 B2_REGION = os.getenv('B2_REGION')
 B2_ENDPOINT = os.getenv('B2_ENDPOINT')
 B2_BUCKET_NAME = os.getenv('B2_BUCKET_NAME')
+BUCKET_ID = os.getenv('BUCKET_ID')
 
 def get_signed_b2_url(key, method='get_object'):
     s3 = boto3.client(
@@ -94,3 +97,76 @@ def delete_cover_ima1ge_folder(listing_id):
 
     except Exception as e:
         print(f"Error deleting files in {folder_path}: {str(e)}")
+
+
+
+class BackBlazeAPI:
+    def __init__(self):
+        self.access_key = B2_ACCESS_KEY
+        self.secret_key = B2_SECRET_KEY
+        self.bucket_id = BUCKET_ID
+        self.authorize_account()
+    
+
+    def authorize_account(self):
+        """ Authorize BackBlaze account """
+        url = "https://api.backblazeb2.com/b2api/v3/b2_authorize_account"
+        response = requests.get(url, auth=(self.access_key, self.secret_key))
+        if response.status_code == 200:
+            data = response.json()
+            self.auth_token = data['authorizationToken']
+            self.api_url = data['apiInfo']['storageApi']['apiUrl']
+            self.download_url = data['apiInfo']['storageApi']['downloadUrl']
+            self.account_id = data['accountId']
+        else:
+            raise Exception(f"Authorization failed: {response.status_code} - {response.text}")
+    
+
+    def delete_file(self, fileId, fileName):
+        """ Delete file in Backblaze bucket """
+        url = f'{self.api_url}/b2api/v3/b2_delete_file_version'
+        headers = {"Authorization": self.auth_token}
+        data = {
+            'fileId': fileId,
+            'fileName': fileName
+        }
+
+        response = requests.post(url, headers=headers, json=data)
+
+        if response.status_code == 200:
+            print(f"File '{fileName}' deleted successfully.")
+        else:
+            print(f"Failed to delete file '{fileName}': {response.status_code} {response.text}")
+
+
+    def list_fileName_and_fileIds_with_prefix(self, prefix):
+        """Return file id and file names of files fetched  """
+
+        url = f'{self.api_url}/b2api/v3/b2_list_file_names'
+        headers = {"Authorization": self.auth_token}
+        data = {
+            'bucketId': self.bucket_id,
+            'prefix': prefix,
+            'maxFileCount': 100
+        }
+        response = requests.post(url, headers=headers, json=data)
+        all_files = []
+        if response.status_code == 200:
+            files_data = response.json()
+            for file in files_data.get('files', []):
+                all_files.append({
+                    'fileId': file['fileId'],
+                    'fileName': file['fileName']
+                })
+            return all_files
+
+        else:
+            raise Exception(f"List failed: {response.status_code} {response.text}")
+        
+
+    def delete_files_with_prefix(self, prefix):
+        """ Takes in list of dictionary containing the id and name of the file for deletion """
+        files = self.list_fileName_and_fileIds_with_prefix(prefix)
+        
+        for file in files:
+            self.delete_file(file['fileId'], file['fileName'])

@@ -11,9 +11,11 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from listing.models import Listings
-from utils.storage import delete_cover_image_folder, get_signed_b2_url
+from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
 
 User = get_user_model()
+backblaze = BackBlazeAPI()
+
 # Create your views here.
 @user_passes_test(is_admin)
 def dashboard(request):
@@ -41,6 +43,9 @@ def delete_listing(request, listing_id):
 
     if request.method == "POST":
         listing.delete()
+        listing_media_dir = f'listing-images/listing_{listing_id}/'
+        print(listing_id)
+        backblaze.delete_files_with_prefix(listing_media_dir)
         return redirect('adminv2:listing')
     
     return redirect('adminv2:listing')
@@ -99,11 +104,12 @@ def edit_listing(request, property_id):
     property_images = ListingImages.objects.filter(listing_id=property_id).values_list('image', flat=True)
     signed_image_urls = [get_signed_b2_url(img) for img in property_images]
     listingImageArray = mark_safe(json.dumps(signed_image_urls))
-
+    
     
     form = ListingForm(instance=listingEdit)
 
     if request.method == "POST":
+        old_cover_image = listingEdit.cover_image
         form = ListingForm(request.POST, request.FILES, instance=listingEdit)
         multiple_images = request.FILES.getlist('multiple_images[]')
         
@@ -112,7 +118,11 @@ def edit_listing(request, property_id):
 
             # Keep existing cover image if no new file is uploaded
             if "cover_image" in request.FILES:
-                delete_cover_image_folder(listing.id)
+                if old_cover_image:
+                    # to delete the file
+                    backblaze.delete_files_with_prefix(old_cover_image.name)
+                    
+                # delete_cover_image_folder(listing.id)
                 listing.cover_image = request.FILES["cover_image"]
             
             form.save()
@@ -133,23 +143,13 @@ def edit_listing(request, property_id):
             # Get the list of existing images
             existing_images = ListingImages.objects.filter(listing_id=property_id)
 
-            # Collect the names of existing images
-            existing_image_names = {img.image.name for img in existing_images}
-            print(existing_image_names)
+            for img in existing_images:
+                backblaze.delete_files_with_prefix(img.image.name)
+                img.delete()
 
-            # Get the list of new images being uploaded
-            new_image_names = {image.name for image in multiple_images}
-
-            # Remove images that are not in the new image list
-            for image in existing_images:
-                if image.image.name not in new_image_names:
-                    # Optionally, you can add logic here to delete the image from storage
-                    image.delete()
-
-            # Upload new images that are not already associated with the listing
+            # Upload all new images
             for image in multiple_images:
-                if image.name not in existing_image_names:
-                    ListingImages.objects.create(listing=listing, image=image)
+                ListingImages.objects.create(listing=listing, image=image)
             
             #END MULTIMAGE PROCESSING    
                 

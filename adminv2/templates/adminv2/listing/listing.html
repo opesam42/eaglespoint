@@ -81,6 +81,10 @@
                                 List
                             {% endif %}
                         </button>
+                        <form action="{% url 'adminv2:delete-listing' listing_id=result.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
