@@ -114,7 +114,7 @@
 
             <a onclick="prepareFormData()">hello</a>
             {% comment %} submit btn {% endcomment %}
-            {% component "button" html_tag="button" label="Add Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
+            {% component "button" html_tag="button" label="Edit Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
         </div>
     </form>
 {% endblock %}
@@ -239,14 +239,28 @@
             const form = event.target;
             const formData = prepareFormData(form)
 
+            const submitBtn = form.querySelector('button[type="submit"]');
+            originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Saving Changes...`;
+            submitBtn.disabled = true;
+            
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log('Updatate failed', error));
+            .then(data => {
+                window.location.href = "{% url 'adminv2:listing' %}";
+                console.log(data)
+            }) 
+            .catch(error => console.log('Updatate failed', error))
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
 
+            })
+
+            
         }
 
     </script>

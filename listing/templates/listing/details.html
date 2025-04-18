@@ -125,21 +125,17 @@
                 <div class="flex justify-between">
                     <h2 class="w-2/3 text-lg line-clamp-2 font-bold">{{ listing.title }}</h2>
 
-                    <div class="flex gap-2">
-                        <button class="cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="gray" class="w-6 h-6">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21l-1.45-1.35C5.4 15.2 2 12.27 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09A6.49 6.49 0 0116.5 3C19.58 3 22 5.42 22 8.5c0 3.77-3.4 6.7-8.55 11.15L12 21z"/>
-                            </svg>
+                    <div class="flex gap-2 *:w-9 *:h-9 *:flex *:justify-center *:items-center">
+                        <button data-listing-id='{{ id }}' class="cursor-pointer fav-icon bg-gray-400 rounded-full p-1.5 hover:bg-gray-300">
+                            <i class="fa fa-heart {% if is_favourite%} text-red-600 {%else%} text-white {% endif %}"></i>
                         </button>
 
-                        <button class="cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="gray" class="w-6 h-6">
-                                <circle cx="18" cy="5" r="3" stroke="gray" stroke-width="2"/>
-                                <circle cx="6" cy="12" r="3" stroke="gray" stroke-width="2"/>
-                                <circle cx="18" cy="19" r="3" stroke="gray" stroke-width="2"/>
-                                <line x1="8.5" y1="10.5" x2="15.5" y2="6.5" stroke="gray" stroke-width="2"/>
-                                <line x1="8.5" y1="13.5" x2="15.5" y2="17.5" stroke="gray" stroke-width="2"/>
-                            </svg>
+                        {% comment %} <button>
+                            <i class="fa fa-share-alt bg-gray-400 text-white rounded-full p-1.5 hover:bg-gray-300"></i>
+                        </button> {% endcomment %}
+
+                        <button class="cursor-pointer bg-gray-400 rounded-full p-1.5 hover:bg-gray-300" onclick="shareListing()">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16px" viewBox="0 -960 960 960" width="24px" fill="#ffffff"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Z"/></svg>
                         </button>
 
                     </div>
@@ -176,5 +172,19 @@
         const clickedImage = document.querySelectorAll('.thumbnail')
 
         console.log(imageSlide)
+
+        function shareListing() {
+            if (navigator.share) {
+              navigator.share({
+                title: "{{ listing.title|escapejs }}",
+                text: 'Take a look at this property: {{ listing.title|escapejs }} — located in {{listing.street_address}}, {{listing.lga}}, {{listing.state}} for just N{{ listing.price|floatformat:0|intcomma }}!',
+                url: window.location.href,
+              })
+              .then(() => console.log('Thanks for sharing!'))
+              .catch((error) => console.error('Error sharing:', error));
+            } else {
+              alert('Sharing not supported on this device/browser.');
+            }
+          }
     </script>
 {% endblock  %}

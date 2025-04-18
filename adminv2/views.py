@@ -14,7 +14,7 @@ from listing.models import Listings
 from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
 
 User = get_user_model()
-backblaze = BackBlazeAPI()
+
 
 # Create your views here.
 @user_passes_test(is_admin)
@@ -45,7 +45,11 @@ def delete_listing(request, listing_id):
         listing.delete()
         listing_media_dir = f'listing-images/listing_{listing_id}/'
         print(listing_id)
-        backblaze.delete_files_with_prefix(listing_media_dir)
+        try:
+            backblaze = BackBlazeAPI()
+            backblaze.delete_files_with_prefix(listing_media_dir)
+        except Exception as e:
+            print(f'Backblaze error: {e}')
         return redirect('adminv2:listing')
     
     return redirect('adminv2:listing')
@@ -72,7 +76,11 @@ def add_listing(request):
             for image in multiple_images:
                 ListingImages.objects.create(listing=listing, image=image)
 
-            return JsonResponse({"success": True, "message": "Listing added successfully!"})
+            return JsonResponse({
+                "success": True, 
+                "message": "Listing added successfully!",
+                "listing_id": listing.id,
+            })
         
         else:
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
@@ -120,7 +128,11 @@ def edit_listing(request, property_id):
             if "cover_image" in request.FILES:
                 if old_cover_image:
                     # to delete the file
-                    backblaze.delete_files_with_prefix(old_cover_image.name)
+                    try:
+                        backblaze = BackBlazeAPI()
+                        backblaze.delete_files_with_prefix(old_cover_image.name)
+                    except Exception as e:
+                        print(f'Backblaze error: {e}')
                     
                 # delete_cover_image_folder(listing.id)
                 listing.cover_image = request.FILES["cover_image"]
@@ -144,7 +156,11 @@ def edit_listing(request, property_id):
             existing_images = ListingImages.objects.filter(listing_id=property_id)
 
             for img in existing_images:
-                backblaze.delete_files_with_prefix(img.image.name)
+                try:
+                    backblaze = BackBlazeAPI()
+                    backblaze.delete_files_with_prefix(img.image.name)
+                except Exception as e:
+                    print(f'Backblaze error: {e}')
                 img.delete()
 
             # Upload all new images

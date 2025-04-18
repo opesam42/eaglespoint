@@ -188,13 +188,28 @@
             let form = event.target;
             formData = prepareFormData(form)
 
+            const submitBtn = form.querySelector('button[type="submit"]');
+            originalText = submitBtn.innerHTML   
+            submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Creating Listing...`;
+            submitBtn.disabled = true; //prevent double click 
+            
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
             })
             .then(response => response.json())
-            .then(data => console.log(data))
-            .catch(error => console.log('Upload failed', error));
+            .then(data =>{
+                //console.log(data['listing_id']);
+                url = `/listing/property/${data.listing_id}/`
+                //console.log(url)
+                window.location.href = url;
+                
+            })
+            .catch(error => console.log('Upload failed', error))
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            })
         }
         /* END PREPARING FORMDATA AND SUBMITING */
 

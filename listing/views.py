@@ -20,6 +20,14 @@ def get_states_api(request):
     
     return JsonResponse(data, safe=False)
 
+def favourite_listing(request):
+    listings = Listings.objects.all().order_by('-created_at')
+    user_favourites = Listings.objects.filter(favourites__user=request.user)
+    context = {
+        'listings': user_favourites,
+        'user_favourites': user_favourites,
+        }
+    return render(request, 'listing/favourite.html', context)
 
 def search_listing(request):
     listings = Listings.objects.all().order_by('-created_at')
@@ -85,6 +93,7 @@ def search_listing(request):
 
 def listing_details(request, property_id):
     property = get_object_or_404(Listings, id=property_id)
+    user_favourites = Listings.objects.filter(favourites__user=request.user)
     property_images = ListingImages.objects.filter(listing_id=property_id).values()
     features = property.features.all()
 
@@ -94,11 +103,21 @@ def listing_details(request, property_id):
         image_url = get_signed_b2_url(image['image']) 
         signed_image_urls.append(image_url)
 
+    def check_if_favourite():
+        if property in user_favourites:
+            print('yeah')
+            return True
+        else:
+            print('nay')
+            return False
+    
+    check_if_favourite()
+
     context = {
         'listing': property,
         'listing_images': signed_image_urls,
         'features': features,
-        'B2_MEDIA_URL': settings.B2_MEDIA_URL,
+        'is_favourite': check_if_favourite()
     }
 
     return render(request, "listing/details.html", context)

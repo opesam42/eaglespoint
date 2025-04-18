@@ -69,7 +69,7 @@
                     <td class="px-6 py-4">
                         {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
                     </td>
-                    <td class="px-6 py-4 flex gap-2">
+                    <td class="px-6 py-4 flex gap-2 items-center">
                         {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
                         <button 
                             class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
@@ -81,10 +81,12 @@
                                 List
                             {% endif %}
                         </button>
-                        <form action="{% url 'adminv2:delete-listing' listing_id=result.id %}" method="POST">
-                            {% csrf_token %}
-                            <button type="submit">Delete</button>
-                        </form>
+                        {% if request.user.is_superuser %}
+                            <form action="{% url 'adminv2:delete-listing' listing_id=result.id %}" method="POST">
+                                {% csrf_token %}
+                                <button type="submit">Delete</button>
+                            </form>
+                        {% endif %}
                     </td>
                 </tr>
                 {% endfor %}

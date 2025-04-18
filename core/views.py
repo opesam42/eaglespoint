@@ -2,7 +2,6 @@ from django.shortcuts import render, redirect
 from listing.models import Listings
 
 # Create your views here.
-from utils.storage import BackBlazeAPI
 def home(request):
     return render(request, 'core/index.html')
 

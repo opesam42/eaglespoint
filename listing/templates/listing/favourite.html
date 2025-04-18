@@ -1,0 +1,33 @@
+{% extends 'core/base.html'%}
+{% load static %}
+{% load humanize %}
+
+{% block title %} Favourite Listings {% endblock %}
+
+{% block content %}
+<div class="responsive-padding">
+    <h2 class="text-2xl mt-9 font-semibold">Favourite Listing</h2>
+    <div id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">  
+        
+        {% if listings %}
+            {% for result in listings %}
+                {% component "listing_card" 
+                    title=result.title 
+                    href="/listing/property/{{ result.id }}/" 
+                    price=result.price 
+                    size=result.size 
+                    type=result.listing_type 
+                    imageUrl=result.cover_image.url 
+                    address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+                    listing=result 
+                    id=result.pk 
+                    user_favourites=user_favourites 
+                %}
+                {% endcomponent %}            
+            {% endfor %}
+        {% else %}
+            <p>No search result... </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
