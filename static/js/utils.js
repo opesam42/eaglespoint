@@ -59,9 +59,9 @@ async function handlePasswordReset(event) {
 async function handleSignUp(event){
     event.preventDefault();
     // remove all error
-    form.querySelectorAll('.error-message').forEach(error => error.remove());
 
     const form = event.target;
+    form.querySelectorAll('.error-message').forEach(error => error.remove());
     const formData = new FormData(form);
     const jsonData  = JSON.stringify(Object.fromEntries(formData));
 
