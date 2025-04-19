@@ -22,7 +22,7 @@ def send_verification_email(request, user):
 
     #generate activation link
     # example output - http://example.com/activate/MQ/token123/
-    activation_link = f"http://{current_site.domain}{reverse('users:activate', kwargs={'uidb64' : uid, 'token' : token})}"
+    activation_link = f"http://{current_site.domain}{reverse('user:activate', kwargs={'uidb64' : uid, 'token' : token})}"
 
     print("Activation link", activation_link)
     message = render_to_string("emails/email_verification.html", {
