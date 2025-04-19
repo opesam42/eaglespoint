@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = 'django-insecure-fr85#p0^htm)3g+wm8@^f@7_l-z#sb1(uw42hv-33fsfma$aab'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app', '*']
 
@@ -231,4 +231,4 @@ EMAIL_TIMEOUT = 30
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_APP_PASSWORD')
 
-APPEND_SLASH = True
+# APPEND_SLASH = True
