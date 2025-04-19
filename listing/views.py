@@ -20,6 +20,7 @@ def get_states_api(request):
     
     return JsonResponse(data, safe=False)
 
+@login_required
 def favourite_listing(request):
     listings = Listings.objects.all().order_by('-created_at')
     user_favourites = Listings.objects.filter(favourites__user=request.user)
@@ -31,7 +32,11 @@ def favourite_listing(request):
 
 def search_listing(request):
     listings = Listings.objects.all().order_by('-created_at')
-    user_favourites = Listings.objects.filter(favourites__user=request.user)
+    
+    if request.user.is_authenticated:
+        user_favourites = Listings.objects.filter(favourites__user=request.user)
+    else:
+        user_favourites = []
 
     search_query = request.GET.get('search_query', '').strip()  # Get search query from GET request
     if search_query:
@@ -128,8 +133,11 @@ def listing_details(request, property_id):
     return render(request, "listing/details.html", context)
 
 
-@login_required
+
 def toggle_favourite(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Anonymous user'}, status=401)
+
     listing_id = request.POST.get("product_id")
     listing = Listings.objects.get(id=listing_id)
     favourite, created = Favourites.objects.get_or_create(user=request.user, listing=listing)

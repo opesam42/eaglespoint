@@ -167,7 +167,11 @@ async function handleLogin(event){
         
         // if successful
         errorMessageContainer.classList.add("hidden");
-        window.location.href = result.next_url
+        if(!result.next_url){
+            window.location.reload();
+        }else{
+            window.location.href = result.next_url
+        }
         console.log(result.message);
         console.log(result.next_url);
 
@@ -249,6 +253,13 @@ if (fav_icons){
                 } else {
                     icon.classList.remove("text-red-600");
                     icon.classList.add("text-white");
+                }
+
+                // if user is not logged in, it trigger Alpine to show the login modal
+                if(data.error == "Anonymous user"){
+                    setTimeout(() => {
+                        Alpine.store('modal').openLoginModal = true;
+                    }, 500)
                 }
             })
             .catch(error => {

@@ -629,6 +629,9 @@
     --tw-translate-y: calc(calc(1/2 * 100%) * -1);
     translate: var(--tw-translate-x) var(--tw-translate-y);
   }
+  .rotate-180 {
+    rotate: 180deg;
+  }
   .transform {
     transform: var(--tw-rotate-x) var(--tw-rotate-y) var(--tw-rotate-z) var(--tw-skew-x) var(--tw-skew-y);
   }

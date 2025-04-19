@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="responsive-padding">
-    <h2 class="text-2xl mt-9 font-semibold">Favourite Listing</h2>
+    <h2 class="text-2xl mt-9 font-semibold">Favourite Listings</h2>
     <div id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">  
         
         {% if listings %}
@@ -26,7 +26,7 @@
                 {% endcomponent %}            
             {% endfor %}
         {% else %}
-            <p>No search result... </p>
+            <p>You have no favourite listings</p>
         {% endif %}
     </div>
 </div>

@@ -40,15 +40,6 @@
                     %}
                     {% endcomponent %}
                 {% endfor %}
-                
-                {% comment %} {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% component "listing_card" title="Bedroom at Transikis" price="3,000,000" size="2,000" type="Buy" imageUrl="{% static 'images/fbd51ea.jpeg'%}" address="Onitsha, Anambra" %} {% endcomponent %}
-                {% endcomment %}
             </div>
         </section>
     {% endif %}
@@ -148,11 +139,29 @@
 
     </section>
 </main>
+
+<button onclick="openModalForLogin()">hello</button>
     
 {% endblock %}
 
 {% block script %}
     <script>
-        console.log('hello')
+        // document.addEventListener('alpine:init', () => {
+
+        //     Alpine.data('openLoginModal', () => ({
+        //         openLoginModal: true,
+
+        //         init() {
+        //             console.log('hello')
+        //             console.log('Modal state:', this.openLoginModal);
+        //         }
+        //     }))
+        // })
+
+
+        function openModalForLogin() {
+            Alpine.store('modal').openLoginModal = true;
+        }
+        
     </script>
 {% endblock %}

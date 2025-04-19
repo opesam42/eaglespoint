@@ -69,7 +69,14 @@
                             {% else %}
                                 <img src="{% static 'images/default-user.svg' %}" class="rounded-full border-2 border-blue-600 hover:p-0.5" width="24px">
                             {% endif %}
-                            <span>Profile</span>
+                            <div class="lg:hidden flex justify-between w-full">
+                                <span>Profile</span>
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision"
+                                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="1.5" viewBox="0 0 24 24" width="24" class="transition-transform duration-300" :class="{ 'rotate-180': open }">
+                                <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </div>
                         </div>
                         
                     
@@ -93,7 +100,7 @@
                     </li>
                     {% else %}
                         <li>
-                            {% component "button" label="Sign Up/Login" type="primary" width="full" attr="@click='openLoginModal = true'" %} {% endcomponent %}
+                            {% component "button" label="Sign Up/Login" type="primary" width="full" attr="@click='$store.modal.openLoginModal = true'" %} {% endcomponent %}
                         </li>
                     {% endif %}
                     
@@ -152,11 +159,11 @@
     </footer>
     
 
-    <template x-if="openLoginModal">
+    <template x-if="$store.modal.openLoginModal">
         <div id="login-modal" class="fixed inset-0 flex items-center justify-center bg-gray-800/80 z-[1000000]">
             <div x-data="{ isLogin:true }" class="bg-white rounded-lg w-full max-w-[400px] shadow-lg">
                 <div class="flex border-b border-gray-300 px-4 ">
-                    <button @click="openLoginModal = false"class="ml-auto text-gray-600 p-2 rounded-lg hover:bg-gray-200">
+                    <button @click="$store.modal.openLoginModal = false"class="ml-auto text-gray-600 p-2 rounded-lg hover:bg-gray-200">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -190,9 +197,17 @@
 
     <!-- Modal (Initially Hidden) -->
     
-
+    
     <script src="{% static 'js/helper_func.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
+    <script>
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('modal', {
+                openLoginModal: false,
+            });
+        });
+
+    </script>
     {% block script %}{% endblock %}
     
 </body>

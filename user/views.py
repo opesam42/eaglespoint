@@ -69,10 +69,13 @@ def user_login(request):
     Handles user authentication and login.
     """
     domain_name = request.get_host() 
-    next_url = request.GET.get('next', 'core:home') #2nd arg is fallback if their is no next
+    next_url = request.GET.get('next', '') #2nd arg is fallback if their is no next
     if next_url == '/user/logout':
         next_url = 'core:home' 
-    full_url = f"{request.scheme}://{domain_name}{reverse(next_url)}"
+    if not next_url:
+        full_url = None
+    else:
+        full_url = f"{request.scheme}://{domain_name}{reverse(next_url)}"
 
     if request.user.is_authenticated:
         return redirect('core:home') #redirect if login
@@ -126,7 +129,7 @@ def user_login(request):
 @login_required
 def logout_view(request):
     logout(request)
-    return redirect('user:login')
+    return redirect('core:home')
 
 
 def activate_account(request, uidb64, token):
