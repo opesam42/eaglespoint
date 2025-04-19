@@ -7,9 +7,9 @@
 @source '../../components/**/*.js';
 @source '../../static/js/**/*.js';
 
-* {
+/* * {
   outline: 1px solid red;
-}
+} */
 
 
 @theme {

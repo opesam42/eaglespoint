@@ -558,14 +558,14 @@
   .w-64 {
     width: calc(var(--spacing) * 64);
   }
+  .w-\[90\%\] {
+    width: 90%;
+  }
   .w-full {
     width: 100%;
   }
   .w-max {
     width: max-content;
-  }
-  .w-screen {
-    width: 100vw;
   }
   .max-w-2xl {
     max-width: var(--container-2xl);
@@ -2120,9 +2120,6 @@
       }
     }
   }
-}
-* {
-  outline: 1px solid red;
 }
 @layer components {
   .responsive-padding {

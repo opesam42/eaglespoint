@@ -93,9 +93,23 @@ def search_listing(request):
 
 def listing_details(request, property_id):
     property = get_object_or_404(Listings, id=property_id)
-    user_favourites = Listings.objects.filter(favourites__user=request.user)
     property_images = ListingImages.objects.filter(listing_id=property_id).values()
     features = property.features.all()
+
+    user_favourite = None
+    if request.user.is_authenticated:
+        user_favourites = Listings.objects.filter(favourites__user=request.user)
+        def check_if_favourite():
+            if property in user_favourites:
+                print('yeah')
+                return True
+            else:
+                print('nay')
+                return False
+        is_favourite = check_if_favourite()
+    else:
+        is_favourite = None
+        # check_if_favourite()
 
     # Generate signed URLs for images from backblaze
     signed_image_urls = []
@@ -103,21 +117,12 @@ def listing_details(request, property_id):
         image_url = get_signed_b2_url(image['image']) 
         signed_image_urls.append(image_url)
 
-    def check_if_favourite():
-        if property in user_favourites:
-            print('yeah')
-            return True
-        else:
-            print('nay')
-            return False
-    
-    check_if_favourite()
 
     context = {
         'listing': property,
         'listing_images': signed_image_urls,
         'features': features,
-        'is_favourite': check_if_favourite()
+        'is_favourite': is_favourite
     }
 
     return render(request, "listing/details.html", context)
