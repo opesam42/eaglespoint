@@ -52,7 +52,7 @@
             </button>
     
             <!-- Navigation Menu -->
-            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="w-full absolute p-2 lg:p-0 top-full z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center" id="mobile-menu">
+            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="absolute p-2 lg:p-0 top-full z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center" id="mobile-menu">
                 <ul class="flex flex-col lg:items-center mt-4 w-full px-3 lg:px-0 md:w-full lg:w-max lg:flex-row lg:gap-4 lg:text-sm lg:mt-0 *:block *:text-gray-700 *:pl-2 *:py-2 *:lg:p-0 *:hover:bg-gray-100 *:lg:hover:bg-transparent *:lg:hover:underline">
                     <li><a href="{% url 'core:home' %}">Home</a></li>
                     <li><a href="{% url 'core:real_estate' %}">Real Estate</a></li>
