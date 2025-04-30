@@ -3,18 +3,6 @@
 
 {% block title %}Home - Eaglespoint Horizon Limited{% endblock %}
 
-{% block styleblock %}
-<style>
-    .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-    }
-    .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <main class="flex flex-col gap-20">
     <section class="hero responsive-padding bg-blue-800 flex flex-col justify-center gap-6 lg:gap-9 py-3 lg:py-20 lg:px-60">
@@ -35,33 +23,23 @@
     {% if listings %}
         <section class="flex flex-col gap-6 responsive-padding">
             <h3 class="text-4xl font-semibold">Featured Listings</h3>
-            <div class="relative">
 
-                <!-- Arrow Buttons (Visible on Desktop) -->
-                <button class="hidden md:block absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListLeft()">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                </button>
-                <button class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListRight()">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-
-                <div id="listingScroll" class="w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
-                    {% for result in listings %}
-                        {% component "listing_card" 
-                            title=result.title 
-                            href="/listing/property/{{ result.id }}/" 
-                            price=result.price 
-                            size=result.size 
-                            type=result.listing_type 
-                            imageUrl=result.cover_image.url 
-                            address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
-                            listing=result
-                            id=result.pk 
-                            user_favourites=user_favourites 
-                        %}
-                        {% endcomponent %}
-                    {% endfor %}
-                </div>
+            <div class="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {% for result in listings %}
+                    {% component "listing_card" 
+                        title=result.title 
+                        href="/listing/property/{{ result.id }}/" 
+                        price=result.price 
+                        size=result.size 
+                        type=result.listing_type 
+                        imageUrl=result.cover_image.url 
+                        address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+                        listing=result
+                        id=result.pk 
+                        user_favourites=user_favourites 
+                    %}
+                    {% endcomponent %}
+                {% endfor %}
             </div>
         </section>
     {% endif %}
@@ -118,7 +96,7 @@
     </section>
     
     <section class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center responsive-padding">
-        <h2 class="text-4xl lg:text-5xl font-extrabold text-center lg:w-1/4 lg:text-left">Why Chose <span class="text-blue-600 font-cursive">Us?</span></h2>
+        <h2 class="text-4xl lg:text-6xl font-extrabold text-center lg:w-1/4 lg:text-left">Why Chose <span class="text-blue-600 font-cursive">Us?</span></h2>
         <div class="flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-6 *:w-64 *:h-64 *:flex *:flex-col *:gap-2 *:items-center *:justify-center *:px-2 *:rounded-xl *:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
             <div>
                 <img src="{% static 'images/noto_brain.svg' %}" class="w-16 h-16">
@@ -139,9 +117,9 @@
     </section>
 
     <section class="lg:pr-0 bg-slate-100 flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center">
-        <div class="responsive-padding py-4 md:py-0 pr-0">
-            <h3 class="text-4xl lg:text-5xl font-extrabold mb-1.5 pr-20"><span class="font-cursive text-blue-600">SELL</span> Your Property or <span class="font-cursive text-blue-600">RENT</span> Your Apartment with Confidence!</h3>
-            <p class="mb-3">Let our experienced team handle it for you.</p>
+        <div class="responsive-padding pr-0">
+            <h3 class="text-5xl font-extrabold mb-3 pr-20 leading-14"><span class="font-cursive text-blue-600">SELL</span> Your Property or <span class="font-cursive text-blue-600">RENT</span> Your Apartment with Confidence!</h3>
+            <p class="mb-6">Let our experienced team handle it for you.</p>
             {% component "button" label="List with Us" type="primary" %} {% endcomponent %}
         </div>
         <img src="{% static 'images/8f8b116b79ed25b75ae82abf0a2e31a6.jpeg' %}" class="w-full lg:max-w-96 h-auto max-h-64 lg:h-full object-cover">
@@ -162,30 +140,28 @@
     </section>
 </main>
 
+<button onclick="openModalForLogin()">hello</button>
     
 {% endblock %}
 
 {% block script %}
     <script>
+        // document.addEventListener('alpine:init', () => {
+
+        //     Alpine.data('openLoginModal', () => ({
+        //         openLoginModal: true,
+
+        //         init() {
+        //             console.log('hello')
+        //             console.log('Modal state:', this.openLoginModal);
+        //         }
+        //     }))
+        // })
+
 
         function openModalForLogin() {
             Alpine.store('modal').openLoginModal = true;
         }
-
-        const listingScrollList = document.getElementById('listingScroll');
-        scrollDistance = (listingScrollList.clientWidth) / 2;
-        function scrollListLeft(){
-            listingScrollList.scrollBy({left: -scrollDistance, behavior: 'smooth'});
-            console.log(listingScrollList)
-            console.log("Scroll left clicked")
-        }
-        function scrollListRight(){
-            listingScrollList.scrollBy({left: scrollDistance, behavior: 'smooth'});
-            // listingScrollList.scrollBy(singleScroll, 0);
-            // console.log( listingScrollList.clientWidth )
-            console.log("Scroll right clicked")
-        }
-
         
     </script>
 {% endblock %}

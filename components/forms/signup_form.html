@@ -18,7 +18,7 @@
     <div class="flex flex-col gap-3 lg:gap-4">
         <div>
             <label for="id_first_name" class="label-primary">First Name</label>
-            <input class="input-primary" type="text" name="first_name" maxlength="150" id="id_first_name" required>
+            <input class="input-primary" type="text" name="first_name" maxlength="150" id="id_first_name" required {% if autofocus %}autofocus{% endif %}>
         </div>
 
         <div>
@@ -28,7 +28,7 @@
 
         <div>
             <label for="id_email" class="label-primary">Email</label>
-            <input class="input-primary" type="email" name="email" maxlength="254" required id="id_email" {% if autofocus %}autofocus{% endif %}>
+            <input class="input-primary" type="email" name="email" maxlength="254" required id="id_email">
         </div>
 
         <div>

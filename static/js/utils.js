@@ -58,7 +58,6 @@ async function handlePasswordReset(event) {
 
 async function handleSignUp(event){
     event.preventDefault();
-    // remove all error
 
     const form = event.target;
     form.querySelectorAll('.error-message').forEach(error => error.remove());
@@ -220,7 +219,6 @@ if(listing_type_field && sizeLabel){
  /* END FOR DYNAMICALLY CHANGING SIZE TO UNITS IF THE PROPERTY IS NOT A LAND */
 
 const fav_icons = document.querySelectorAll('.fav-icon')
-console.log(fav_icons)
 
 if (fav_icons){
     fav_icons.forEach(fav_icon => {

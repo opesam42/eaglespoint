@@ -5,12 +5,17 @@ from listing.models import Listings
 def home(request):
     return render(request, 'core/index.html')
 
+def testAnimate(request):
+    return render(request, 'core/animate.html')
+
 def real_estate_page(request):
     listings = Listings.objects.all().order_by('-created_at')[:6]
+
     if request.user.is_authenticated:
         user_favourites = Listings.objects.filter(favourites__user=request.user)
     else:
         user_favourites = []
+        
     context = {
         'listings': listings,
         'user_favourites': user_favourites,
