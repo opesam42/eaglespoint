@@ -33,7 +33,7 @@
     {% component "stats_partner" %} {% endcomponent %}
 
     {% if listings %}
-        <section class="flex flex-col gap-6 responsive-padding">
+        <section class="flex flex-col gap-6 responsive-padding" data-aos="fade-up" data-aos-duration="1000">
             <h3 class="text-4xl font-semibold">Featured Listings</h3>
             <div class="relative">
 
@@ -61,13 +61,24 @@
                         %}
                         {% endcomponent %}
                     {% endfor %}
+
+                    <div>
+                        <a class="flex flex-col justify-center items-center h-full rounded-lg border-2 border-blue-500 bg-gray-200" href="{% url 'listing:search_listing' %}">
+                            <div class="p-1.5 rounded-sm bg-gray-700 shadow">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 -960 960 960" fill="#ffffff"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
+                            </div>
+                            
+                            <p class="font-semibold">Start searching!</p>
+
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
     {% endif %}
     
 
-    <section class="py-8 responsive-padding">
+    <section class="py-8 responsive-padding" data-aos="fade-up">
         <h3 class="text-4xl font-semibold mb-6">Popular Cities</h3>
         <div class="flex gap-6 justify-start items-center flex-nowrap overflow-x-auto *:shrink-0 *:h[420]">
             <div class="relative w-64 aspect-[9/16] overflow-hidden rounded-lg">
@@ -117,7 +128,7 @@
         
     </section>
     
-    <section class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center responsive-padding">
+    <section class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center responsive-padding" data-aos="fade-left">
         <h2 class="text-4xl lg:text-5xl font-extrabold text-center lg:w-1/4 lg:text-left">Why Chose <span class="text-blue-600 font-cursive">Us?</span></h2>
         <div class="flex flex-col md:flex-row md:flex-wrap justify-center items-center gap-6 *:w-64 *:h-64 *:flex *:flex-col *:gap-2 *:items-center *:justify-center *:px-2 *:rounded-xl *:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)]">
             <div>
