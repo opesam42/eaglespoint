@@ -60,6 +60,7 @@ async function handleSignUp(event){
     event.preventDefault();
 
     const form = event.target;
+    form.querySelectorAll('.error-message').forEach(error => error.remove());
     const formData = new FormData(form);
     const jsonData  = JSON.stringify(Object.fromEntries(formData));
 
@@ -167,7 +168,12 @@ async function handleLogin(event){
         
         // if successful
         errorMessageContainer.classList.add("hidden");
-        window.location.href = result.next_url
+        console.log(result.next_url)
+        if(result.next_url == null){
+            window.location.reload();
+        }else{
+            window.location.href = result.next_url
+        }
         console.log(result.message);
         console.log(result.next_url);
 
@@ -214,7 +220,6 @@ if(listing_type_field && sizeLabel){
  /* END FOR DYNAMICALLY CHANGING SIZE TO UNITS IF THE PROPERTY IS NOT A LAND */
 
 const fav_icons = document.querySelectorAll('.fav-icon')
-console.log(fav_icons)
 
 if (fav_icons){
     fav_icons.forEach(fav_icon => {
@@ -249,6 +254,13 @@ if (fav_icons){
                 } else {
                     icon.classList.remove("text-red-600");
                     icon.classList.add("text-white");
+                }
+
+                // if user is not logged in, it trigger Alpine to show the login modal
+                if(data.error == "Anonymous user"){
+                    setTimeout(() => {
+                        Alpine.store('modal').openLoginModal = true;
+                    }, 500)
                 }
             })
             .catch(error => {

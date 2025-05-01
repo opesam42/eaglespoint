@@ -10,5 +10,5 @@ urlpatterns = [
     path('about/', views.about_us_page, name='about'),
     path('contact/', views.contact_page, name='contact'),
 
-    path('animate/', views.testAnimate, name='testAnimate'),
+    path('error-page', views.error_page, name='error_page')
 ]

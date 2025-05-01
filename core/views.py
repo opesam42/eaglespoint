@@ -5,8 +5,16 @@ from listing.models import Listings
 def home(request):
     return render(request, 'core/index.html')
 
-def testAnimate(request):
-    return render(request, 'core/animate.html')
+
+def page_not_found_view(request, exception):
+    context = {
+        'error_message': 'Sorry, the page you are looking for does not exist.',
+    }
+    return render(request, 'error_pages/404.html', context, status=404)
+
+def error_page(request):
+    return render(request, 'error_pages/error.html')
+
 
 def real_estate_page(request):
     listings = Listings.objects.all().order_by('-created_at')[:6]

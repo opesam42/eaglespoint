@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Page Not Found - 404 Error{% endblock %}
+
+{% block content %}
+    <div class="w-full flex flex-col items-center justify-center mt-9">
+        <div class="error-container border-2 border-blue-400 rounded-2xl p-8 flex flex-col items-center max-w-4xl text-center gap-2">
+            <img src="https://www.pngkey.com/png/detail/147-1473883_404-error-404-not-found-png.png" alt="404 Error - 404 Not Found Png@pngkey.com" class="max-w-[400px]">
+            <h1 class="text-2xl text-red-600 font-semibold">Page Not Found</h1>
+            <p class="error-message">{{ error_message }}</p>
+            <div class="back-link">
+                {% component "button" label="Return to Home" type="primary" href="{% url 'core:home' %}" %} {% endcomponent %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

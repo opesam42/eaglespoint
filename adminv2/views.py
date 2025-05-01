@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from .forms import ListingForm
 from listing.models import Listings, Feature, ListingImages
 from utils.choices import LISTING_TYPE, STATE_CHOICES
-from utils.role_check import is_admin
+from utils.role_check import is_admin, admin_only
 from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 # Create your views here.
-@user_passes_test(is_admin)
+@admin_only
 def dashboard(request):
     users_count = User.objects.count()
     listings_count = Listings.objects.count()
@@ -25,9 +25,10 @@ def dashboard(request):
         'users_count': users_count,
         'listings_count': listings_count,
     }
+
     return render(request, 'adminv2/dashboard.html', context)
 
-@user_passes_test(is_admin)
+@admin_only
 def listing(request):
     listings = Listings.objects.all()
     nigeria_states = Listings.objects.values_list('state', flat=True).order_by('state').distinct()
@@ -37,7 +38,7 @@ def listing(request):
     })
 
 
-@user_passes_test(is_admin)
+@admin_only
 def delete_listing(request, listing_id):
     listing = get_object_or_404(Listings, id=listing_id)
 
@@ -55,7 +56,7 @@ def delete_listing(request, listing_id):
     return redirect('adminv2:listing')
 
 
-@user_passes_test(is_admin)
+@admin_only
 def add_listing(request):
     if request.method == "POST":
         form = ListingForm(request.POST, request.FILES)
@@ -101,7 +102,7 @@ def add_listing(request):
 
 
 
-@user_passes_test(is_admin)
+@admin_only
 def edit_listing(request, property_id):
     
     listingEdit = get_object_or_404(Listings, id=property_id)
