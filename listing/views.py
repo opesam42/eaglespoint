@@ -4,6 +4,8 @@ from django.db.models import Q
 from django.conf import settings
 from django.core.paginator import Paginator
 import os
+from django.urls import reverse
+from urllib.parse import quote
 import json
 from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test, login_required
@@ -100,6 +102,18 @@ def listing_details(request, property_id):
     property = get_object_or_404(Listings, id=property_id)
     property_images = ListingImages.objects.filter(listing_id=property_id).values()
     features = property.features.all()
+    property_url = request.build_absolute_uri(
+        reverse('listing:property_details', kwargs={'property_id': property.id})
+    )
+    whatsapp_message = (
+        f"Good day Eaglespoint, I am interested in the following property:\n"
+        f"*{property.title}*\n"
+        f"Link: {property_url}\n"
+        f"Please provide more details. Thank you!"
+    )
+    encoded_message = quote(whatsapp_message)
+    whatsapp_number = "+2348086818881"
+    whatsapp_link = f"https://wa.me/{whatsapp_number}?text={encoded_message}"
 
     user_favourite = None
     if request.user.is_authenticated:
@@ -127,7 +141,8 @@ def listing_details(request, property_id):
         'listing': property,
         'listing_images': signed_image_urls,
         'features': features,
-        'is_favourite': is_favourite
+        'is_favourite': is_favourite,
+        'whatsapp_link': whatsapp_link,
     }
 
     return render(request, "listing/details.html", context)
