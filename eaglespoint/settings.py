@@ -201,6 +201,7 @@ STATICFILES_FINDERS = [
 ]
 
 """ for whitenoise caching """
+
 STORAGES = {
     "default": {
         # "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -216,7 +217,11 @@ STORAGES = {
         },
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
     },
 }
 

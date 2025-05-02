@@ -46,19 +46,16 @@
         </div>
     </section>
     
-    <!-- Stats and Partner Section -->
-    {% component "stats_partner" %} {% endcomponent %}
-    
     <section class="relative bg-cover bg-center text-white py-4 lg:py-10 responsive-padding" 
     style="background-image: url('{% static 'images/house-duplex.jpg' %}');">
     
         <!-- Overlay -->
-        <div class="absolute inset-0 bg-blue-600/50"></div> 
+        <div class="absolute inset-0 bg-blue-800/50"></div> 
 
         <!-- Content -->
         <div class="relative z-10">
-            <h2 class="text-2xl font-bold mb-4">Are You Interested In Our Real Estate</h2>
-            {% component "button" label="Find out More" type="primary" %} {% endcomponent %}
+            <h2 class="text-2xl font-bold mb-4" data-aos="fade-right">Are You Interested In Our Real Estate?</h2>
+            {% component "button" label="Find out More" type="primary" attr="data-aos='fade-right' data-aos-duration='900'" %} {% endcomponent %}
         </div>
 
     </section>
@@ -116,6 +113,9 @@
             <img src="{% static 'images/co-learning.jpg' %}" class="w-full lg:max-w-96 h-auto max-h-64 lg:h-full object-cover">
         </section>
     </div>
+
+    <!-- Stats and Partner Section -->
+    {% component "stats_partner" %} {% endcomponent %}
 
     <section class="testimonial responsive-padding relative bg-repeat py-8 bg-[100px] text-white" style="background-image: url({% static 'images/pattern4.svg' %}); background-color:blue;" data-aos="fade-up">
         <!-- overlay -->

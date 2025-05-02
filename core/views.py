@@ -13,7 +13,7 @@ def page_not_found_view(request, exception):
     return render(request, 'error_pages/404.html', context, status=404)
 
 def error_page(request):
-    return render(request, 'error_pages/error.html')
+    return render(request, 'error_pages/error.html', status=403)
 
 
 def real_estate_page(request):

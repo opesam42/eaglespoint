@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Eaglespoint Horizon Limited {% endblock %}</title>
 
-    {% comment %} <script src="https://unpkg.com/alpinejs" defer></script> {% endcomment %}
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/> -->
@@ -21,15 +20,15 @@
 <body class='font-base text-gray-900 overflow-x-hidden' x-data="{ openLoginModal: false }">
 
     <header x-data="{ isOpen:false }" class="w-full bg-white border-gray-200 responsive-padding py-2.5 sticky top-0 z-30 drop-shadow-md">
-        <div id="headerWrapper" class="relative flex  gap-6 items-center justify-center mx-auto">
+        <div id="headerWrapper" class="relative flex  gap-6 items-center justify-between mx-auto">
             
             <!-- Logo Section -->
             <a href="{% url 'core:home' %}" class="block" id="logo">
-                <img src="{% static 'images/eaglespoint-logo.png' %}" width="32px" class="w-24" alt="EaglesPoint Logo" />
+                <img src="{% static 'images/eaglespoint-logo.png' %}" width="32px" class="w-16" alt="EaglesPoint Logo" />
             </a>
     
             <!-- Search Bar -->
-            <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex items-stretch w-full h-10 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
+            <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex items-stretch w-full max-w-96 h-10 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
                 <input type="search" name="search_query" value="{{ search_query }}" aria-label="Search" class="block w-full px-4 py-2 focus:outline-none" 
                        placeholder="Search Location or Properties">
                 <button class="bg-blue-600 text-white h-full p-2 rounded-r-lg" type="submit"><i class="fa fa-search fa-lg"></i></button>
@@ -37,7 +36,7 @@
     
            <!-- Mobile Menu Toggle -->
            <button @click="isOpen = !isOpen" type="button" class="inline-flex items-center p-2 text-sm 
-           text-gray-500 rounded-lg ml-auto lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
+           text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200">
                 <span class="sr-only">Open main menu</span>
                 <!-- <i class="fa fa-hamburger w-6 h-6" :class="isOpen ? 'fa-close' : 'fa fa-hamburger'"></i> -->
                 <template x-if="!isOpen">
@@ -53,7 +52,7 @@
             </button>
     
             <!-- Navigation Menu -->
-            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="w-screen absolute p-2 lg:p-0 top-full z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:ml-auto lg:w-max lg:flex lg:items-center" id="mobile-menu">
+            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="w-screen absolute p-2 lg:p-0 top-full z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:w-max lg:flex lg:items-center" id="mobile-menu">
                 <ul class="flex flex-col lg:items-center mt-4 w-full px-3 lg:px-0 md:w-full lg:w-max lg:flex-row lg:gap-4 lg:text-sm lg:mt-0 *:block *:text-gray-700 *:pl-2 *:py-2 *:lg:p-0 *:hover:bg-gray-100 *:lg:hover:bg-transparent *:lg:hover:underline">
                     <li><a href="{% url 'core:home' %}">Home</a></li>
                     <li><a href="{% url 'core:real_estate' %}">Real Estate</a></li>
