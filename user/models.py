@@ -19,8 +19,8 @@ class CustomUser(AbstractUser):
 
     username = None #remove username, I want to use email as unique identifier
     email = models.EmailField(_("email address"), unique=True)
-    country_code = models.CharField(max_length=5)
-    phone_number = models.CharField(max_length=15)
+    # TO-DO: If you is important, make phone number field compulsory
+    phone_number = models.CharField(max_length=15, blank=False, null=False)
     user_role = models.CharField(max_length=10, choices=USER_TYPE, default='customer')
     profileImage = models.ImageField(
         upload_to=user_directory_path,
