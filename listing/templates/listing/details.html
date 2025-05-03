@@ -126,7 +126,7 @@
                     <h2 class="w-2/3 text-lg line-clamp-2 font-bold">{{ listing.title }}</h2>
 
                     <div class="flex gap-2 *:w-9 *:h-9 *:flex *:justify-center *:items-center">
-                        <button data-listing-id='{{ id }}' class="cursor-pointer fav-icon bg-gray-400 rounded-full p-1.5 hover:bg-gray-300">
+                        <button data-listing-id='{{ listing.id }}' class="cursor-pointer fav-icon bg-gray-400 rounded-full p-1.5 hover:bg-gray-300">
                             <i class="fa fa-heart {% if is_favourite%} text-red-600 {%else%} text-white {% endif %}"></i>
                         </button>
 
