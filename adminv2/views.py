@@ -234,4 +234,35 @@ def search_listing(request, search_query=None):
             })
      
     
-   
+@admin_only
+def user_control_page(request):
+    users = User.objects.all()
+    return render(request, 'adminv2/users/users.html', {
+        'users': users,
+    })
+
+@admin_only
+@user_passes_test(lambda u: u.is_superuser)
+def toggle_admin(request, user_id):
+    """ This is used to promote a user into admin or demote a user into a customer """
+    user = get_object_or_404(User, pk=user_id)
+    if request.method == "POST":
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            if user.user_role == "admin":
+                user.user_role = "customer"
+            else:
+                user.user_role = "admin"
+            
+            user.save()
+            
+            return JsonResponse({
+                "success": True,
+                "user_role": user.user_role,
+                "message": f'{user.first_name} user role has been successfully changed',
+            })
+        
+    return JsonResponse({
+        "success": False,
+        "message": "Invalid request",
+    }, status=400)
+        

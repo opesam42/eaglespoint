@@ -270,3 +270,24 @@ if (fav_icons){
         });
     });
 }
+
+function showToastNotification(notification_type, message){
+    notificationId = `toast-${notification_type}`;
+    notificationBox = document.getElementById(notificationId);
+    notificationBox.querySelector('.notification-message').innerText = message;
+    
+    notificationBox.style.display = "flex";
+    notificationBox.classList.add("fade-in");
+
+    // Auto-hide after duration
+    setTimeout(() => {
+        notificationBox.classList.remove("fade-in");
+        notificationBox.classList.add("fade-out");
+
+        // After fade out animation completes
+        setTimeout(() => {
+            notificationBox.style.display = "none";
+            notificationBox.classList.remove("fade-out");
+        }, 500);
+    }, 6000);
+}

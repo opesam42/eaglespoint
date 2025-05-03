@@ -55,7 +55,7 @@
         <!-- Content -->
         <div class="relative z-10">
             <h2 class="text-2xl font-bold mb-4" data-aos="fade-right">Are You Interested In Our Real Estate?</h2>
-            {% component "button" label="Find out More" type="primary" attr="data-aos='fade-right' data-aos-duration='900'" %} {% endcomponent %}
+            {% component "button" label="Find out More" href="{% url 'core:real_estate' %}" type="primary" attr="data-aos='fade-right' data-aos-duration='900'" %} {% endcomponent %}
         </div>
 
     </section>

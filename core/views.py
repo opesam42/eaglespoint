@@ -17,10 +17,10 @@ def error_page(request):
 
 
 def real_estate_page(request):
-    listings = Listings.objects.all().order_by('-created_at')[:6]
+    listings = Listings.objects.filter(is_listed=True).order_by('-created_at')[:6]
 
     if request.user.is_authenticated:
-        user_favourites = Listings.objects.filter(favourites__user=request.user)
+        user_favourites = Listings.objects.filter(is_listed=True, favourites__user=request.user)
     else:
         user_favourites = []
         

@@ -14,4 +14,7 @@ urlpatterns = [
     path('listing-search/', views.search_listing, name='search_listing_all'),
 
     path('listing/delete/<int:listing_id>', views.delete_listing, name="delete-listing"),
+
+    path('user/', views.user_control_page, name="user-control-page"),
+    path('user/toggle-admin/<int:user_id>', views.toggle_admin, name="toggle-admin"),
 ]

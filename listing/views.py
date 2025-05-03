@@ -24,8 +24,8 @@ def get_states_api(request):
 
 @login_required
 def favourite_listing(request):
-    listings = Listings.objects.all().order_by('-created_at')
-    user_favourites = Listings.objects.filter(favourites__user=request.user)
+    # TODO: will allow all to show irrespective of the "is_listed" state but the one with the "is_listed=False" would be made disabled
+    user_favourites = Listings.objects.filter(is_listed=True, favourites__user=request.user)
     context = {
         'listings': user_favourites,
         'user_favourites': user_favourites,
@@ -33,7 +33,7 @@ def favourite_listing(request):
     return render(request, 'listing/favourite.html', context)
 
 def search_listing(request):
-    listings = Listings.objects.all().order_by('-created_at')
+    listings = Listings.objects.filter(is_listed=True).order_by('-created_at')
     
     if request.user.is_authenticated:
         user_favourites = Listings.objects.filter(favourites__user=request.user)

@@ -3,16 +3,16 @@
 
 {% block title %}{% endblock %}
 
-{% block section_title %} Listings {% endblock %}
+{% block section_title %} Users {% endblock %}
 
 {% block content %} 
     <div>
         
     </div>
-    <div class="flex mb-6">
+    {% comment %} <div class="flex mb-6">
         {% component "button" extraclass="ml-auto" label="<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
         <span>Add Listing</span>" type="secondary" width="max" href="{% url 'adminv2:add_listing' %}" %} {% endcomponent %}
-    </div>
+    </div> {% endcomment %}
     
     
     <form class="max-w-md mx-auto mb-6">
@@ -36,64 +36,85 @@
     <div id="listing-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Title
+                <tr class="*:px-6 *:py-3">
+                    <th scope="col" class="">
+                        First Name
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Price
+                    <th scope="col" class="">
+                        Last Name
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Listing Type
+                    <th scope="col" class="">
+                        E-mail
                     </th>
-                    <th scope="col" class="px-6 py-3">
-                        Address
+                    <th scope="col" class="">
+                        Role
                     </th>
-                    <th scope="col" class="px-6 py-3">
+                    <th scope="col" class="">
+                        Join Date
+                    </th>
+                    <th scope="col">
+                        Active Status
+                    </th>
+                    <th scope="col">
+                        Admin Access
+                    </th>
+                    <th scope="col">
                         Actions
                     </th>
                 </tr>
             </thead>
             <tbody>
-                {% for result in results %}
-                <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
-                    <td class="px-6 py-4">
-                        <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
+                {% for user in users %}
+                <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
+                    <td class="">
+                        {% if user.profileImage %}
+                            <img src="{{user.profileImage.url}}" alt="{{user.firstname}} profle image"
+                        {% else %}
+                            <img src="{% static 'images/default-user.svg' %}" alt="default-profile-image"
+                        {% endif %}
+                        width="24px" class="inline-block rounded-full object-cover border-2 border-blue-600 h-6 w-6 p-0.5">
+                        
+                        <span>{{ user.first_name }}</span>
+
                     </td>
-                    <td class="px-6 py-4 title">
-                        &#8358; {{ result.price }}
+                    <td class="">
+                        {{ user.last_name }}
                     </td>
-                    <td class="px-6 py-4 capitalize">
-                        {{ result.listing_type }}
+                    <td class="">
+                        {{ user.email }}
                     </td>
-                    <td class="px-6 py-4">
-                        {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
+                    <td class=" capitalize">
+                        {{ user.user_role }}
                     </td>
-                    <td class="px-6 py-4 flex gap-2 items-center">
-                        {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
-                        <button 
-                            class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
-                            data-listing-id="{{ result.id }}"
-                            data-is-listed="{{ result.is_listed }}">Unlist
-                            {% if result.is_listed %}
-                                Unlist
+                    <td class="">
+                        {{ user.date_joined }}
+                    </td>
+                    <td class="">
+                        {{ user.is_active }}
+                    </td>
+                    <td>
+                        <label class="switch">
+                            <input type="checkbox" class="admin-toggle" onchange="change_admin_status({{user.id}})"
+                            {% if user.user_role == 'admin' %}checked{% endif %}>
+                            <span class="slider round"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <button type="button" class="w-max bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='change_admin_status({{user.id}})'>
+                            {% if user.user_role == 'admin' %}
+                                Demote
                             {% else %}
-                                List
+                                Promote to Admin
                             {% endif %}
                         </button>
-                        {% if request.user.is_superuser %}
-                            <form action="{% url 'adminv2:delete-listing' listing_id=result.id %}" method="POST">
-                                {% csrf_token %}
-                                <button type="submit">Delete</button>
-                            </form>
-                        {% endif %}
                     </td>
+                    
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-      
+    
     
 
     {% component "modal" modal_type="search_fiters" modal_title="Filters" %}
@@ -154,6 +175,29 @@
 {% block script %}
     <script>
 
+        function change_admin_status(user_id){
+            console.log(user_id)
+            url = "{% url 'adminv2:toggle-admin' 123 %}".replace("123", user_id);
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    showToastNotification('success', data.message);
+                    console.log("Status changes successfully")
+                }
+                else{
+                    console.log("Oh! oh! sth went wrong")
+                }
+            })
+            .catch(error => console.log("Error:", error))
+        }
         // function for handling the status of a listing
         function attachEventListeners(){
 
