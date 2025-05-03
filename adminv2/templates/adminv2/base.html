@@ -15,10 +15,10 @@
 
         <!-- Nav bar -->
         <nav x-cloak :class="isOpen ? 'absolute' : 'hidden'" class="w-2/3 md:max-w-56 lg:w-full lg:flex h-screen bg-white flex flex-col gap-5 p-4 lg:sticky top-0 lg:col-span-1 z-[100000]">
-            <div class="flex gap-2">
+            <a class="flex gap-2" href="{% url 'core:home' %}">
                 <img class="block w-16" src="{% static 'images/eaglespoint-logo.png' %}">
                 <!-- <span>EaglesPoint</span> -->
-            </div>
+            </a>
             <ul class="flex flex-col gap-1 h-max *:font-medium *:py-2 *px-1 *:rounded-md *:hover:bg-slate-100">
                 <li>
                     <a class="w-full flex gap-1" href="{% url 'adminv2:dashboard' %}">
@@ -94,14 +94,6 @@
     {% component "toast_notification" notification_type="warning" message="" %} {% endcomponent %}
 </body>
 
-<script>
-    AOS.init({
-        duration: 600, 
-        easing: 'ease-in-out',
-        once: true,
-        offset: 100
-    });
-</script>
 <script src="{% static 'js/helper_func.js' %}"></script>
 <script src="{% static 'js/utils.js' %}"></script>
 

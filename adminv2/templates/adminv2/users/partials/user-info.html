@@ -1,0 +1,12 @@
+{% load static %}
+<div>
+    <div>
+        {% if user.profileImage %}
+            <img src="{{user.profileImage.url}}" alt="{{user.firstname}} profle image"
+        {% else %}
+            <img src="{% static 'images/default-user.svg' %}" alt="default-profile-image"
+        {% endif %}
+        width="320px" class="inline-block object-cover border-2 border-blue-600 h-auto w-2xs p-0.5">
+    </div>
+    {{ user.first_name }}
+</div>

@@ -15,7 +15,7 @@
     </div> {% endcomment %}
     
     
-    <form class="max-w-md mx-auto mb-6">
+    {% comment %} <form class="max-w-md mx-auto mb-6">
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
         <div class="relative">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -31,9 +31,9 @@
             </button>
         </div>
     </form>
-    
+     {% endcomment %}
 
-    <div id="listing-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
+    <div id="user-list-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table class="w-full text-sm text-left text-gray-500">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr class="*:px-6 *:py-3">
@@ -49,15 +49,14 @@
                     <th scope="col" class="">
                         Role
                     </th>
-                    <th scope="col" class="">
-                        Join Date
-                    </th>
                     <th scope="col">
                         Active Status
                     </th>
+                    {% if request.user.is_superuser %}
                     <th scope="col">
                         Admin Access
                     </th>
+                    {% endif %}
                     <th scope="col">
                         Actions
                     </th>
@@ -87,11 +86,9 @@
                         {{ user.user_role }}
                     </td>
                     <td class="">
-                        {{ user.date_joined }}
-                    </td>
-                    <td class="">
                         {{ user.is_active }}
                     </td>
+                    {% if request.user.is_superuser %}
                     <td>
                         <label class="switch">
                             <input type="checkbox" class="admin-toggle" onchange="change_admin_status({{user.id}})"
@@ -99,13 +96,10 @@
                             <span class="slider round"></span>
                         </label>
                     </td>
+                    {% endif %}
                     <td>
-                        <button type="button" class="w-max bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='change_admin_status({{user.id}})'>
-                            {% if user.user_role == 'admin' %}
-                                Demote
-                            {% else %}
-                                Promote to Admin
-                            {% endif %}
+                        <button type="button" class="w-max bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 cursor-pointer" onclick='view_user_info({{user.id}})'>
+                            View Details
                         </button>
                     </td>
                     
@@ -115,7 +109,13 @@
         </table>
     </div>
     
-    
+    {% component "modal" modal_type="user_info" modal_title="User Information" %}
+        {% fill "children" %}
+        <div class="modal-body overflow-y-auto max-h-[80vh]">
+
+        </div>
+        {% endfill %}
+    {% endcomponent %}
 
     {% component "modal" modal_type="search_fiters" modal_title="Filters" %}
         {% fill "children" %}
@@ -176,7 +176,6 @@
     <script>
 
         function change_admin_status(user_id){
-            console.log(user_id)
             url = "{% url 'adminv2:toggle-admin' 123 %}".replace("123", user_id);
 
             fetch(url, {
@@ -190,14 +189,45 @@
             .then(data => {
                 if(data.success){
                     showToastNotification('success', data.message);
-                    console.log("Status changes successfully")
                 }
                 else{
+                    showToastNotification('danger', data.message)
                     console.log("Oh! oh! sth went wrong")
                 }
             })
             .catch(error => console.log("Error:", error))
         }
+
+        
+        function view_user_info(user_id){
+            url = "{% url 'adminv2:user-info' 123 %}".replace("123", user_id);
+
+            fetch(url, {
+                method: "GET",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                // since the data is a full html stuff, we need to extract the innerHTML of the body
+                let parser = new DOMParser();
+                let doc = parser.parseFromString(data, 'text/html');
+                let user_info = doc.body.innerHTML;
+                console.log(user_info);
+                let modal = document.getElementById('modal-user_info')
+
+                modal.querySelector('.modal-body').innerHTML = user_info;
+                openModal_user_info();
+                // let newListings = doc.body.innerHTML;
+                // document.getElementById('listing-container').innerHTML = newListings;
+
+            })
+            .catch(error => console.log("Error:", error))
+
+
+        }
+
         // function for handling the status of a listing
         function attachEventListeners(){
 

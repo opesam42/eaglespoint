@@ -1,5 +1,12 @@
 <div id="modal-{{ modal_type }}" class="fixed inset-0 hidden items-center justify-center bg-gray-800/80 z-[1000000]">
-    <div class="bg-white rounded-lg w-full max-w-[400px] shadow-lg mx-4">
+    <div class="bg-white rounded-lg w-full shadow-lg mx-4
+    {% if modal_type == 'user_info' %}
+        lg:w-4/5
+        h-4/5
+    {% else %}
+        max-w-[400px]
+    {% endif %}
+    ">
         <div class="flex border-b border-gray-300 px-4">
             <div class="text-xl">{{ modal_title }}</div>
             <!-- Make sure the close button's ID is unique -->
@@ -10,7 +17,7 @@
                 </svg>
             </button>
         </div>
-       
+        
         {% slot "children" %}
 
         {% endslot %}

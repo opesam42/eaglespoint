@@ -228,10 +228,14 @@ def search_listing(request, search_query=None):
         if state:
             listings = listings.filter(state__icontains=state)
         
+        # TODO add is_listed to the filter
+        # if is_listed:
+        #     listings = listings.filter(is_listed__icontains=is_listed)
+        
 
         return render(request, 'adminv2/listing/partials/listing-items.html', {
             'results': listings,
-            })
+        })
      
     
 @admin_only
@@ -246,23 +250,46 @@ def user_control_page(request):
 def toggle_admin(request, user_id):
     """ This is used to promote a user into admin or demote a user into a customer """
     user = get_object_or_404(User, pk=user_id)
-    if request.method == "POST":
+    try:
+        if request.method == "POST":
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                if user.user_role == "admin":
+                    user.user_role = "customer"
+                else:
+                    user.user_role = "admin"
+                
+                user.save()
+                
+                return JsonResponse({
+                    "success": True,
+                    "user_role": user.user_role,
+                    "message": f'{user.first_name} user role has been successfully changed',
+                })
+            
+        return JsonResponse({
+            "success": False,
+            "message": "Invalid request",
+        }, status=400)
+    
+    except User.DoesNotExist:
+        return JsonResponse({
+            "success": False,
+            "message": "User does not exist",
+        }, status=400)
+
+@admin_only
+def user_info(request, user_id):
+    """ To generate the information for a specific user. """
+    user = get_object_or_404(User, pk=user_id)
+    try:
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            if user.user_role == "admin":
-                user.user_role = "customer"
-            else:
-                user.user_role = "admin"
-            
-            user.save()
-            
-            return JsonResponse({
-                "success": True,
-                "user_role": user.user_role,
-                "message": f'{user.first_name} user role has been successfully changed',
-            })
-        
-    return JsonResponse({
-        "success": False,
-        "message": "Invalid request",
-    }, status=400)
-        
+            return render(request, 'adminv2/users/partials/user-info.html', {
+            'user': user,
+        })
+
+    except User.DoesNotExist:
+        print("User does not exist")
+        # return JsonResponse({
+        #     "success": False,
+        #     "message": "User does not exist",
+        # }, status=400)
