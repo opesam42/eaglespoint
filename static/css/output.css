@@ -102,6 +102,7 @@
       --font-mono--font-variation-settings
     );
     --font-base: 'Hanken Grotesk';
+    --font-header: 'Hanken Grotesk';
     --font-cursive: 'Architects Daughter', cursive;
   }
 }
@@ -378,14 +379,8 @@
   .z-\[100\] {
     z-index: 100;
   }
-  .z-\[200\] {
-    z-index: 200;
-  }
   .z-\[2000\] {
     z-index: 2000;
-  }
-  .z-\[100000\] {
-    z-index: 100000;
   }
   .z-\[1000000\] {
     z-index: 1000000;
@@ -1793,6 +1788,13 @@
       }
     }
   }
+  .hover\:bg-red-800 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-red-800);
+      }
+    }
+  }
   .hover\:p-0\.5 {
     &:hover {
       @media (hover: hover) {
@@ -1993,11 +1995,6 @@
       max-width: calc(var(--spacing) * 56);
     }
   }
-  .md\:grid-cols-2 {
-    @media (width >= 48rem) {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
   .md\:grid-cols-3 {
     @media (width >= 48rem) {
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2011,11 +2008,6 @@
   .md\:flex-wrap {
     @media (width >= 48rem) {
       flex-wrap: wrap;
-    }
-  }
-  .md\:items-center {
-    @media (width >= 48rem) {
-      align-items: center;
     }
   }
   .md\:justify-between {
@@ -2041,6 +2033,11 @@
   .md\:px-2 {
     @media (width >= 48rem) {
       padding-inline: calc(var(--spacing) * 2);
+    }
+  }
+  .md\:px-8 {
+    @media (width >= 48rem) {
+      padding-inline: calc(var(--spacing) * 8);
     }
   }
   .md\:py-0 {

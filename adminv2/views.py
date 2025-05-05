@@ -253,7 +253,14 @@ def toggle_admin(request, user_id):
     try:
         if request.method == "POST":
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                
                 if user.user_role == "admin":
+                    if user.is_superuser:
+                        return JsonResponse({
+                            "success": False,
+                            "user_role": user.user_role,
+                            "message": f'This user cannot be demoted',
+                        })
                     user.user_role = "customer"
                 else:
                     user.user_role = "admin"

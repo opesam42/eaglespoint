@@ -14,9 +14,15 @@
             {% endif %}
             class="object-cover border">
         </div>
+        {% if request.user.is_superuser %}
         <div class="flex flex-col items-center gap-0.5">
             <div class="text-lg font-bold"><span>{{ user.first_name }}</span> <span class="uppercase">{{ user.last_name }}</span></div>
-            <div x-text="userRole" class="capitalize font-normal">{{ user.user_role }}</div>
+            <div class="capitalize font-normal">
+                <span x-text="userRole"></span>
+                {% if user.is_superuser %}
+                    <span> / Super-Admin</span>
+                {% endif %}
+            </div>
         </div>
         <div class="flex flex-row gap-2"
             x-data="{
@@ -29,7 +35,7 @@
             }"
         >
             <button 
-                x-bind:class="isAdmin ? 'bg-red-600' : 'bg-blue-600'"
+                x-bind:class="isAdmin ? 'bg-red-600 hover:bg-red-800' : 'bg-blue-600 hover:bg-blue-800'"
                 @click ="changeAdminStatus"
                 class="text-white px-3 py-3 rounded-md cursor-pointer"
                 :disabled="isLoading">
@@ -39,6 +45,7 @@
             </button>
             <!-- <button class="bg-red-600 text-white px-3 py-3 rounded-md">Block User</button> -->
         </div>
+        {% endif %}
     </section>
 
     <section class="grid grid-cols-1 sm:grid-cols-2 gap-y-3 gap-x-5 *:flex *:flex-col *:gap-0.5">
