@@ -12,11 +12,18 @@
             {% else %}
                 <img src="{% static 'images/default-user.svg' %}" alt="default-profile-image"
             {% endif %}
-            class="object-cover border">
+            class="object-cover border w-full">
         </div>
         {% if request.user.is_superuser %}
         <div class="flex flex-col items-center gap-0.5">
             <div class="text-lg font-bold"><span>{{ user.first_name }}</span> <span class="uppercase">{{ user.last_name }}</span></div>
+            <div>
+                {% if user.is_active == True %}
+                    <div class="bg-green-100 text-green-600 p-1.5 rounded-md w-max">Active</div>
+                {% else %}
+                    <div class="bg-red-100 text-red-600 p-1.5 rounded-md w-max">Inactive</div>
+                {% endif %}
+            </div>
             <div class="capitalize font-normal">
                 <span x-text="userRole"></span>
                 {% if user.is_superuser %}

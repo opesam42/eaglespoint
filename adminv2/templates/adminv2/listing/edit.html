@@ -253,7 +253,7 @@
                 window.location.href = "{% url 'adminv2:listing' %}";
                 console.log(data)
             }) 
-            .catch(error => console.log('Updatate failed', error))
+            .catch(error => console.log('Update failed', error))
             .finally(() => {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;

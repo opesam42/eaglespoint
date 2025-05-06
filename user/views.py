@@ -17,6 +17,7 @@ from django.views.generic import TemplateView
 from django.contrib.auth.forms import SetPasswordForm
 from django.contrib.auth.tokens import default_token_generator
 from .tokens import email_verification_token
+from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
 from .utils import send_verification_email, is_user_active
 
 User = get_user_model()
@@ -213,30 +214,41 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
             }, status=400)
         return super().form_invalid(form)
 
+@login_required
+def user_settings(request):
+    return render(request, 'user/settings.html')
 
+@login_required
+def update_profile(request):
+    if request.method == "POST" and request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        user = request.user
+    
+        user.first_name = request.POST.get('first_name')
+        user.last_name = request.POST.get('last_name')
+        user.phone_number = request.POST.get('phone_number')
 
-""" 
-# for reseting password
-class CustomPasswordResetConfirmView(TemplateView):
-    template_name = 'user/password_reset_confirm.html'
+        if 'profileImage' in request.FILES:
+            old_profile_image = user.profileImage
+            if old_profile_image:
+                    # to delete the file
+                    try:
+                        backblaze = BackBlazeAPI()
+                        backblaze.delete_files_with_prefix(old_profile_image.name)
+                    except Exception as e:
+                        print(f'Backblaze error: {e}')
+                    
+            user.profileImage = request.FILES['profileImage']
 
-    def post(self, request, *args, **kwargs):
-        uidb64 = kwargs.get('uidb64')
-        token = kwargs.get('token')
-        try:
-            # Decode the user ID from the uidb64
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = get_user_model().objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return JsonResponse({'error': 'Invalid link'}, status=400)
+        user.save()
+        # user.profileImage = data.get('profileImage')
 
-        # Validate token
-        if not default_token_generator.check_token(user, token):
-            return JsonResponse({'error': 'Invalid token'}, status=400)
-
-        form = SetPasswordForm(user, request.POST)
-        if form.is_valid():
-            form.save()
-            return JsonResponse({'success': 'Password reset successfully!'})
-        else:
-            return JsonResponse({'error': form.errors}, status=400) """
+        return JsonResponse({
+            'success': True,
+            'message': 'Profile successfully updated',
+        })
+    
+    else:
+        return JsonResponse({
+            'success': False,
+            'message': 'Invalid Request',
+        })

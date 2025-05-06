@@ -170,3 +170,4 @@ class BackBlazeAPI:
         
         for file in files:
             self.delete_file(file['fileId'], file['fileName'])
+            print(f'Deleted {file['fileName']}')

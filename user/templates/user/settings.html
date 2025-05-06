@@ -1,0 +1,137 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block content %}
+<div x-data="{ isOpen:false }" class="wrapper relative grid grid-cols-1 lg:grid-cols-4 bg-slate-200 lg:p-4">
+    <!-- Nav bar -->
+    <nav x-cloak :class="isOpen ? 'absolute' : 'hidden'" class="w-2/3 md:max-w-56 lg:w-full lg:flex h-screen bg-white flex flex-col gap-5 p-4 lg:sticky top-0 lg:col-span-1 z-[90]">
+        <ul class="flex flex-col gap-1 h-max *:font-medium *:py-2 *px-1 *:rounded-md *:hover:bg-slate-100">
+            <li>
+                <a class="w-full flex gap-1" href="{% url 'user:settings' %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M234-276q51-39 114-61.5T480-360q69 0 132 22.5T726-276q35-41 54.5-93T800-480q0-133-93.5-226.5T480-800q-133 0-226.5 93.5T160-480q0 59 19.5 111t54.5 93Zm246-164q-59 0-99.5-40.5T340-580q0-59 40.5-99.5T480-720q59 0 99.5 40.5T620-580q0 59-40.5 99.5T480-440Zm0 360q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q53 0 100-15.5t86-44.5q-39-29-86-44.5T480-280q-53 0-100 15.5T294-220q39 29 86 44.5T480-160Zm0-360q26 0 43-17t17-43q0-26-17-43t-43-17q-26 0-43 17t-17 43q0 26 17 43t43 17Zm0-60Zm0 360Z"/></svg>
+                    <span>Account</span>
+                </a>
+        </li>
+            <li><a class="w-full flex gap-1 " href="{% url 'user:settings' %}">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M880-720v480q0 33-23.5 56.5T800-160H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720Zm-720 80h640v-80H160v80Zm0 160v240h640v-240H160Zm0 240v-480 480Z"/></svg>
+                <span>Payments</span></a>
+            </li> 
+           
+
+            <li class="mt-auto">  
+                <form method="POST" action="{% url 'user:logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="flex gap-1 text-red-500 text-left py-2 w-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M212.31-140Q182-140 161-161q-21-21-21-51.31v-535.38Q140-778 161-799q21-21 51.31-21h268.07v60H212.31q-4.62 0-8.46 3.85-3.85 3.84-3.85 8.46v535.38q0 4.62 3.85 8.46 3.84 3.85 8.46 3.85h268.07v60H212.31Zm436.92-169.23-41.54-43.39L705.08-450H363.85v-60h341.23l-97.39-97.38 41.54-43.39L820-480 649.23-309.23Z"/></svg> 
+                        <span>Logout</span></button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="lg:col-span-3 px-4">
+        <form method="post" enctype="multipart/form-data" onsubmit="submitForm(event)" class="max-w-2xl" action="{% url 'user:update-profile' %}">
+            <div class="flex flex-col md:flex-row items-center gap-y-2 gap-x-3 mb-4">
+                <div class="relative w-28 h-28 bg-blue-100 rounded-full overflow-hidden border-2 border-gray-300">
+
+                    <img id="profile-photo" {% if user.profileImage %} src="{{request.user.profileImage.url}}" alt="{{user.firstname}} profle image" {% else %} src="{% static 'images/default-user.svg' %}" alt="default-profile-image" {% endif %} class="object-cover border w-full">
+                </div>
+                <div>
+                    <input type="file" id="id_profileImage" name="profileImage" accept="image/*" class="hidden" value="{{user.profileImage}}">
+                    <label for="id_profileImage" class="inline-block text-sm px-4 py-2 border border-gray-600 font-semibold rounded-md cursor-pointer hover:bg-white transition">Replace</label>
+                </div>
+            </div>
+            
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 lg:gap-y-4">
+                
+                <div>
+                    <label for="id_first_name" class="label-primary">First Name</label>
+                    <input class="input-primary" type="text" name="first_name" value="{{ request.user.first_name }}" maxlength="150" id="id_first_name" required {% if autofocus %}autofocus{% endif %}>
+                </div>
+        
+                <div>
+                    <label for="id_last_name" class="label-primary">Last Name</label>
+                    <input class="input-primary" type="text" name="last_name" value="{{ request.user.last_name }}" maxlength="150" id="id_last_name" required>
+                </div>
+    
+                <div>
+                    <label for="id_last_name" class="label-primary">Email</label>
+                    <input class="input-primary disabled:bg-gray-400" type="email" name="last_name" value="{{ request.user.email }}" maxlength="150" id="id_email" disabled>
+                </div>
+    
+                <div>
+                    <label for="id_last_name" class="label-primary">Phone</label>
+                    <input class="input-primary" type="tel" name="phone_number" value="{{ request.user.phone_number }}" maxlength="150" id="id_phone_number">
+                </div>
+            
+            </div>
+            <div class="my-3 w-full flex justify-end">
+                {% component "button" html_tag="button" label="Update Details" type="primary" width="max" function="submit"  %} {% endcomponent %}
+            </div>
+        </form>
+    </div>
+    
+
+</div>
+{% endblock %}
+
+{% block script %}
+<script>
+    console.log(document.getElementById('toast-success'))
+
+    document.getElementById('id_profileImage').addEventListener('change', function(event) {
+        console.log("Image have being changed")
+        const file = event.target.files[0];
+        console.log("File", file)
+        if (file && file.type.startsWith('image/')) {
+            const blobUrl = URL.createObjectURL(file);
+            console.log('blob has beingcreated')
+            document.getElementById('profile-photo').src = blobUrl;
+        } else {
+            alert('Please upload a valid image file.');
+        }
+    });
+
+    function prepareFormData(form){
+        formData = new FormData(form);
+        console.log(...formData);
+
+        return formData
+    }
+
+        function submitForm(event){
+            event.preventDefault();
+            const form = event.target;
+            console.log(form);
+            const formData = prepareFormData(form);
+
+            const submitBtn = form.querySelector('button[type="submit"]');
+            originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Saving Changes...`;
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": getCsrfToken(),
+                },
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){showToastNotification('success', data.message);}
+                else{showToastNotification('danger', data.message);}
+            })
+            .catch(error => {
+                console.log('Profile update failed', error)
+                showToastNotification('danger', error)
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            })
+        }
+</script>
+{% endblock %}
