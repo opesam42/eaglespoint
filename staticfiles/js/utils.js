@@ -9,7 +9,7 @@ function getCsrfToken() {
     return csrfToken;
 }
 
-
+// for forget password
 async function handlePasswordReset(event) {
     event.preventDefault();
 
@@ -158,7 +158,9 @@ async function handleLogin(event){
                 return;
             }
             if(result.message == "Invalid login details"){
-                errorMessageContainer.innerHTML = "Invalid login details. Check your email and password";
+                message = "Invalid login details. Check your email and password"
+                showToastNotification('danger', message);
+                errorMessageContainer.innerHTML = message;
             }
 
             errorMessageContainer.innerHTML = result.message;
@@ -168,23 +170,76 @@ async function handleLogin(event){
         
         // if successful
         errorMessageContainer.classList.add("hidden");
-        console.log(result.next_url)
+        showToastNotification('success', result.message)
         if(result.next_url == null){
             window.location.reload();
         }else{
             window.location.href = result.next_url
         }
-        console.log(result.message);
-        console.log(result.next_url);
 
     } catch(error){
         console.error("Error:", error);
+        showToastNotification('error', error);
     } finally{
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
     }
 }
 
+
+// for direct password reset while user is in session
+function handleResetPassword(event){
+    event.preventDefault();
+    form = event.target;
+
+    old_password = form.querySelector('[name="old_password"]').value;
+    new_password = form.querySelector('[name="new_password"]').value;
+    new_password2 = form.querySelector('[name="new_password2"]').value;
+
+    if(old_password == new_password){
+        message = "Your new password must be different from the current password."
+        console.log(message);
+        showToastNotification('warning', message);
+        return;
+    }
+    if(new_password != new_password2){
+        message = 'The new passwords you entered do not match. Please try again.';
+        console.log(message);
+        showToastNotification('warning', message);
+        return;
+    }
+
+    formData = new FormData(form)
+    const submitBtn = form.querySelector('button[type="submit"]');
+    originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Resetting your password...`;
+    submitBtn.disabled = true;
+
+    fetch(form.action, {
+        method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCsrfToken(),
+        },
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){showToastNotification('success', data.message);}
+        else{showToastNotification('danger', data.message);}
+    })
+    .catch(error => {
+        console.error("Reset Password failed", error);
+        showToastNotification('danger', error);
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    })
+
+}
+    
+    
 async function fetchLGAs(state){
     try{
         const response = await fetch( "/listing/get-states/" );

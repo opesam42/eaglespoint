@@ -73,13 +73,15 @@ def user_login(request):
     Handles user authentication and login.
     """
     domain_name = request.get_host() 
+    full_url = None
     next_url = request.GET.get('next', '') #2nd arg is fallback if their is no next
+    print("Next_url", next_url)
     if next_url == '/user/logout':
-        next_url = 'core:home' 
-    if not next_url:
-        full_url = None
-    else:
-        full_url = f"{request.scheme}://{domain_name}{reverse(next_url)}"
+        next_url = reverse('core:home')
+
+    if next_url:
+        full_url = f"{request.scheme}://{domain_name}{next_url}"
+        request.session['full_url'] = full_url
 
     if request.user.is_authenticated:
         return redirect('core:home') #redirect if login
@@ -95,9 +97,14 @@ def user_login(request):
             user = authenticate(request, email=email, password=password)
             
             
-            if user: 
-                print(user)             
+            if user:         
                 login(request, user)
+                full_url = request.session.get('full_url')
+                print(full_url)
+
+                if 'full_url' in request.session:
+                    del request.session['full_url']
+
                 return JsonResponse({'message': 'Login successful', 'next_url': full_url}, status=200)
 
             user = User.objects.filter(email=email).first()
@@ -129,8 +136,6 @@ def user_login(request):
     return render(request, 'user/login.html', {'form':form, 'next':next_url})
 
 
-
-@login_required
 def logout_view(request):
     logout(request)
     return redirect('core:home')
@@ -256,6 +261,7 @@ def update_profile(request):
             'message': 'Invalid Request',
         })
 
+
 @login_required
 @require_POST
 def reset_password(request):
@@ -294,6 +300,7 @@ def reset_password(request):
             }, status=400)
 
         user.set_password(new_password)
+        user.save()
         # TODO: add email to be sent after password change
         update_session_auth_hash(request, user) #keep the user login after changing password
 

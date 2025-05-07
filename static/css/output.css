@@ -104,6 +104,7 @@
       --font-mono--font-variation-settings
     );
     --font-base: 'Hanken Grotesk';
+    --font-header: 'Hanken Grotesk';
     --font-cursive: 'Architects Daughter', cursive;
   }
 }
@@ -385,6 +386,9 @@
   }
   .z-\[1000000\] {
     z-index: 1000000;
+  }
+  .z-\[200000000\] {
+    z-index: 200000000;
   }
   .order-1 {
     order: 1;
@@ -2080,6 +2084,11 @@
   .md\:px-2 {
     @media (width >= 48rem) {
       padding-inline: calc(var(--spacing) * 2);
+    }
+  }
+  .md\:px-8 {
+    @media (width >= 48rem) {
+      padding-inline: calc(var(--spacing) * 8);
     }
   }
   .md\:py-0 {

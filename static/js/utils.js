@@ -158,7 +158,9 @@ async function handleLogin(event){
                 return;
             }
             if(result.message == "Invalid login details"){
-                errorMessageContainer.innerHTML = "Invalid login details. Check your email and password";
+                message = "Invalid login details. Check your email and password"
+                showToastNotification('danger', message);
+                errorMessageContainer.innerHTML = message;
             }
 
             errorMessageContainer.innerHTML = result.message;
@@ -168,17 +170,16 @@ async function handleLogin(event){
         
         // if successful
         errorMessageContainer.classList.add("hidden");
-        console.log(result.next_url)
+        showToastNotification('success', result.message)
         if(result.next_url == null){
             window.location.reload();
         }else{
             window.location.href = result.next_url
         }
-        console.log(result.message);
-        console.log(result.next_url);
 
     } catch(error){
         console.error("Error:", error);
+        showToastNotification('error', error);
     } finally{
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalText;
