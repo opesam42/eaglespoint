@@ -13,6 +13,7 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('settings/', views.user_settings, name='settings'),
     path('update-profile/', views.update_profile, name='update-profile'),
+    path('reset-password', views.reset_password, name='reset-password'),
     path('activate/<uidb64>/<token>', views.activate_account, name='activate'),
     path('resend-activation/<uid>', views.resend_activation_token, name='resend_activation'),
 

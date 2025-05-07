@@ -19,6 +19,9 @@ from django.contrib.auth.tokens import default_token_generator
 from .tokens import email_verification_token
 from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
 from .utils import send_verification_email, is_user_active
+from django.views.decorators.http import require_POST
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import update_session_auth_hash
 
 User = get_user_model()
 
@@ -252,3 +255,47 @@ def update_profile(request):
             'success': False,
             'message': 'Invalid Request',
         })
+
+@login_required
+@require_POST
+def reset_password(request):
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        new_password2 = request.POST.get('new_password2')
+
+        user = request.user
+
+        if not user.check_password(old_password):
+            return JsonResponse({
+                'success': False,
+                'message': 'Old password is incorrect',
+            }, status=400)
+        
+
+        if old_password == new_password:
+            return JsonResponse({
+                'success': False,
+                'message': "Your new password must be different from the current password."
+            })
+
+        if new_password != new_password2:
+            return JsonResponse({
+                'success': False,
+                'message': 'The new passwords you entered do not match. Please try again.',
+            }, status=400)
+        
+        try:
+            validate_password(new_password, user)
+        except ValidationError as e:
+            return JsonResponse({
+                'success': False,
+                'message': e.messages,
+            }, status=400)
+
+        user.set_password(new_password)
+        # TODO: add email to be sent after password change
+        update_session_auth_hash(request, user) #keep the user login after changing password
+
+        return JsonResponse({'success': True, 'message': 'Password successfully updated.'})
+

@@ -64,6 +64,8 @@
     --text-xl--line-height: calc(1.75 / 1.25);
     --text-2xl: 1.5rem;
     --text-2xl--line-height: calc(2 / 1.5);
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: calc(2.25 / 1.875);
     --text-4xl: 2.25rem;
     --text-4xl--line-height: calc(2.5 / 2.25);
     --text-5xl: 3rem;
@@ -102,7 +104,6 @@
       --font-mono--font-variation-settings
     );
     --font-base: 'Hanken Grotesk';
-    --font-header: 'Hanken Grotesk';
     --font-cursive: 'Architects Daughter', cursive;
   }
 }
@@ -402,9 +403,6 @@
   }
   .-mx-1\.5 {
     margin-inline: calc(var(--spacing) * -1.5);
-  }
-  .mx-2 {
-    margin-inline: calc(var(--spacing) * 2);
   }
   .mx-4 {
     margin-inline: calc(var(--spacing) * 4);
@@ -763,9 +761,6 @@
   .items-center {
     align-items: center;
   }
-  .items-end {
-    align-items: flex-end;
-  }
   .items-start {
     align-items: flex-start;
   }
@@ -856,6 +851,9 @@
   }
   .gap-y-6 {
     row-gap: calc(var(--spacing) * 6);
+  }
+  .self-end {
+    align-self: flex-end;
   }
   .self-start {
     align-self: flex-start;
@@ -1225,6 +1223,10 @@
   .text-2xl {
     font-size: var(--text-2xl);
     line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
   }
   .text-4xl {
     font-size: var(--text-4xl);
@@ -1635,6 +1637,17 @@
       border-radius: var(--radius-xl);
     }
   }
+  .\*\:border-b {
+    :is(& > *) {
+      border-bottom-style: var(--tw-border-style);
+      border-bottom-width: 1px;
+    }
+  }
+  .\*\:border-gray-300 {
+    :is(& > *) {
+      border-color: var(--color-gray-300);
+    }
+  }
   .\*\:bg-white {
     :is(& > *) {
       background-color: var(--color-white);
@@ -1678,6 +1691,11 @@
   .\*\:py-6 {
     :is(& > *) {
       padding-block: calc(var(--spacing) * 6);
+    }
+  }
+  .\*\:py-7 {
+    :is(& > *) {
+      padding-block: calc(var(--spacing) * 7);
     }
   }
   .\*\:pl-2 {
@@ -1958,11 +1976,6 @@
       outline-offset: 0px;
     }
   }
-  .disabled\:bg-gray-200 {
-    &:disabled {
-      background-color: var(--color-gray-200);
-    }
-  }
   .disabled\:bg-gray-400 {
     &:disabled {
       background-color: var(--color-gray-400);
@@ -2067,11 +2080,6 @@
   .md\:px-2 {
     @media (width >= 48rem) {
       padding-inline: calc(var(--spacing) * 2);
-    }
-  }
-  .md\:px-8 {
-    @media (width >= 48rem) {
-      padding-inline: calc(var(--spacing) * 8);
     }
   }
   .md\:py-0 {
