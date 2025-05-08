@@ -56,6 +56,7 @@ class Listings(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_listed = models.BooleanField(default=True)
     keywords = models.TextField(max_length=200, blank=True, null=True) #for seo purposes
+    slug = models.CharField(max_length=60, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Listings"
