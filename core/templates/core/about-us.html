@@ -1,7 +1,12 @@
 {% extends 'core/base.html'%}
 {% load static %}
 
-{% block title %} About Us - Eaglespoint Horizon Limited {% endblock %}
+{% block title %} About Us | Eaglespoint Horizon Limited {% endblock %}
+{% block meta_description %} Learn more about Eaglespoint Horizon Limited—your trusted experts in real estate, travel, and international education. With over 8 years of experience and 200+ happy clients, we turn global dreams into reality. {% endblock %}
+{% block meta_keywords %}About Eaglespoint, real estate Nigeria, travel consulting, education consulting, study abroad, trusted real estate agency, travel agency, global education, Eaglespoint Horizon Limited, client-focused services, Nigeria property experts{% endblock %}
+{% block og_title%} About Us | Eaglespoint Horizon Limited {% endblock %}
+{% block og_description %} About Eaglespoint, real estate Nigeria, travel consulting, education consulting, study abroad, trusted real estate agency, travel agency, global education, Eaglespoint Horizon Limited, client-focused services, Nigeria property experts {% endblock %}
+{% block og_image %} {{ request.scheme }}://{{ request.get_host }}{% static 'images/staff.jpg' %} {% endblock %}
 
 {% block content %}
     <section class="responsive-padding pt-12">

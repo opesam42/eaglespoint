@@ -6,10 +6,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %} Eaglespoint Horizon Limited {% endblock %}</title>
+    
+    <!-- Favicon and Manifest -->
+    <link rel="icon" type="image/png" href="{% static 'images/favicons/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/favicons/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" href="{% static 'images/favicons/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicons/android-chrome-192x192.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'images/favicons/android-chrome-512x512.png' %}">
+    <link rel="manifest" href="{% static 'images/favicons/site.webmanifest' %}">
+    <link rel="shortcut icon" href="{% static 'images/favicons/favicon.ico' %}">
+
+    <meta name="description" content="{% block meta_description %} 
+    Explore global opportunities with Eaglespoint Horizon Limited—your trusted partner in real estate, travel, and international education. From university admissions and scholarships to visa processing, flight booking, and property services, we help you study, work, or travel abroad seamlessly. 
+    {% endblock %}">
+
+    <meta name="keywords" content="{% block meta_keywords %}
+    Eaglespoint Horizon Limited, study abroad, international education, work visa, permanent residence, flight booking, visa processing, hotel reservation, real estate in Nigeria, scholarships, SAT coaching, IELTS preparation, TOEFL tutoring, global travel services, university admission, flexible learning, relocation assistance, property services, travel consulting, education consulting
+    {% endblock %}">
+
+    <!-- Open Graphh Tags -->
+    <meta property="og:title" content="{% block og_title%} Eaglespoint Horizon Limited | Real Estate, Travel & International Education Experts {% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Start your global journey with Eaglespoint—trusted advisors in real estate, international education, and travel services. Get expert help with university admissions, visa processing, and property investments. {% endblock %}">  
+    <meta property="og:image" content="{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/eaglespoint-logo.png' %}{% endblock %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Eaglespoint Horizon Limited">
+    <!-- TODO add Robot Tag on final deployment -->
 
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/> -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

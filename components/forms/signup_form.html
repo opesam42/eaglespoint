@@ -1,7 +1,8 @@
 <form method="POST"
       {% if not is_js_submission %} action="{% url 'user:register' %}" {% endif %}
       {% if is_js_submission %} onsubmit="handleSignUp(event)" {% endif %}
-      class="{{ form_class }}">
+      class="{{ form_class }}"
+      x-data="{ password_show: false }">
       
     {% csrf_token %}
     
@@ -33,12 +34,15 @@
 
         <div>
             <label for="id_password1" class="label-primary">Password</label>
-            <input class="input-primary" type="password" name="password1" autocomplete="new-password" required id="id_password1">
+            <input class="input-primary":type="password_show ? 'text' : 'password'" name="password1" autocomplete="new-password" required id="id_password1">
         </div>
 
         <div>
             <label for="id_password2" class="label-primary">Confirm Password</label>
-            <input class="input-primary" type="password" name="password2" autocomplete="new-password" required id="id_password2">
+            <input class="input-primary":type="password_show ? 'text' : 'password'" name="password2" autocomplete="new-password" required id="id_password2">
+        </div>
+        <div class="flex justify-end">
+            <button class="text-gray-400 text-sm hover:underline" type="button" @click="password_show = !password_show" x-text="password_show ? 'Hide Password' : 'Show Password'"></button>
         </div>
 
         {% component "button" html_tag="button" label="Register" type="primary" width="full" function="submit" %} {% endcomponent %}

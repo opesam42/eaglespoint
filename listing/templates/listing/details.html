@@ -3,6 +3,10 @@
 {% load humanize %}
 
 {% block title %} {{listing.title}} {% endblock %}
+{% block meta_description%} {{listing.description|striptags|truncatechars:160}} {% endblock %}
+{% block og_title%} {{listing.title}} {% endblock %}
+{% block og_description %} {{listing.description|striptags|truncatechars:160}} {% endblock %}
+{% block og_image %}{{listing.cover_image.url}}{% endblock %}
 
 {% block content %}
     <main class="responsive-padding grid grid-cols-1 lg:grid-cols-3 gap-8 xl:gap-16 mt-9">
