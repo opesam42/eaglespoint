@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = 'django-insecure-fr85#p0^htm)3g+wm8@^f@7_l-z#sb1(uw42hv-33fsfma$aab'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app', '*']
 
@@ -220,8 +220,8 @@ STORAGES = {
         "BACKEND": (
             "django.contrib.staticfiles.storage.StaticFilesStorage"
             if DEBUG
-            # else "whitenoise.storage.CompressedManifestStaticFilesStorage"
-            else "django.contrib.staticfiles.storage.StaticFilesStorage"
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            # else "django.contrib.staticfiles.storage.StaticFilesStorage"
         ),
     },
 }
