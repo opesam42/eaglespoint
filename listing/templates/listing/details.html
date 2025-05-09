@@ -4,6 +4,9 @@
 
 {% block title %} {{listing.title}} {% endblock %}
 {% block meta_description%} {{listing.description|striptags|truncatechars:160}} {% endblock %}
+{% if listing.keywords %}
+    {% block meta_keywords %} {{listing.keywords}} {% endblock %}
+{% endif %}
 {% block og_title%} {{listing.title}} {% endblock %}
 {% block og_description %} {{listing.description|striptags|truncatechars:160}} {% endblock %}
 {% block og_image %}{{listing.cover_image.url}}{% endblock %}

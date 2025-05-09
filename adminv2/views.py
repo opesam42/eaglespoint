@@ -79,7 +79,7 @@ def add_listing(request):
 
             return JsonResponse({
                 "success": True, 
-                "message": "Listing added successfully!",
+                "message": "Property added successfully!",
                 "listing_id": listing.id,
             })
         
@@ -172,7 +172,7 @@ def edit_listing(request, property_id):
                 
 
             # return redirect('adminv2:listing')
-            return JsonResponse({"message": "Listing updated successfully"})
+            return JsonResponse({"success": True, "message": "Property updated successfully"})
         
         else:
             return JsonResponse({"error": "Form is invalid", "errors": form.errors}, status=400)

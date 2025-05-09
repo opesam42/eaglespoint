@@ -98,13 +98,14 @@ def search_listing(request):
     return render(request, 'listing/search.html', context)
 
 
-def listing_details(request, property_id):
-    property = get_object_or_404(Listings, id=property_id)
-    property_images = ListingImages.objects.filter(listing_id=property_id).values()
+def get_listing_context(request, property):
+    property_images = ListingImages.objects.filter(listing_id=property.id).values()
     features = property.features.all()
-    property_url = request.build_absolute_uri(
-        reverse('listing:property_details', kwargs={'property_id': property.id})
-    )
+
+    property_url = reverse('core:property_details_by_slug', kwargs={'slug': property.slug})
+    full_url = property_url if property.slug else reverse('core:property_details_by_id', kwargs={'property_id': property.id})
+    full_url = request.build_absolute_uri(full_url)
+
     whatsapp_message = (
         f"Good day Eaglespoint, I am interested in the following property:\n"
         f"*{property.title}*\n"
@@ -137,7 +138,7 @@ def listing_details(request, property_id):
         signed_image_urls.append(image_url)
 
 
-    context = {
+    return {
         'listing': property,
         'listing_images': signed_image_urls,
         'features': features,
@@ -145,6 +146,17 @@ def listing_details(request, property_id):
         'whatsapp_link': whatsapp_link,
     }
 
+   
+def listing_details_by_id(request, property_id):
+    property = get_object_or_404(Listings, id=property_id)
+    if property.slug:
+        return redirect('core:property_details_by_slug', slug=property.slug)
+    context = get_listing_context(request, property)
+    return render(request, "listing/details.html", context)
+
+def listing_details_by_slug(request, slug):
+    property = get_object_or_404(Listings, slug=slug)
+    context = get_listing_context(request, property)
     return render(request, "listing/details.html", context)
 
 

@@ -75,7 +75,7 @@
             </div>
 
             <div>
-                <label for="id_lga" class="label-primary" x-show="lgas.length">LGA</label>
+                <label for="id_lga" class="label-primary">LGA</label>
                 <select class="input-primary" type="text" name="lga" required id="id_lga">
                     <option value="" selected>Select LGA</option>
                 </select>
@@ -86,17 +86,19 @@
                 <input x-ref="fileInput" class="input-primary" type="file" id="id_images" name="multiple_images[]" accept="image/*" multiple @change="handleFileUpload($event, $data)"> 
                 
                 {% comment %} image preview start {% endcomment %}
-                <template x-for="(image,index) in images" :key="index">
-                    <div class="relative mt-2 h-32 w-32 rounded-sm">
-                        <img :src="image" class="w-32 h-32 object-cover mt-2 border">
-                        <button @click="removeImage(index, $data)" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                </template>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="(image,index) in images" :key="index">
+                        <div class="relative mt-2 h-32 w-32 rounded-sm">
+                            <img :src="image" class="w-32 h-32 object-cover mt-2 border">
+                            <button @click="removeImage(index, $data)" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                    </template>
+                </div>
                 {% comment %} image preview end {% endcomment %}
             </div>
 
@@ -111,9 +113,18 @@
                     {% endfor %}
                 </div>
             </div>
+{% comment %} 
+            <div>
+                <label for="id_slug" class="label-primary">Slug</label>
+                <input class="input-primary" type="text" name="slug" maxlength="60" required id="id_slug" value="{% if listing.slug %}{{ listing.slug }}{% else %}{% endif %}">
+            </div>
+             {% endcomment %}
+            <div>
+                <label for="id_keyword" class="label-primary">Keywords</label>
+                <textarea class="input-primary" type="text" name="keywords" maxlength="60" required id="id_keywords">{% if listing.keywords %}{{ listing.keywords }}{% else %}{% endif %}</textarea>
+            </div>
 
-            <a onclick="prepareFormData()">hello</a>
-            {% comment %} submit btn {% endcomment %}
+            {% comment %} <a onclick="prepareFormData()">hello</a> {% endcomment %}
             {% component "button" html_tag="button" label="Edit Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
         </div>
     </form>
@@ -250,8 +261,13 @@
             })
             .then(response => response.json())
             .then(data => {
-                window.location.href = "{% url 'adminv2:listing' %}";
-                console.log(data)
+                if(data.success){
+                    showToastNotification('success', data.message)
+                    window.location.href = "{% url 'adminv2:listing' %}";
+                } else{
+                    showToastNotification('warning', "Something went wrong")
+                }
+                
             }) 
             .catch(error => console.log('Update failed', error))
             .finally(() => {

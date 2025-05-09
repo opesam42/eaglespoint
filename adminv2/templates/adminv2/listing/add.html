@@ -75,7 +75,7 @@
             </div>
 
             <div>
-                <label for="id_lga" class="label-primary" x-show="lgas.length">LGA</label>
+                <label for="id_lga" class="label-primary">LGA</label>
                 <select class="input-primary" type="text" name="lga" required id="id_lga">
                     <option value="" selected>Select LGA</option>
                 </select>
@@ -86,18 +86,20 @@
                 <input x-ref="fileInput" class="input-primary" type="file" id="id_images" name="multiple_images[]" accept="image/*" multiple @change="handleFileUpload($event, $data)"> 
                 
                 {% comment %} image preview {% endcomment %}
-                <template x-for="(image,index) in images" :key="index">
-                    <div class="relative mt-2 h-32 w-32 rounded-sm">
-                        <img :src="image" class="w-32 h-32 object-cover mt-2 border">
-                        <button @click="removeImage(index, $data)" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                        </button>
-                    </div>
-                    
-                </template>
+                <div class="flex flex-wrap gap-2">
+                    <template x-for="(image,index) in images" :key="index">
+                        <div class="relative mt-2 h-32 w-32 rounded-sm">
+                            <img :src="image" class="w-32 h-32 object-cover mt-2 border">
+                            <button @click="removeImage(index, $data)" class="absolute top-0 right-0 block mt-2 px-1 py-1 text-white bg-black/50 rounded-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        
+                    </template>
+                </div>
             <div>
                 <label class="label-primary">Select Features:</label>
                 <div class="flex flex-wrap gap-2">
@@ -108,8 +110,19 @@
                         </label>
                     {% endfor %}
                 </div>
-                <a onclick="test()">hello</a>
             </div>
+{% comment %} 
+            <div>
+                <label for="id_slug" class="label-primary">Slug</label>
+                <input class="input-primary" type="text" name="slug" maxlength="60" required id="id_slug" value="{{ listing.street_address }}">
+            </div>
+ {% endcomment %}
+            <div>
+                <label for="id_keyword" class="label-primary">Keywords</label>
+                <textarea class="input-primary" type="text" name="keywords" maxlength="60" required id="id_keywords"></textarea>
+            </div>
+                {% comment %} <a onclick="test()">hello</a> {% endcomment %}
+        </div>
 
                 
             {% component "button" html_tag="button" label="Add Listing" type="primary" width="full" function="submit" %} {% endcomponent %}
@@ -199,10 +212,14 @@
             })
             .then(response => response.json())
             .then(data =>{
-                //console.log(data['listing_id']);
-                url = `/listing/property/${data.listing_id}/`
-                //console.log(url)
-                window.location.href = url;
+                if(data.success){
+                    showToastNotification('success', data.message)
+                    url = `/property/${data.listing_id}/`
+                    //console.log(url)
+                    window.location.href = url;
+                } else{
+                    showToastNotification('warning', "Something went wrong")
+                }
                 
             })
             .catch(error => console.log('Upload failed', error))

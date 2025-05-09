@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from utils.choices import STATE_CHOICES, LISTING_TYPE
+from django.utils.text import slugify
 
 # Create your models here.
 def listing_images_directory_path(instance, filename):
@@ -56,10 +57,21 @@ class Listings(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_listed = models.BooleanField(default=True)
     keywords = models.TextField(max_length=200, blank=True, null=True) #for seo purposes
-    slug = models.CharField(max_length=60, blank=True, null=True)
+    slug = models.CharField(max_length=60, unique=True, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Listings"
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            num = 1
+            while Listings.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{num}"
+                num += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.listing_type} - {self.title}" 

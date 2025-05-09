@@ -47,7 +47,11 @@
             display: none !important;
         }
         body {
-             visibility: hidden; 
+             opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        body.visible {
+            opacity: 1;
         }
         #page-loader {
             transition: opacity 0.3s ease;
@@ -58,12 +62,12 @@
 </head>
 <body class='font-base text-gray-900' x-data="{ openLoginModal: false }" x-init="
         $nextTick(() => {
-            document.body.style.visibility = 'visible';
+            document.body.classList.add('visible');
             document.getElementById('page-loader')?.remove();
         })
     ">
 
-    <div id="page-loader" class="fixed inset-0 flex items-center justify-center bg-white z-[10000000]">
+    <div id="page-loader" class="fixed inset-0 flex items-center justify-center bg-red-600 z-[10000000]">
         <img src="{% static 'images/eaglespoint-logo.png' %}" alt="Loading..." class="w-24 h-auto animate-pulse">
     </div>
 

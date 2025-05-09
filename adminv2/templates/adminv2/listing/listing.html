@@ -58,7 +58,7 @@
                 {% for result in results %}
                 <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
                     <td class="px-6 py-4">
-                        <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
+                        <a href="{% url 'core:property_details_by_id' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
                     </td>
                     <td class="px-6 py-4 title">
                         &#8358; {{ result.price }}
