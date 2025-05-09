@@ -109,7 +109,7 @@ def get_listing_context(request, property):
     whatsapp_message = (
         f"Good day Eaglespoint, I am interested in the following property:\n"
         f"*{property.title}*\n"
-        f"Link: {property_url}\n"
+        f"Link: {full_url}\n"
         f"Please provide more details. Thank you!"
     )
     encoded_message = quote(whatsapp_message)
