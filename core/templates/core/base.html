@@ -33,7 +33,10 @@
     <meta property="og:site_name" content="Eaglespoint Horizon Limited">
     <!-- TODO add Robot Tag on final deployment -->
 
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     {% comment %} <link rel="stylesheet" href="C:/Users/user/Documents/web-project/eaglespoint/eaglespoint/static/css/output.css"> {% endcomment %}
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -50,7 +53,7 @@
             
             <!-- Logo Section -->
             <a href="{% url 'core:home' %}" class="block ml-4 md:ml-8 lg:ml-20" id="logo">
-                <img src="{% static 'images/eaglespoint-logo.png' %}" width="32px" class="w-16" alt="EaglesPoint Logo" />
+                <img src="{% static 'images/eaglespoint-logo.png' %}" width="32" class="w-16" alt="EaglesPoint Logo" />
             </a>
     
             <!-- Search Bar -->
@@ -92,9 +95,9 @@
                         <!-- Trigger (User Icon) -->
                          <div class="flex gap-1 items-center" @click="open = !open">
                             {% if user.profileImage %}
-                                <img src="{{user.profileImage.url}}" alt="{{user.firstname}}" width="24px" class="rounded-full object-cover border-2 border-blue-600 h-6 w-6 p-0.5">
+                                <img src="{{user.profileImage.url}}" alt="{{user.firstname}}" width="24" class="rounded-full object-cover border-2 border-blue-600 h-6 w-6 p-0.5">
                             {% else %}
-                                <img src="{% static 'images/default-user.svg' %}" class="rounded-full border-2 border-blue-600 hover:p-0.5" width="24px">
+                                <img src="{% static 'images/default-user.svg' %}" class="rounded-full border-2 border-blue-600 hover:p-0.5" width="24">
                             {% endif %}
                             <div class="lg:hidden flex justify-between w-full">
                                 <span>Profile</span>
@@ -144,7 +147,7 @@
     
     <footer class="bg-slate-100 responsive-padding py-12 mt-28 flex flex-col gap-8">
         <div class="flex flex-col gap-2">
-            <img src="{% static 'images/eaglespoint-logo.png' %}" width="72px"> 
+            <img src="{% static 'images/eaglespoint-logo.png' %}" width="72"> 
             <p>Your trusted partner in real estate, travel, and education consulting.</p>
             <hr class="border-t border-gray-300 my-4">
         </div>
@@ -229,6 +232,7 @@
     {% component "toast_notification" notification_type="danger" message="" %} {% endcomponent %}
     {% component "toast_notification" notification_type="warning" message="" %} {% endcomponent %}
     
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
     <script src="{% static 'js/helper_func.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
     <script>
