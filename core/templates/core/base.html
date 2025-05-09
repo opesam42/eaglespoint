@@ -237,6 +237,9 @@
     <script src="{% static 'js/utils.js' %}"></script>
     <script>
         AOS.init({
+            disable: function () {
+                return window.innerWidth < 768; // Disable AOS if screen width is less than Tailwind's md breakpoint
+            },
             duration: 600, 
             easing: 'ease-in-out',
             once: true,
