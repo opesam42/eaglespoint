@@ -874,6 +874,9 @@
   .overflow-x-auto {
     overflow-x: auto;
   }
+  .overflow-x-clip {
+    overflow-x: clip;
+  }
   .overflow-x-hidden {
     overflow-x: hidden;
   }
