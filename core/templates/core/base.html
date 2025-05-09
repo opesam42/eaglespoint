@@ -38,15 +38,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    {% comment %} <link rel="stylesheet" href="C:/Users/user/Documents/web-project/eaglespoint/eaglespoint/static/css/output.css"> {% endcomment %}
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+        body {
+             visibility: hidden; 
+        }
+        #page-loader {
+            transition: opacity 0.3s ease;
+        }
+    </style>
     {% block styleblock %} {% endblock %}
 
 </head>
-<body class='font-base text-gray-900' x-data="{ openLoginModal: false }">
+<body class='font-base text-gray-900' x-data="{ openLoginModal: false }" x-init="
+        $nextTick(() => {
+            document.body.style.visibility = 'visible';
+            document.getElementById('page-loader')?.remove();
+        })
+    ">
+
+    <div id="page-loader" class="fixed inset-0 flex items-center justify-center bg-white z-[10000000]">
+        <img src="{% static 'images/eaglespoint-logo.png' %}" alt="Loading..." class="w-24 h-auto animate-pulse">
+    </div>
 
     <header x-data="{ isOpen:false }" class="w-full bg-white border-gray-200 py-2.5 sticky top-0 z-30 drop-shadow-md">
         <div id="headerWrapper" class="relative flex gap-6 items-center justify-between mx-auto">
