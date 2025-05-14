@@ -6,8 +6,11 @@
 {% block content %}
 <main class="mt-9 responsive-padding">   
     <div class="flex justify-between flex-wrap">
-        <h2 class="text-2xl font-bold">Search Results for '<span class="font-semibold italic">{{search_query}}</span>'</h2>
-        {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="submit" extraclass="px-4 py-1" attr="onclick='openModal_search_fiters()'" %} {% endcomponent %}
+        {% if search_query %}
+            <h2 class="text-2xl font-bold">Search Results for '<span class="font-semibold italic">{{search_query}}</span>'</h2>
+        {% endif %}
+        {% comment %} TODO- add the number of search returned {% endcomment %}
+        {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="submit" extraclass="px-4 py-1 ml-auto" attr="onclick='openModal_search_fiters()'" %} {% endcomponent %}
     </div>
 
         <div id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">    

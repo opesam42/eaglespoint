@@ -17,17 +17,47 @@
 
 {% block content %}
 <main class="flex flex-col gap-20 overflow-x-clip">
-    <section class="hero responsive-padding bg-blue-800 flex flex-col justify-center gap-6 lg:gap-9 py-3 lg:py-20 lg:px-60">
-        <h1 class="text-white text-5xl lg:text-6xl text-center font-extrabold">Want a Property? Get One!</h1>
-        <div>
-            <!-- Search Bar -->
-            <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex items-stretch w-full h-10 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
-                <input type="search" name="search_query" aria-label="Search" class="block w-full px-4 py-2 focus:outline-none" 
-                       placeholder="Search Location or Properties">
-                <button class="bg-blue-600 text-white h-full p-2 rounded-r-lg"><i class="fa fa-search fa-lg"></i></button>
-            </form>
-        </div>
-    </section>
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-y-20">
+        <section class="lg:col-span-4 hero responsive-padding relative bg-blue-800 bg-no-repeat bg-center bg-cover flex flex-col justify-center gap-12 lg:gap-9 py-10 lg:py-20 lg:px-60" style="background-image: url({% static 'images/house-duplex.jpg' %});">
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-blue-800/30"></div> 
+
+            <h1 class="relative text-white text-5xl lg:text-6xl text-center font-extrabold">Want a Property? Get One!</h1>
+            <div class="relative">
+                <!-- Search Bar -->
+                <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex flex-col gap-3">
+                    <div class="flex gap-2">
+                        {% for value, label in listing_types %}
+                            <div> 
+                                <input type="radio" name="listing_type" class="hidden peer" value="{{value}}" id="{{value}}" {% if value == 'buy' %}checked{% endif %}>
+                                <label for="{{value}}" class="text-white text-sm border-2 border-white px-3 py-1.5 rounded cursor-pointer peer-checked:bg-red-500 peer-checked:border-red-500">{{label}}</label>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <div class="flex items-stretch w-full h-10 md:h-14 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
+                        <input type="search" name="search_query" aria-label="Search" class="block w-full px-4 py-2 focus:outline-none" 
+                        placeholder="Search Location or Properties">
+                        <button class="bg-blue-600 text-white h-full p-2 md:px-5 rounded-r-lg"><i class="fa fa-search fa-lg"></i></button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="lg:col-span-1 relative flex items-center bg-cover bg-center text-white py-4 lg:py-10 px-4 md:px-8" 
+        style="background-image: url('{% static 'images/airplane.jpg' %}');">
+        
+            <!-- Overlay -->
+            <div class="absolute inset-0 bg-red-500/70"></div> 
+
+            <!-- Content -->
+            <div class="relative z-10">
+                <h2 class="text-2xl font-bold mb-4">Interested in Travels or Study Abroad?</h2>
+                {% component "button" label="Find out More" href="{% url 'core:home'%}" type="primary" %} {% endcomponent %}
+            </div>
+
+        </section>
+    </div>
 
     <!-- Stats and Partner Section -->
     {% component "stats_partner" %} {% endcomponent %}
@@ -35,17 +65,17 @@
     {% if listings %}
         <section class="flex flex-col gap-6 responsive-padding">
             <h3 class="text-4xl font-semibold">Featured Listings</h3>
-            <div class="relative">
+            <div class="relative scroll-wrapper">
 
                 <!-- Arrow Buttons (Visible on Desktop) -->
-                <button class="hidden md:block absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListLeft()">
+                <button class="hidden md:block absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListLeft(this)">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                 </button>
-                <button class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListRight()">
+                <button class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListRight(this)">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
 
-                <div id="listingScroll" class="w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
+                <div class="listingScroll w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
                     {% for result in listings %}
                         {% component "listing_card" 
                             title=result.title 
@@ -62,21 +92,132 @@
                         {% endcomponent %}
                     {% endfor %}
 
-                    <div>
-                        <a class="flex flex-col justify-center items-center h-full rounded-lg border-2 border-blue-500 bg-gray-200" href="{% url 'listing:search_listing' %}">
-                            <div class="p-1.5 rounded-sm bg-gray-700 shadow">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" viewBox="0 -960 960 960" fill="#ffffff"><path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/></svg>
-                            </div>
-                            
-                            <p class="font-semibold">Start searching!</p>
-
-                        </a>
-                    </div>
                 </div>
             </div>
         </section>
     {% endif %}
     
+    {% if land_listings %}
+        <section class="flex flex-col gap-6 responsive-padding">
+            <div class="flex justify-between">
+                <h3 class="text-4xl font-semibold">Land for Sale</h3>
+                <a class="primary-btn w-max btn hidden lg:flex" href="{% url 'listing:land_listings'%}">View More Properties</a>
+            </div>
+
+            <div class="relative scroll-wrapper">
+
+                <!-- Arrow Buttons (Visible on Desktop) -->
+                <button class="hidden md:block absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListLeft(this)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListRight(this)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <div class="listingScroll w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
+                    {% for result in land_listings %}
+                        {% component "listing_card" 
+                            title=result.title 
+                            href="{% url 'core:property_details_by_id' result.id %}" 
+                            price=result.price 
+                            size=result.size 
+                            type=result.listing_type 
+                            imageUrl=result.cover_image.url 
+                            address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+                            listing=result
+                            id=result.pk 
+                            user_favourites=user_favourites 
+                        %}
+                        {% endcomponent %}
+                    {% endfor %}
+
+                </div>
+            </div>
+            <a class="primary-btn w-max btn self-center lg:hidden" href="{% url 'listing:land_listings'%}">View More Properties</a>
+        </section>
+    {% endif %}
+
+
+    {% if houses_for_sale %}
+        <section class="flex flex-col gap-6 responsive-padding">
+            <div class="flex justify-between">
+                <h3 class="text-4xl font-semibold">Properties for Sale</h3>
+                <a class="primary-btn w-max btn hidden lg:flex" href="{% url 'listing:properties_for_sale'%}" type="primary">View More Properties</a>
+            </div>
+
+            <div class="relative scroll-wrapper">
+
+                <!-- Arrow Buttons (Visible on Desktop) -->
+                <button class="hidden md:block absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListLeft(this)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListRight(this)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <div class="listingScroll w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
+                    {% for result in houses_for_sale %}
+                        {% component "listing_card" 
+                            title=result.title 
+                            href="{% url 'core:property_details_by_id' result.id %}" 
+                            price=result.price 
+                            size=result.size 
+                            type=result.listing_type 
+                            imageUrl=result.cover_image.url 
+                            address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+                            listing=result
+                            id=result.pk 
+                            user_favourites=user_favourites 
+                        %}
+                        {% endcomponent %}
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <a class="primary-btn w-max btn self-center lg:hidden" href="{% url 'listing:properties_for_sale'%}" type="primary">View More Properties</a>
+        </section>
+    {% endif %}
+
+    {% if houses_for_rent %}
+        <section class="flex flex-col gap-6 responsive-padding">
+            <div class="flex justify-between">
+                <h3 class="text-4xl font-semibold">Properties Available For Rent</h3>
+                <a class="primary-btn w-max btn hidden lg:flex" href="{% url 'listing:properties_for_rent'%}" type="primary">View More Properties</a>
+            </div>
+
+            <div class="relative scroll-wrapper">
+
+                <!-- Arrow Buttons (Visible on Desktop) -->
+                <button class="hidden md:block absolute -left-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListLeft(this)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <button class="hidden md:block absolute -right-6 top-1/2 transform -translate-y-1/2 bg-white border border-red-500 p-2 rounded-full shadow-md z-10 cursor-pointer hover:bg-gray-200" type="button" onclick="scrollListRight(this)">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+
+                <div class="listingScroll w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
+                    {% for result in houses_for_rent %}
+                        {% component "listing_card" 
+                            title=result.title 
+                            href="{% url 'core:property_details_by_id' result.id %}" 
+                            price=result.price 
+                            size=result.size 
+                            type=result.listing_type 
+                            imageUrl=result.cover_image.url 
+                            address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+                            listing=result
+                            id=result.pk 
+                            user_favourites=user_favourites 
+                        %}
+                        {% endcomponent %}
+                    {% endfor %}
+
+                </div>
+            </div>
+            <a class="primary-btn w-max btn self-center lg:hidden" href="{% url 'listing:properties_for_rent'%}">View More Properties</a>
+        </section>
+    {% endif %}
 
     <section class="py-8 responsive-padding" data-aos="fade-up">
         <h3 class="text-4xl font-semibold mb-6">Popular Cities</h3>
@@ -157,20 +298,6 @@
         </div>
         <img src="{% static 'images/8f8b116b79ed25b75ae82abf0a2e31a6.jpeg' %}" class="w-full lg:max-w-96 h-auto max-h-64 lg:h-full object-cover">
     </section>
-
-    <section class="relative bg-cover bg-center text-white py-4 lg:py-10 responsive-padding" 
-    style="background-image: url('{% static 'images/airplane.jpg' %}');">
-    
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-red-500/70"></div> 
-
-        <!-- Content -->
-        <div class="relative z-10">
-            <h2 class="text-2xl font-bold mb-4">Interested in Travels or Study Abroad?</h2>
-            {% component "button" label="Find out More" href="{% url 'core:home'%}" type="primary" %} {% endcomponent %}
-        </div>
-
-    </section>
 </main>
 
     
@@ -183,18 +310,19 @@
             Alpine.store('modal').openLoginModal = true;
         }
 
-        const listingScrollList = document.getElementById('listingScroll');
-        scrollDistance = (listingScrollList.clientWidth) / 2;
-        function scrollListLeft(){
-            listingScrollList.scrollBy({left: -scrollDistance, behavior: 'smooth'});
-            console.log(listingScrollList)
-            console.log("Scroll left clicked")
+
+        function scrollListLeft(button) {
+            const closessRelative = button.closest('.scroll-wrapper')
+            const scrollContainer = closessRelative.querySelector('.listingScroll') 
+            const scrollDistance = scrollContainer.clientWidth / 2;
+            scrollContainer.scrollBy({ left: -scrollDistance, behavior: 'smooth' });
         }
-        function scrollListRight(){
-            listingScrollList.scrollBy({left: scrollDistance, behavior: 'smooth'});
-            // listingScrollList.scrollBy(singleScroll, 0);
-            // console.log( listingScrollList.clientWidth )
-            console.log("Scroll right clicked")
+
+        function scrollListRight(button) {
+            const closessRelative = button.closest('.scroll-wrapper')
+            const scrollContainer = closessRelative.querySelector('.listingScroll') 
+            const scrollDistance = scrollContainer.clientWidth / 2;
+            scrollContainer.scrollBy({ left: scrollDistance, behavior: 'smooth' });
         }
 
         

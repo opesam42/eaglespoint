@@ -32,7 +32,7 @@ def favourite_listing(request):
         }
     return render(request, 'listing/favourite.html', context)
 
-def search_listing(request):
+def search_listing(request, default_listing_type = None):
     listings = Listings.objects.filter(is_listed=True).order_by('-created_at')
     
     if request.user.is_authenticated:
@@ -50,7 +50,7 @@ def search_listing(request):
         listings = listings.filter(query)
 
     #handle filters
-    listing_type = request.GET.get('listing_type', '')
+    listing_type = request.GET.get('listing_type', '') or default_listing_type
     min_price = request.GET.get('min_price', '')
     max_price = request.GET.get('max_price', '')
     lga = request.GET.get('lga', '')

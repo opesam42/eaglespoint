@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from listing.models import Listings
+from utils.choices import LISTING_TYPE
 
 # Create your views here.
 def home(request):
@@ -17,7 +18,11 @@ def error_page(request):
 
 
 def real_estate_page(request):
-    listings = Listings.objects.filter(is_listed=True).order_by('-created_at')[:6]
+    all_listings = Listings.objects.filter(is_listed=True).order_by('-created_at')
+    latest_listings = all_listings[:6]
+    land_listings = all_listings.filter(listing_type='land')[:6]
+    houses_for_sale = all_listings.filter(listing_type='buy')[:6]
+    houses_for_rent = all_listings.filter(listing_type='rent')[:6]
 
     if request.user.is_authenticated:
         user_favourites = Listings.objects.filter(is_listed=True, favourites__user=request.user)
@@ -25,8 +30,12 @@ def real_estate_page(request):
         user_favourites = []
         
     context = {
-        'listings': listings,
+        'listings': latest_listings,
+        'listing_types': LISTING_TYPE,
         'user_favourites': user_favourites,
+        'land_listings': land_listings,
+        'houses_for_sale': houses_for_sale,
+        'houses_for_rent': houses_for_rent,
     }
 
     return render(request, 'core/real_estate.html', context)
