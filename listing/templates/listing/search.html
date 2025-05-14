@@ -12,27 +12,91 @@
         {% comment %} TODO- add the number of search returned {% endcomment %}
         {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="submit" extraclass="px-4 py-1 ml-auto" attr="onclick='openModal_search_fiters()'" %} {% endcomponent %}
     </div>
+        
+    <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" x-data="{ priceModalOpen: false }">
+        <div class="flex gap-2 overflow-x-scroll snap-x snap-mandatory scrollbar-hide">
+            <section>
+                <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search">
+                <h5 class="font-bold">Type</h5>
+                <select name="listing_type" class="block input-primary w-max">
+                    <option value="">Any</option>
+                    <option value="buy" {% if listing_type == 'buy' %}selected{% endif %}>Buy</option>
+                    <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Rent</option>
+                    <option value="land" {% if listing_type == 'land' %}selected{% endif %}>Land</option>
+                </select>
+            </section>
 
-        <div id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">    
-        {% if results %}
-            {% for result in results %}
-                {% component "listing_card" 
-                    title=result.title 
-                    href="{% url 'core:property_details_by_id' result.id %}" 
-                    price=result.price 
-                    size=result.size 
-                    type=result.listing_type 
-                    imageUrl=result.cover_image.url 
-                    address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
-                    listing=result 
-                    id=result.pk 
-                    user_favourites=user_favourites 
-                %}
-                {% endcomponent %}            
-            {% endfor %}
-        {% else %}
-            <p>No search result... </p>
-        {% endif %}
+            <!-- for states -->
+            <section>
+                <label for="state_location" class="font-bold">State</label>
+                <select id="state_location" name="state" class="appearance-none block w-max px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer">
+                    <option value="">Any</option>
+                    {% for state in nigeria_states %}
+                        <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
+                    {% endfor %}
+                </select>
+            </section>
+
+            <!-- for price -->
+            <section x-cloak  class="relative">
+                <label for="state_location" class="font-bold" @click="priceModalOpen = !priceModalOpen">Price</label>
+                <div class="appearance-none block w-full px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer" @click="priceModalOpen = !priceModalOpen">
+                    Price
+                </div>
+            </section>
+ 
+             <!-- for states -->
+            <section>
+                <label for="state_location" class="font-bold">State</label>
+                <select id="state_location" name="state" class="appearance-none block w-full px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer">
+                    <option value="">Any</option>
+                    {% for state in nigeria_states %}
+                        <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
+                    {% endfor %}
+                </select>
+            </section>
+
+
+             <!-- for states -->
+            <section>
+                <label for="state_location" class="font-bold">State</label>
+                <select id="state_location" name="state" class="appearance-none block w-full px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer">
+                    <option value="">Any</option>
+                    {% for state in nigeria_states %}
+                        <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
+                    {% endfor %}
+                </select>
+            </section>
+        </div>
+        
+        <!--price dropdown-->
+        <div x-show="priceModalOpen" @click.away="priceModalOpen = false" x-transition class="w-[200px] flex flex-col gap-2 absolute mt-2 left-10 z-20 bg-white border border-gray-300 rounded-md shadow-lg py-2 px-4">
+            <div>
+                <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
+                    <span class="px-2 block">&#8358;</span>
+                    <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="min_price" value="{{ min_price }}">
+                </div>
+                <label class="label-primary" for="min_price">Min:</label>
+            </div>
+            <div>
+                <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
+                    <span class="px-2 block">&#8358;</span>
+                    
+                    <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="max_price" value="{{ max_price }}">
+                </div>
+                <label class="label-primary" for="min_price">Max:</label>
+            </div>
+        </div>
+    </form>
+
+    <div x-data="{loading: true}" id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">    
+        <template x-if="loading">
+            <template x-for="i in 6" :key="i">
+                <!-- Listing Skeleton -->
+                {% component "listing_skeleton" %} {% endcomponent %}
+            </template>
+        </template>
+
     </div>
 
     {% if results.has_next %}
@@ -74,10 +138,7 @@
                     </div>
                 </div>
             </section>
-
-
-                    
-                    
+                        
             <!-- for states -->
             <section>
                 <div class="flex flex-col gap-2">
@@ -104,6 +165,36 @@
 {% block script %}
 <script>
 
+    window.addEventListener('DOMContentLoaded', () => {
+        fetchListings();
+        console.log('hello')
+    });
+
+    function fetchListings(page = 1) {
+        const container = document.getElementById('listing-container');
+        const params = new URLSearchParams(window.location.search)
+        params.set('page', page)
+        fetch(`?${params.toString()}`, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const listingsHtml = doc.body.innerHTML;
+            container.innerHTML = listingsHtml;
+
+            // Move load-more button if it exists
+            const loadMoreContainer = document.getElementById('load-more-container');
+            if (loadMoreContainer) {
+                container.after(loadMoreContainer);
+            }
+        });
+    }
+
     // for loading more listings instead of traditional previous and next button
     document.getElementById('load-more').addEventListener('click', function() {
         let nextPage = this.getAttribute('data-next-page');
@@ -113,7 +204,9 @@
         
         this.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Loading...`;
 
-        fetch(`?page=${nextPage}`, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+        const params = new URLSearchParams(window.location.search)
+        params.set('page', nextPage)
+        fetch(`?${params.toString()}`, { headers: { "X-Requested-With": "XMLHttpRequest" } })
             .then(response => response.text())
             .then(data => {
                 // since the data is a full html stuff, we need to extract the innerHTML of the body

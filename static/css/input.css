@@ -88,6 +88,15 @@
       display: none;
     }
 
+    input[type='number']::-webkit-outer-spin-button, input[type='number']::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    input[type='number'] {
+      -moz-appearance: textfield; /* Firefox */
+    }
+
     [x-cloak] {
       @apply hidden;
     }
@@ -105,6 +114,14 @@
       display: none;
     }
     .scrollbar-none {
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+    .scrollbar-hide {
       -ms-overflow-style: none; /* IE and Edge */
       scrollbar-width: none; /* Firefox */
     }

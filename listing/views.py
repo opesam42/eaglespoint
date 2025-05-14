@@ -77,8 +77,10 @@ def search_listing(request, default_listing_type = None):
     
     #handle ajax request
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        
         return render(request, 'listing/partials/listing-items.html', {
             'results': listings,
+            'user_favourites': user_favourites,
             'has_next': listings.has_next(),
             'next_page': listings.next_page_number() if listings.has_next() else None,
             })
