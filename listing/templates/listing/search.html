@@ -13,12 +13,13 @@
         {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="submit" extraclass="px-4 py-1 ml-auto" attr="onclick='openModal_search_fiters()'" %} {% endcomponent %}
     </div>
         
-    <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" x-data="{ priceModalOpen: false }">
-        <div class="flex gap-2 overflow-x-scroll snap-x snap-mandatory scrollbar-hide">
+    <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" x-data="{ priceModalOpen: false }" onsubmit="handleLiveSearch(event)">
+        <div class="flex gap-2 overflow-x-scroll snap-x snap-mandatory scrollbar-hide p-2">
+
             <section>
                 <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search">
-                <h5 class="font-bold">Type</h5>
-                <select name="listing_type" class="block input-primary w-max">
+                <label for="listing_type" class="font-bold hidden">Type</label>
+                <select id="listing_type" name="listing_type" class="block w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1  focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer">
                     <option value="">Any</option>
                     <option value="buy" {% if listing_type == 'buy' %}selected{% endif %}>Buy</option>
                     <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Rent</option>
@@ -28,9 +29,9 @@
 
             <!-- for states -->
             <section>
-                <label for="state_location" class="font-bold">State</label>
-                <select id="state_location" name="state" class="appearance-none block w-max px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer">
-                    <option value="">Any</option>
+                <label for="state_location" class="font-bold hidden">State</label>
+                <select id="state_location" name="state" class="block w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1  focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer">
+                    <option value="">All States</option>
                     {% for state in nigeria_states %}
                         <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
                     {% endfor %}
@@ -39,34 +40,13 @@
 
             <!-- for price -->
             <section x-cloak  class="relative">
-                <label for="state_location" class="font-bold" @click="priceModalOpen = !priceModalOpen">Price</label>
-                <div class="appearance-none block w-full px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer" @click="priceModalOpen = !priceModalOpen">
+                <label for="state_location" class="font-bold hidden" @click="priceModalOpen = !priceModalOpen">Price</label>
+                <button id="price_button" class="block w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" @click="priceModalOpen = !priceModalOpen" type="button">
                     Price
-                </div>
-            </section>
- 
-             <!-- for states -->
-            <section>
-                <label for="state_location" class="font-bold">State</label>
-                <select id="state_location" name="state" class="appearance-none block w-full px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer">
-                    <option value="">Any</option>
-                    {% for state in nigeria_states %}
-                        <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
-                    {% endfor %}
-                </select>
+                </button>
             </section>
 
-
-             <!-- for states -->
-            <section>
-                <label for="state_location" class="font-bold">State</label>
-                <select id="state_location" name="state" class="appearance-none block w-full px-4 py-2 border border-blue-500 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-700 cursor-pointer">
-                    <option value="">Any</option>
-                    {% for state in nigeria_states %}
-                        <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
-                    {% endfor %}
-                </select>
-            </section>
+            <button type="submit" class="px-4 py-1 rounded-2xl btn primary-btn">Apply Filters</button>
         </div>
         
         <!--price dropdown-->
@@ -89,15 +69,23 @@
         </div>
     </form>
 
-    <div x-data="{loading: true}" id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">    
-        <template x-if="loading">
+    <div id="listing-wrapper" x-data="{loading: true}">
+        <div x-show="loading" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {% for i in "123456" %}
+                {% component "listing_skeleton" %} {% endcomponent %}
+            {% endfor %}
+        </div>
+        <div x-show="!loading" id="listing-container" class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">    
+        
+        <!-- <template x-show="loading">
             <template x-for="i in 6" :key="i">
-                <!-- Listing Skeleton -->
+                
                 {% component "listing_skeleton" %} {% endcomponent %}
             </template>
-        </template>
-
+        </template> -->
     </div>
+    </div>
+    
 
     {% if results.has_next %}
         <div id="load-more-container" class="mt-7 flex flex-col items-center">
@@ -112,7 +100,7 @@
 
     {% component "modal" modal_type="search_fiters" modal_title="Filters" %}
         {% fill "children" %}
-        <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" class="p-4 flex flex-col gap-2" x-data>
+        <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" class="p-4 flex flex-col gap-2">
             <section>
                 <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search">
                 <h5 class="font-bold">Type</h5>
@@ -167,11 +155,50 @@
 
     window.addEventListener('DOMContentLoaded', () => {
         fetchListings();
-        console.log('hello')
+        highlightActiveFilters()
     });
 
+    const search_query = document.querySelector('input[name="search_query"]');
+    const listing_type_input = document.getElementById('listing_type');
+    const state_location = document.getElementById('state_location')
+    const price_btn = document.getElementById('price_button');
+    const min_price_input = document.querySelector('input[name="min_price"]');
+    const max_price_input = document.querySelector('input[name="max_price"]');
+    const filterInputs = [listing_type_input, state_location, min_price_input, max_price_input];
+
+    filterInputs.forEach(input => {
+        input.addEventListener('change', highlightActiveFilters);
+    });
+
+    function highlightActiveFilters(){
+        const highlightClasses = ["ring-2", "ring-red-400", "border-0"];
+
+        console.log(listing_type_input.value)
+        if(listing_type_input.value){
+            listing_type_input.classList.add(...highlightClasses);
+        } else{
+            listing_type_input.classList.remove(...highlightClasses)
+        }
+
+        if(state_location.value){
+            state_location.classList.add(...highlightClasses);
+        } else{
+            state_location.classList.remove(...highlightClasses)
+        }
+
+        
+        if(min_price_input.value != "" || max_price_input.value != ""){
+            price_btn.classList.add(...highlightClasses);
+        } else{
+            price_btn.classList.remove(...highlightClasses)
+        }
+
+    }
+
     function fetchListings(page = 1) {
-        const container = document.getElementById('listing-container');
+        const listingContainer = document.getElementById('listing-container');
+        const listingWrapper = document.getElementById('listing-wrapper')        
+        
         const params = new URLSearchParams(window.location.search)
         params.set('page', page)
         fetch(`?${params.toString()}`, {
@@ -185,13 +212,69 @@
             const doc = parser.parseFromString(html, 'text/html');
 
             const listingsHtml = doc.body.innerHTML;
-            container.innerHTML = listingsHtml;
+            listingContainer.innerHTML += listingsHtml;
+
+            // Move load-more button if it exists
+            const loadMoreContainer = document.getElementById('load-more-container');
+            if (loadMoreContainer) {
+                listingContainer.after(loadMoreContainer);
+            }
+
+            // Remove loading skeleton
+            Alpine.nextTick(() => {
+                alpineListingData = Alpine.$data(listingWrapper);
+                if (alpineListingData) {
+                    alpineListingData.loading = false;
+                }
+            });
+
+        });
+    }
+
+    function handleLiveSearch(e){
+        e.preventDefault();
+        const listingContainer = document.getElementById('listing-container');
+        const listingWrapper = document.getElementById('listing-wrapper');
+        alpineListingData = Alpine.$data(listingWrapper);
+        console.log(alpineListingData.loading)
+        alpineListingData.loading = true;
+        
+
+        let params = new URLSearchParams({
+            search_query: search_query.value,
+            listing_type: listing_type_input.value,
+            min_price: min_price_input.value,
+            max_price: max_price_input.value,
+            state: state_location.value,  
+        });
+
+        console.log("params", params)
+
+        fetch(`?${params.toString()}`, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const listingsHtml = doc.body.innerHTML;
+            listingContainer.innerHTML = listingsHtml;
 
             // Move load-more button if it exists
             const loadMoreContainer = document.getElementById('load-more-container');
             if (loadMoreContainer) {
                 container.after(loadMoreContainer);
             }
+
+            // Remove loading skeleton
+            Alpine.nextTick(() => {
+                alpineListingData = Alpine.$data(listingWrapper);
+                if (alpineListingData) {
+                    alpineListingData.loading = false;
+                }
+            });
         });
     }
 
