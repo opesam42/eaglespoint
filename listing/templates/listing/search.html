@@ -9,64 +9,132 @@
         {% if search_query %}
             <h2 class="text-2xl font-bold">Search Results for '<span class="font-semibold italic">{{search_query}}</span>'</h2>
         {% endif %}
-        {% comment %} TODO- add the number of search returned {% endcomment %}
-        {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="submit" extraclass="px-4 py-1 ml-auto" attr="onclick='openModal_search_fiters()'" %} {% endcomponent %}
     </div>
         
     <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" x-data="{ priceModalOpen: false }" onsubmit="handleLiveSearch(event)">
-        <div class="flex gap-2 overflow-x-scroll snap-x snap-mandatory scrollbar-hide p-2">
+        <div class="flex gap-2 items-end overflow-x-scroll snap-x snap-mandatory scrollbar-hide p-2">
 
-            <section>
-                <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search">
-                <label for="listing_type" class="font-bold hidden">Type</label>
-                <select id="listing_type" name="listing_type" class="block w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1  focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer">
-                    <option value="">Any</option>
-                    <option value="buy" {% if listing_type == 'buy' %}selected{% endif %}>Buy</option>
-                    <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Rent</option>
-                    <option value="land" {% if listing_type == 'land' %}selected{% endif %}>Land</option>
-                </select>
-            </section>
+            <button id="sort_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_sort_modal()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                <span> Sort</span></button>
 
-            <!-- for states -->
-            <section>
-                <label for="state_location" class="font-bold hidden">State</label>
-                <select id="state_location" name="state" class="block w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1  focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer">
-                    <option value="">All States</option>
-                    {% for state in nigeria_states %}
-                        <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
-                    {% endfor %}
-                </select>
-            </section>
+            <button id="property_type_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_property_type_modal()">Property Type</button>
 
-            <!-- for price -->
-            <section x-cloak  class="relative">
-                <label for="state_location" class="font-bold hidden" @click="priceModalOpen = !priceModalOpen">Price</label>
-                <button id="price_button" class="block w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" @click="priceModalOpen = !priceModalOpen" type="button">
-                    Price
-                </button>
-            </section>
+            <button id="price_range_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_price_modal()">Price</button>
+
+            <button id="location_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_location_modal()">Location</button>
 
             <button type="submit" class="px-4 py-1 rounded-2xl btn primary-btn">Apply Filters</button>
         </div>
         
-        <!--price dropdown-->
-        <div x-show="priceModalOpen" @click.away="priceModalOpen = false" x-transition class="w-[200px] flex flex-col gap-2 absolute mt-2 left-10 z-20 bg-white border border-gray-300 rounded-md shadow-lg py-2 px-4">
-            <div>
-                <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
-                    <span class="px-2 block">&#8358;</span>
-                    <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="min_price" value="{{ min_price }}">
+
+        <!-- SORT FILTER MODAL -->
+        {% component "modal" modal_type="sort_modal" modal_title="Sort by" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="block">
+                            <input type="radio" name="sort" value="" {% if selected_sort == '' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Any
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="sort" value="date_desc" {% if selected_sort == 'date_desc' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Newest
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="sort" value="date_asc" {% if selected_sort == 'date_asc' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Oldest
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="sort" value="price_desc" {% if selected_sort == 'price_desc' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Price (High to Low)
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="sort" value="price_asc" {% if selected_sort == 'price_asc' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Price (Low to High)
+                        </label>
+                    </div>
+
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
                 </div>
-                <label class="label-primary" for="min_price">Min:</label>
-            </div>
-            <div>
-                <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
-                    <span class="px-2 block">&#8358;</span>
-                    
-                    <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="max_price" value="{{ max_price }}">
+            {% endfill %}
+        {% endcomponent %}
+
+        <!-- PRICE TYPE FILTER MODAL -->
+        {% component "modal" modal_type="price_modal" modal_title="Price Range" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="gap-2">
+                        <div>
+                            <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
+                                <span class="px-2 block">&#8358;</span>
+                                <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="min_price" value="{{ min_price }}">
+                            </div>
+                            <label class="label-primary" for="min_price">Min:</label>
+                        </div>
+                        <div>
+                            <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
+                                <span class="px-2 block">&#8358;</span>
+                                
+                                <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="max_price" value="{{ max_price }}">
+                            </div>
+                            <label class="label-primary" for="min_price">Max:</label>
+                        </div>
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
                 </div>
-                <label class="label-primary" for="min_price">Max:</label>
-            </div>
-        </div>
+            {% endfill %}
+        {% endcomponent %}
+
+        
+        <!-- PROPERTY TYPE FILTER MODAL -->
+        {% component "modal" modal_type="property_type_modal" modal_title="Property Type" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="" {% if listing_type == '' %}checked{% endif %} class="mr-2 accent-red-500">
+                            All Properties
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="buy" {% if listing_type == 'buy' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Properties for Sale
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="rent" {% if selected_sort == 'rent' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Properties for Rent
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="land" {% if selected_sort == 'land' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Landed Properties
+                        </label>
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
+
+        <!-- LOCATION TYPE FILTER MODAL -->
+        {% component "modal" modal_type="location_modal" modal_title="Property Type" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="block">
+                            <input type="radio" name="state" value="" {% if selectedState == '' %}checked{% endif %} class="mr-2 accent-red-500">
+                            All Locations
+                        </label>
+                        {% for state in nigeria_states %}
+                            <label class="block">
+                                <input type="radio" name="state" value="{{state}}" {% if selectedState ==  state %}checked{% endif %} class="mr-2 accent-red-500">
+                                {{ state }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
+
     </form>
 
     <div id="listing-wrapper" x-data="{loading: true}">
@@ -159,38 +227,68 @@
     });
 
     const search_query = document.querySelector('input[name="search_query"]');
-    const listing_type_input = document.getElementById('listing_type');
-    const state_location = document.getElementById('state_location')
-    const price_btn = document.getElementById('price_button');
+    const selectedSortRadio = document.getElementsByName('sort');
+    const listingTypeRadio = document.getElementsByName('listing_type');
+    const locationRadio = document.getElementsByName('state');
+    const sort_filter_btn = document.getElementById('sort_filter_btn');
+    const property_type_filter_btn = document.getElementById('property_type_filter_btn');
+    const price_range_filter_btn = document.getElementById('price_range_filter_btn');
+    const location_filter_btn = document.getElementById('location_filter_btn');
+    
     const min_price_input = document.querySelector('input[name="min_price"]');
     const max_price_input = document.querySelector('input[name="max_price"]');
-    const filterInputs = [listing_type_input, state_location, min_price_input, max_price_input];
+    const priceInputs = [min_price_input, max_price_input];
+    const radioInputs = [selectedSortRadio, listingTypeRadio, locationRadio];
 
-    filterInputs.forEach(input => {
+    priceInputs.forEach(input => {
         input.addEventListener('change', highlightActiveFilters);
+    });
+
+    radioInputs.forEach(radioInput => {
+        radioInput.forEach(radio => {
+            radio.addEventListener('change', highlightActiveFilters)
+        })
     });
 
     function highlightActiveFilters(){
         const highlightClasses = ["ring-2", "ring-red-400", "border-0"];
 
-        console.log(listing_type_input.value)
-        if(listing_type_input.value){
-            listing_type_input.classList.add(...highlightClasses);
-        } else{
-            listing_type_input.classList.remove(...highlightClasses)
-        }
+        selectedSortRadio.forEach(radio => {
+            const anySortTypeSelected = Array.from(selectedSortRadio).some(radio => radio.checked && radio.value !== '');
 
-        if(state_location.value){
-            state_location.classList.add(...highlightClasses);
-        } else{
-            state_location.classList.remove(...highlightClasses)
-        }
+            if(anySortTypeSelected){
+                sort_filter_btn.classList.add(...highlightClasses);
+            } else{
+                sort_filter_btn.classList.remove(...highlightClasses);
+            }
+        });
+
+        listingTypeRadio.forEach(radio => {
+            const anyListingTypeSelected = Array.from(listingTypeRadio).some(radio => radio.checked && radio.value !== '');
+            
+            if(anyListingTypeSelected){
+                property_type_filter_btn.classList.add(...highlightClasses);
+            } else{
+                property_type_filter_btn.classList.remove(...highlightClasses);
+            }
+        });
+
+        locationRadio.forEach(radio => {
+            const anyLocationSelected = Array.from(locationRadio).some(radio => radio.checked && radio.value !== '');
+
+            if(anyLocationSelected){
+                location_filter_btn.classList.add(...highlightClasses);
+            } else{
+                location_filter_btn.classList.remove(...highlightClasses);
+            }
+        });
+
 
         
         if(min_price_input.value != "" || max_price_input.value != ""){
-            price_btn.classList.add(...highlightClasses);
+            price_range_filter_btn.classList.add(...highlightClasses);
         } else{
-            price_btn.classList.remove(...highlightClasses)
+            price_range_filter_btn.classList.remove(...highlightClasses)
         }
 
     }
@@ -239,13 +337,35 @@
         console.log(alpineListingData.loading)
         alpineListingData.loading = true;
         
+        let selectedSortValue = "";
+        selectedSortRadio.forEach(radio=>{
+            if(radio.checked){
+                selectedSortValue = radio.value;
+            }
+        })
+
+        let listingTypeValue = "";
+        listingTypeRadio.forEach(radio=>{
+            if(radio.checked){
+                listingTypeValue = radio.value;
+            }
+        })
+
+        let selectedLocation = "";
+        locationRadio.forEach(radio=>{
+            if(radio.checked){
+                selectedLocation = radio.value;
+            }
+        })
+        
 
         let params = new URLSearchParams({
             search_query: search_query.value,
-            listing_type: listing_type_input.value,
+            selected_sort: selectedSortValue,
+            listing_type: listingTypeValue,
             min_price: min_price_input.value,
             max_price: max_price_input.value,
-            state: state_location.value,  
+            state: selectedLocation,
         });
 
         console.log("params", params)

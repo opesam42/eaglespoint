@@ -33,7 +33,19 @@ def favourite_listing(request):
     return render(request, 'listing/favourite.html', context)
 
 def search_listing(request, default_listing_type = None):
-    listings = Listings.objects.filter(is_listed=True).order_by('-created_at')
+    # listings = Listings.objects.filter(is_listed=True).order_by('-created_at')
+    
+    
+    selected_sort = request.GET.get('selected_sort', '')
+    sort_options = {
+        'date_desc': '-created_at',
+        'date_asc': 'created_at',
+        'price_desc': '-price',
+        'price_asc': 'price'
+    }
+
+    order_by_field = sort_options.get(selected_sort, '-created_at') #default option '-created_at'
+    listings = Listings.objects.filter(is_listed=True).order_by(order_by_field)
     
     if request.user.is_authenticated:
         user_favourites = Listings.objects.filter(favourites__user=request.user)
@@ -88,6 +100,7 @@ def search_listing(request, default_listing_type = None):
     context = {
         'results': listings,
         'search_query': search_query,
+        'selected_sort': selected_sort,
         'listing_type': listing_type,
         'min_price': min_price,
         'max_price': max_price,
