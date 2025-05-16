@@ -19,6 +19,8 @@ async function handlePasswordReset(event) {
     messageBox.innerHTML = "";
     // messageBox.classList.innerHTML = "";
 
+    
+
     try{
         const response = await fetch('/user/password-reset/', {
             method: "POST",
