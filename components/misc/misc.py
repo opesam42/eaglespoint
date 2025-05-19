@@ -13,3 +13,10 @@ class ListingSkeleton(Component):
 
     def get_context_data(self):
         return {}
+    
+@register("table_skeleton")
+class TableSkeleton(Component):
+    template_file = "misc/table-skeleton.html"
+
+    def get_context_data(self):
+        return {}    

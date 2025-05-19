@@ -12,6 +12,7 @@ urlpatterns = [
     path('user/', include('user.urls', namespace='user')),
     path('', include('core.urls', namespace='core')),
     path('listing/', include('listing.urls', namespace='listing')),
+    path('messaging/', include('messaging.urls', namespace='messaging')),
     path('adminv2/', include('adminv2.urls', namespace='adminv2')),
     
     path("components/", include("django_components.urls")),

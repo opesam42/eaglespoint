@@ -1,0 +1,30 @@
+<div> 
+
+    {% if message %}
+        <ul class="">
+            <li><strong>Sender Name: </strong> {{ message.sender_name }}</li>
+            {% if message.sender_email %}
+            <li><strong>Sender Email: </strong><a class="text-blue-400 hover:text-blue-700" href="mailto:{{ message.sender_email }}">{{ message.sender_email }}</a></li>
+            {% endif %}
+            {% if message.sender_phone %}
+            <li><strong>Sender Phone No.: </strong><a class="text-blue-400 hover:text-blue-700" href="mailto:{{ message.sender_email }}">{{ message.sender_phone }}</a></li>
+            {% endif %}
+            <li><strong>Date: </strong>{{ message.sent_at }} </li>
+        </ul>
+
+        <h3 class="mt-8 font-semibold text-xl">{{ message.subject }}</h3>
+        <div class="flex flex-col gap-1">
+            {{ message.body|linebreaks }} 
+        </div>
+    {% else %}
+    {% endif %}
+
+    <div class="flex gap-2 sticky -bottom-8 w-full bg-white py-2">
+        <a href="mailto:{{ message.sender_email }}" class="btn primary-btn">Reply</a>
+        <button onclick="deleteMessage({{ message.id }}, event)" class="btn primarry-btn bg-red-600 text-white" type="button">Delete</button>
+    </div>
+</div>
+
+<script>
+    console.log('hello')
+</script>

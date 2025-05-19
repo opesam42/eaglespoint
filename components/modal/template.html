@@ -1,11 +1,5 @@
 <div id="modal-{{ modal_type }}" class="fixed inset-0 hidden items-center justify-center bg-gray-800/80 z-[100]">
-    <div class="bg-white rounded-lg w-full shadow-lg mx-4
-    {% if modal_type == 'user_info' %}
-        lg:w-4/5
-        h-[90%]
-    {% else %}
-        max-w-[400px]
-    {% endif %}
+    <div class="bg-white rounded-lg w-full shadow-lg mx-4 {% if classes %} {{classes}} {% else %} max-w-[400px] {% endif %}
     ">
         <div class="flex border-b border-gray-300 px-4 items-center">
             <div class="text-xl">{{ modal_title }}</div>
@@ -35,9 +29,19 @@
 
 
     // Add event listener to the close button
-    closeBtn_{{modal_type}}.addEventListener('click', () => {
+
+    
+    function closeModal_{{modal_type}}(){
         modal_{{modal_type}}.classList.remove('flex')
-        modal_{{modal_type}}.classList.add('hidden') // Hides the modal
+        modal_{{modal_type}}.classList.add('hidden')
+    }
+    closeBtn_{{modal_type}}.addEventListener('click', closeModal_{{modal_type}});
+    
+    // Close when clicking outside the modal content
+    modal_{{ modal_type }}.addEventListener('click', function (event) {
+        if (event.target === modal_{{ modal_type }}) {
+            closeModal_{{ modal_type }}();
+        }
     });
 
     function openModal_{{modal_type}}(){

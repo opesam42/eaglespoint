@@ -1,0 +1,47 @@
+<table class="w-full text-sm text-left text-gray-500">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr class="*:px-6 *:py-3">
+            <th scope="col" class="">
+                Sender Name
+            </th>
+            <th scope="col">
+                Phone No./Email
+            </th>    
+            <th scope="col" class="">
+                Subject
+            </th>
+            <th scope="col" class="">
+                Date
+            </th>
+            <th scope="col">
+                Actions
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for message in messages %}
+        <tr id="" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
+            <td>                        
+                {{ message.sender_name }}
+            </td>
+            <td>
+                {% if message.sender_phone %}
+                    <a class="text-blue-400 hover:text-blue-700" href="tel:{{ message.sender_phone }}">{{ message.sender_phone }}</a>
+                {% else %}
+                    <a class="text-blue-400 hover:text-blue-700" href="mailto:{{ message.sender_email}}">{{ message.sender_email }}</a>
+                {% endif %}
+                
+            </td>
+            <td>
+                {{ message.subject }}
+            </td>
+            <td class="">
+                {{ message.sent_at }}
+            </td>
+            <td>
+                <button class="btn primary-btn" onclick="viewMessageInfo({{ message.id }})">View</button>
+            </td>                  
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

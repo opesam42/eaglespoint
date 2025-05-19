@@ -38,7 +38,7 @@
         </ul>
     </address>
 
-    <form  class="w-full lg:w-3/5 max-w-2xl px-6 order-1 lg:order-2">
+    <form  class="w-full lg:w-3/5 max-w-2xl px-6 order-1 lg:order-2" method="post" action="{% url 'messaging:send-contact-form' %}" onsubmit="submitContactForm(event)">
         <h1 class="text-4xl font-bold mb-2"><span class="font-cursive text-red-600">Reach</span> Out To Us Today</h1>
         <p class="mb-4">
             Fill out  your information and our representative will reach out to you.<br>
@@ -47,23 +47,36 @@
 
         <div class="flex flex-col gap-3 lg:gap-4">
             <div>
-                <label for="name"class="label-primary">Full Name</label>
-                <input class="input-primary" type="text" id="name" name="name" required>
+                <label for="sender_name" class="label-primary">Full Name</label>
+                <input class="input-primary" type="text" id="sender_name" name="sender_name" required>
             </div>
 
             <div>
-                <label for="email" class="label-primary">Email</label>
-                <input class="input-primary" type="email" id="email" name="email" required>
+                <label for="sender_phone" class="label-primary">Phone Number</label>
+                <input class="input-primary" type="tel" id="sender_phone" name="sender_phone" required>
             </div>
 
             <div>
-                <label for="phone" class="label-primary">Phone Number</label>
-                <input class="input-primary" type="tel" id="phone" name="phone">
+                <label for="sender_email" class="label-primary">Email <i class="text-xs"> (optional)</i></label>
+                <input class="input-primary" type="email" id="sender_email" name="sender_email">
+            </div>
+
+            <div>
+                <label for="subject" class="label-primary">Subject</label>
+                <input list="reasons" class="input-primary" type="text" id="subject" name="subject" required>
+                <datalist id="reasons">
+                    <option value="Property Inquiry">
+                    <option value="Vacation Package Booking">
+                    <option value="Relocation Services">
+                    <option value="Corporate Travel">
+                    <option value="Custom Tour Request">
+                    <option value="Other">
+                </datalist>
             </div>
 
             <div>
                 <label for="message" class="label-primary">Your Message</label>
-                <textarea class="input-primary resize-none" id="message" name="message" rows="4"  required></textarea>
+                <textarea class="input-primary resize-none" id="body" name="body" rows="4"  required></textarea>
             </div>
 
             {% component "button" html_tag="button" label="Send Inquiry" type="primary" width="full" function="submit" %} {% endcomponent %}

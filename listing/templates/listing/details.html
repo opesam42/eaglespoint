@@ -148,7 +148,8 @@
                     </div>
                 </div>
                 <div class="flex flex-row lg:flex-col justify-center items-center gap-4">
-                    {% component "button" label="Enquire Now" type="primary" width="full" %} {% endcomponent %}
+                    <button type="button" class="btn primary-btn w-full" onclick="openModal_property_equiry_form_modal()">Enquire Now</button>
+                    <!-- {% component "button" label="Enquire Now" type="primary" width="full" attr="onclick='openModal_property_equiry_form_modal'" %} {% endcomponent %} -->
                     <a class="bg-green-600 text-white hover:bg-green-800 w-full px-5 py-2.5 rounded-lg flex justify-center items-center gap-2 cursor-pointer transition-all duration-300 ease-in-out" href="{{whatsapp_link}}" none="" target="_blank"><i class="fa fa-lg fa-whatsapp text-white"></i> WhatsApp</a>
     
                 </div>
@@ -158,7 +159,47 @@
         </section>
     </main>
 
-    
+    <!-- PROPERTY ENQUIRY FORM MODAL -->
+        {% component "modal" modal_type="property_equiry_form_modal" modal_title="Property Inquiry Form" classes="h-[90vh] max-h-[90vh] max-w-[400px]" %}
+            {% fill "children" %}
+                <div class="p-4 overflow-y-auto h-[90%]">
+                    <form  class="" method="post" action="{% url 'messaging:send-contact-form' %}" onsubmit="submitContactForm(event)">
+                        <!-- <h2 class="text-2xl font-bold mb-2"><span class="font-cursive text-red-600">Property Inquiry</span> Form </h2> -->
+
+                        <div class="flex flex-col gap-3 lg:gap-4">
+                            <div>
+                                <label for="sender_name" class="label-primary">Full Name</label>
+                                <input class="input-primary" type="text" id="sender_name" name="sender_name" required>
+                            </div>
+
+                            <div>
+                                <label for="sender_phone" class="label-primary">Phone Number</label>
+                                <input class="input-primary" type="tel" id="sender_phone" name="sender_phone" required>
+                            </div>
+
+                            <div>
+                                <label for="sender_email" class="label-primary">Email <i class="text-xs"> (optional)</i></label>
+                                <input class="input-primary" type="email" id="sender_email" name="sender_email">
+                            </div>
+
+                            <div style="display: none;">
+                                <label for="subject" class="label-primary">Subject</label>
+                                <input type="hidden" class="input-primary" type="text" id="subject" name="subject" value="Property Inquiry" required>
+                                <input type="hidden" name="property" class="property" value="{{ listing.id }}">
+                            </div>
+
+                            <div>
+                                <label for="message" class="label-primary">Your Message</label>
+                                <textarea class="input-primary resize-none" id="body" name="body" rows="4"  required></textarea>
+                            </div>
+
+                            {% component "button" html_tag="button" label="Send Inquiry" type="primary" width="full" function="submit" %} {% endcomponent %}
+                        </div>
+                    </form>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
+
     
     <script>
         // Select the close button and modal element

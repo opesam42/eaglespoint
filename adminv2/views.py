@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST
 from .forms import ListingForm
 from listing.models import Listings, Feature, ListingImages
 from utils.choices import LISTING_TYPE, STATE_CHOICES
@@ -12,6 +13,7 @@ from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from listing.models import Listings
 from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
+from messaging.models import ContactMessage
 
 User = get_user_model()
 
@@ -300,3 +302,42 @@ def user_info(request, user_id):
         #     "success": False,
         #     "message": "User does not exist",
         # }, status=400)
+
+
+# messaging views
+@admin_only
+def message_page(request):
+    return render(request, "adminv2/messaging/index.html")
+
+@admin_only
+def get_messages(request, message_id=None):
+    messages = ContactMessage.objects.all().order_by('-sent_at')
+
+    if message_id:
+        message = get_object_or_404(ContactMessage, pk=message_id)
+        try:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return render(request, 'adminv2/messaging/partials/message-info.html', {
+                'message': message,
+            })
+
+        except ContactMessage.DoesNotExist:
+            return JsonResponse({"success": False, "message": "User does not exist",}, status=400)
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, "adminv2/messaging/partials/messages.html", {
+            'messages': messages,
+        })
+    
+
+@require_POST
+@admin_only
+def delete_message(request, message_id):
+    message = get_object_or_404(ContactMessage, id=message_id)
+
+    try:
+        message.delete()
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
+    

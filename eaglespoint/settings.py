@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'user',
     'listing',
     'adminv2',
+    'messaging',
 
     'django_components',
 ]

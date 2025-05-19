@@ -21,9 +21,13 @@
                 <!-- Search Bar -->
                 <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex flex-col gap-3">
                     <div class="flex gap-2">
+                        <div> 
+                            <input type="radio" name="listing_type" class="hidden peer" value="" id="all_properties" checked>
+                            <label for="all_properties" class="text-white text-sm border-2 border-white px-3 py-1.5 rounded cursor-pointer peer-checked:bg-red-500 peer-checked:border-red-500">All</label>
+                            </div>
                         {% for value, label in listing_types %}
                             <div> 
-                                <input type="radio" name="listing_type" class="hidden peer" value="{{value}}" id="{{value}}" {% if value == 'buy' %}checked{% endif %}>
+                                <input type="radio" name="listing_type" class="hidden peer" value="{{value}}" id="{{value}}">
                                 <label for="{{value}}" class="text-white text-sm border-2 border-white px-3 py-1.5 rounded cursor-pointer peer-checked:bg-red-500 peer-checked:border-red-500">{{label}}</label>
                             </div>
                         {% endfor %}
