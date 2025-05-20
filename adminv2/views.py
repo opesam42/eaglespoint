@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.utils.safestring import mark_safe
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.db.models import Q
 from django.views.decorators.http import require_POST
 from .forms import ListingForm
 from listing.models import Listings, Feature, ListingImages
@@ -311,8 +312,28 @@ def message_page(request):
 
 @admin_only
 def get_messages(request, message_id=None):
-    messages = ContactMessage.objects.all().order_by('-sent_at')
 
+    messages = ContactMessage.objects.all().order_by('-sent_at')
+    selected_sort = request.GET.get('selected_sort', '')
+    sort_options = {
+        'date_desc': '-sent_at',
+        'date_asc': 'sent_at',
+    }
+
+    order_by_field = sort_options.get(selected_sort, '-sent_at') #default option '-created_at
+    messages = messages.order_by(order_by_field)
+
+    search_query = request.GET.get('search_query', '')
+    if search_query:
+        print("Hello")
+        search_words = search_query.split()
+
+        query = Q()
+        for word in search_words:
+            query |= Q(subject__icontains=word) | Q(body__icontains=word)
+        messages = messages.filter(query)
+
+    # to get a single message
     if message_id:
         message = get_object_or_404(ContactMessage, pk=message_id)
         try:

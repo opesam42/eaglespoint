@@ -932,6 +932,9 @@
   .self-stretch {
     align-self: stretch;
   }
+  .overflow-clip {
+    overflow: clip;
+  }
   .overflow-hidden {
     overflow: hidden;
   }
@@ -940,6 +943,9 @@
   }
   .overflow-x-clip {
     overflow-x: clip;
+  }
+  .overflow-x-hidden {
+    overflow-x: hidden;
   }
   .overflow-x-scroll {
     overflow-x: scroll;
