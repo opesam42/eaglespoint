@@ -248,6 +248,48 @@ def user_control_page(request):
         'users': users,
     })
 
+
+@admin_only
+def get_users(request, message_id=None):
+
+    users = User.objects.all()
+
+    selected_sort = request.GET.get('selected_sort', '')
+    sort_options = {
+        'date_desc': '-date_joined',
+        'date_asc': 'date_joined',
+    }
+
+    order_by_field = sort_options.get(selected_sort, '-date_joined') 
+    users = users.order_by(order_by_field)
+
+    search_query = request.GET.get('search_query', '')
+    if search_query:
+        search_words = search_query.split()
+
+        query = Q()
+        for word in search_words:
+            query |= Q(first_name__icontains=word) | Q(last_name__icontains=word) | Q(email__icontains=word) | Q(phone_number__icontains=word)
+        users = users.filter(query)
+
+    user_role = request.GET.get('user_role', '')
+    active_status = request.GET.get('active_status', '')
+
+    if user_role:
+        users = users.filter(user_role=user_role)
+    
+    if active_status == '1':
+        users = users.filter(is_active=True)
+    elif active_status == '0':
+        users = users.filter(is_active=False)
+
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return render(request, "adminv2/users/partials/users-table.html", {
+            'users': users,
+        })
+    
+    
+
 @admin_only
 @user_passes_test(lambda u: u.is_superuser)
 def toggle_admin(request, user_id):
@@ -362,3 +404,4 @@ def delete_message(request, message_id):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
     
+

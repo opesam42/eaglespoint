@@ -6,88 +6,110 @@
 {% block section_title %} Users {% endblock %}
 
 {% block content %} 
-    <div>
-        
-    </div>
-    {% comment %} <div class="flex mb-6">
-        {% component "button" extraclass="ml-auto" label="<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
-        <span>Add Listing</span>" type="secondary" width="max" href="{% url 'adminv2:add_listing' %}" %} {% endcomponent %}
-    </div> {% endcomment %}
-    
-    
-    {% comment %} <form class="max-w-md mx-auto mb-6">
-        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-                </svg>
-            </div>
-            <input type="text" id="listing-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Listings..." />
-    
-            <!-- Filters Button with similar classes as Search -->
-            <button type="button" class="absolute end-2.5 bottom-2.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_search_fiters()'>
-                <i class="fa fa-filter"></i> Filters
-            </button>
-        </div>
-    </form>
-     {% endcomment %}
 
-    <div id="user-list-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr class="*:px-6 *:py-3">
-                    <th scope="col"><span>Profile Photo</span></th>
-                    <th scope="col" class="">
-                        Name
-                    </th>    
-                    <th scope="col" class="">
-                        E-mail
-                    </th>
-                    <th scope="col" class="">
-                        Role
-                    </th>
-                    <th scope="col">
-                        Active Status
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr id="" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
-                    <td>
-                        {% if user.profileImage %}
-                            <img src="{{user.profileImage.url}}" alt="{{user.firstname}} profle image"
-                        {% else %}
-                            <img src="{% static 'images/default-user.svg' %}" alt="default-profile-image"
-                        {% endif %}
-                        width="24px" class="inline-block rounded-full object-cover h-6 w-6">
-                    </td>
-                    <td class="hover:underline cursor-pointer" onclick='view_user_info({{user.id}})'>                        
-                        <span>{{ user.first_name }} {{ user.last_name }}</span>
-                    </td>
-                    <td class="">
-                        <a class="text-blue-400" href="mailto:{{user.email}}">{{ user.email }}</a>
-                    </td>
-                    <td class=" capitalize">
-                        {% if user.user_role == 'customer' %}
-                            User
-                        {% else %}
-                            {{ user.user_role }}
-                        {% endif %}
-                    </td>
-                    <td class="">
-                        {% if user.is_active == True %}
-                            <div class="bg-green-100 text-green-600 p-1.5 rounded-md w-max">Active</div>
-                        {% else %}
-                            <div class="bg-red-100 text-red-600 p-1.5 rounded-md w-max">Inactive</div>
-                        {% endif %}
-                    </td>                    
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div>
+        <form class="flex flex-col gap-2 max-w-md mx-auto mb-6 mt-6" onsubmit="handleSearch(event)">
+            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="text" id="user-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Messages..." />
+        
+                <!-- Filters Button with similar classes as Search -->
+                <button type="button" class="flex gap-1 items-center absolute end-2.5 bottom-1.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_sort_message_filter()'>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                    <span>Sort</span>
+                </button>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="user_role_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_user_role_modal()">User Role</button>
+                
+                <button id="user_active_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_user_active_modal()">Active Status</button>
+            </div>
+             
+
+            <!-- sort modal -->
+            {% component "modal" modal_type="sort_message_filter" modal_title="Sort by Date Joined" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="sort" value="date_desc" class="mr-2 accent-red-500" checked>
+                                Newest First
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="sort" value="date_asc" class="mr-2 accent-red-500">
+                                Oldest First
+                            </label>
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+
+            <!-- user role modal -->
+            {% component "modal" modal_type="user_role_modal" modal_title="Filter by User Role" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="user_role" value="" class="mr-2 accent-red-500" checked>
+                                All users
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="user_role" value="customer" class="mr-2 accent-red-500">
+                                Normal Users
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="user_role" value="agent" class="mr-2 accent-red-500">
+                                Agents
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="user_role" value="admin" class="mr-2 accent-red-500">
+                                Admins
+                            </label>
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+
+            <!-- active status modal -->
+            {% component "modal" modal_type="user_active_modal" modal_title="Filter by User Role" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="active_status" value="" class="mr-2 accent-red-500" checked>
+                                All users
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="active_status" value="1" class="mr-2 accent-red-500">
+                                Active Users
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="active_status" value="0" class="mr-2 accent-red-500">
+                                Inactive Users
+                            </label>
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+        </form>
     </div>
+
+    <div x-data="{loading:true}" id="user-wrapper">
+        <div x-show="loading">   
+            {% component "table_skeleton" %} {% endcomponent %}
+        </div>
+        <div x-show="!loading" id="user-list-container" class="relative overflow-x-auto shadow-md sm:rounded-lg"></div>
+    </div>
+    
     
     {% component "modal" modal_type="user_info" modal_title="User Information" classes="lg:w-4/5 h-[90%] overflow-y-auto" %}
         {% fill "children" %}
@@ -154,6 +176,115 @@
 
 {% block script %}
     <script>
+
+         window.addEventListener('DOMContentLoaded', () => {
+            fetchUsers();
+        });
+
+        const usersContainer = document.getElementById("user-list-container");
+        const tableWrapper = document.getElementById("user-wrapper");
+        const selectedSortRadio = document.getElementsByName('sort');
+        const userRoleRadio = document.getElementsByName('user_role');
+        const activeStatusRadios = document.getElementsByName('active_status');
+        radioInputs = [userRoleRadio, activeStatusRadios];
+
+        function fetchUsers(url){
+           if(!url){
+                url = '{% url 'adminv2:get-users' %}';
+            }
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const usersHTML = doc.body.innerHTML;
+                usersContainer.innerHTML = usersHTML;                
+            })
+            .finally(() => {
+                Alpine.nextTick(() => {
+                    alpineTableData = Alpine.$data(tableWrapper);
+                    if (alpineTableData) {
+                        alpineTableData.loading = false;
+                    }
+                });
+            })
+        }
+
+        function handleSearch(e){
+            e.preventDefault();
+
+            const search_query = document.getElementById('user-search');
+            
+            let selectedSortValue = "";
+            selectedSortRadio.forEach(radio=>{
+                if(radio.checked){
+                    selectedSortValue = radio.value;
+                }
+            })
+
+            let userRoleValue = "";
+            userRoleRadio.forEach(radio => {
+                if(radio.checked){
+                    userRoleValue = radio.value
+                }
+            })
+
+            let activeStatusValue = "";
+            activeStatusRadios.forEach(radio => {
+                if(radio.checked){
+                    activeStatusValue = radio.value
+                }
+            })
+
+            let params = new URLSearchParams({
+                search_query:search_query.value,
+                selected_sort: selectedSortValue,
+                user_role: userRoleValue,
+                active_status: activeStatusValue,
+            });
+            
+            alpineTableData = Alpine.$data(tableWrapper);
+            alpineTableData.loading = true;
+            base_url = '{% url 'adminv2:get-users' %}';
+            fetchUsers(url=`${base_url}?${params.toString()}`);
+        }
+
+        function highlightActiveFilters(){
+            const highlightClasses = ["text-red-400", "ring-2", "ring-red-400", "border-0"];
+
+            userRoleRadio.forEach(radio => {
+                let selected = Array.from(userRoleRadio).some(radio => radio.checked && radio.value !== '');
+                const user_role_filter_btn = document.getElementById('user_role_filter_btn');
+                if(selected){
+                    user_role_filter_btn.classList.add(...highlightClasses);
+                } else{
+                    user_role_filter_btn.classList.remove(...highlightClasses);
+                }
+            });
+
+            activeStatusRadios.forEach(radio => {
+                let selected = Array.from(activeStatusRadios).some(radio => radio.checked && radio.value !== '');
+                const user_active_filter_btn = document.getElementById('user_active_filter_btn');
+                if(selected){
+                    user_active_filter_btn.classList.add(...highlightClasses);
+                } else{
+                    user_active_filter_btn.classList.remove(...highlightClasses);
+                }
+            });
+        }
+
+        radioInputs.forEach(radioInput => {
+            radioInput.forEach(radio => {
+                radio.addEventListener('change', highlightActiveFilters)
+            })
+        });
 
         function change_admin_status(user_id, alpineComponent){
             let url = "{% url 'adminv2:toggle-admin' 123 %}".replace("123", user_id);
