@@ -6,8 +6,44 @@
 {% block section_title %} Contact Messages {% endblock %}
 
 {% block content %} 
+
     <div>
+        <form class="max-w-md mx-auto mb-6 mt-6" onsubmit="handleSearch(event)">
+            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="text" id="message-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Messages..." />
         
+                <!-- Filters Button with similar classes as Search -->
+                <button type="button" class="flex gap-1 items-center absolute end-2.5 bottom-1.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_sort_message_filter()'>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                    <span>Sort</span>
+                </button>
+            </div>
+
+            <!-- sort modal -->
+            {% component "modal" modal_type="sort_message_filter" modal_title="Sort by" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="sort" value="date_desc" class="mr-2 accent-red-500" checked>
+                                Newest
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="sort" value="date_asc" class="mr-2 accent-red-500">
+                                Oldest
+                            </label>
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+        </form>
     </div>
     <div x-data="{loading:true}" id="table-wrapper">
         <div x-show="loading">   
@@ -32,10 +68,14 @@
             fetchMessages();
         });
 
-        function fetchMessages(){
-            const messagesContainer = document.getElementById("message-list-container");
-            const tableWrapper = document.getElementById("table-wrapper");
-            const url = '{% url 'adminv2:get-messages' %}';
+         const messagesContainer = document.getElementById("message-list-container");
+        const tableWrapper = document.getElementById("table-wrapper");
+
+        function fetchMessages(url){
+           if(!url){
+                url = '{% url 'adminv2:get-messages' %}';
+            }
+            console.log("URL", url)
 
             fetch(url, {
                 method: "POST",
@@ -52,6 +92,9 @@
                 messagesContainer.innerHTML = messagesHTML;
                 console.log('done')
 
+                
+            })
+            .finally(() => {
                 Alpine.nextTick(() => {
                     alpineTableData = Alpine.$data(tableWrapper);
                     if (alpineTableData) {
@@ -59,6 +102,31 @@
                     }
                 });
             })
+        }
+
+
+        function handleSearch(e){
+            e.preventDefault();
+
+            const search_query = document.getElementById('message-search');
+            const selectedSortRadio = document.getElementsByName('sort');
+            
+            let selectedSortValue = "";
+            selectedSortRadio.forEach(radio=>{
+                if(radio.checked){
+                    selectedSortValue = radio.value;
+                }
+            })
+
+            let params = new URLSearchParams({
+                search_query:search_query.value,
+                selected_sort: selectedSortValue
+            });
+            
+            alpineTableData = Alpine.$data(tableWrapper);
+            alpineTableData.loading = true;
+            base_url = '{% url 'adminv2:get-messages' %}';
+            fetchMessages(url=`${base_url}?${params.toString()}`);
         }
 
         function viewMessageInfo(message_id){

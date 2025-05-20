@@ -330,7 +330,7 @@ def get_messages(request, message_id=None):
 
         query = Q()
         for word in search_words:
-            query |= Q(subject__icontains=word) | Q(body__icontains=word)
+            query |= Q(subject__icontains=word) | Q(body__icontains=word) | Q(sender_name__icontains=word)
         messages = messages.filter(query)
 
     # to get a single message
