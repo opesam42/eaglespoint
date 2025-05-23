@@ -51,8 +51,10 @@ INSTALLED_APPS = [
     'listing',
     'adminv2',
     'messaging',
+    'blog',
 
     'django_components',
+    'django_ckeditor_5',
 ]
 
 AUTH_USER_MODEL = 'user.CustomUser' # updated
@@ -201,7 +203,14 @@ STATICFILES_FINDERS = [
     "django_components.finders.ComponentsFileSystemFinder",
 ]
 
-""" for whitenoise caching """
+
+
+AWS_ACCESS_KEY_ID = env('B2_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = env('B2_SECRET_KEY')
+AWS_STORAGE_BUCKET_NAME = env('B2_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = env('B2_ENDPOINT')
+AWS_S3_REGION_NAME = env("B2_REGION")
+AWS_S3_ADDRESSING_STYLE = "path"
 
 STORAGES = {
     "default": {
@@ -227,6 +236,9 @@ STORAGES = {
     },
 }
 
+#timezone
+TIME_ZONE = 'Africa/Lagos'
+USE_TZ = True
 
 #Email Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -238,4 +250,43 @@ EMAIL_TIMEOUT = 30
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_APP_PASSWORD')
 
-# APPEND_SLASH = True
+# CKEditor 5 Configuration
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': [
+            'heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList',
+            'blockQuote', 'imageUpload', 'insertTable', 'fontSize', 'fontColor'
+        ],
+        'image': {
+            'toolbar': [
+                'imageTextAlternative', 'imageStyle:alignLeft',
+                'imageStyle:alignCenter', 'imageStyle:alignRight'
+            ],
+            'styles': ['full', 'alignLeft', 'alignCenter', 'alignRight']
+        },
+    },
+    'extends': {
+        'language': 'en',
+        'toolbar': [
+            'heading', 'codeBlock', '|', 'bold', 'italic', 'link', 'underline',
+            'strikethrough', 'subscript', 'superscript', 'highlight', '|',
+            'bulletedList', 'numberedList', 'todoList', '|', 'blockQuote',
+            'insertImage', 'insertTable', 'fontSize', 'fontFamily', 'fontColor',
+            'removeFormat', 'sourceEditing'
+        ],
+        'image': {
+            'toolbar': [
+                'imageTextAlternative', '|', 'imageStyle:alignLeft',
+                'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',
+                'toggleImageCaption'
+            ],
+            'styles': ['full', 'side', 'alignLeft', 'alignRight', 'alignCenter']
+        },
+    }
+}
+
+CKEDITOR_5_CUSTOM_CSS = 'path_to.css' # optional
+CKEDITOR_5_FILE_STORAGE = "utils.storage.CustomS3Storage"
+CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
+CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'webp', 'jpg', 'png', 'gif']
+

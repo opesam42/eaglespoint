@@ -14,8 +14,10 @@ urlpatterns = [
     path('listing/', include('listing.urls', namespace='listing')),
     path('messaging/', include('messaging.urls', namespace='messaging')),
     path('adminv2/', include('adminv2.urls', namespace='adminv2')),
+    path('blog/', include('blog.urls', namespace='blog')),
     
     path("components/", include("django_components.urls")),
+    path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]
 
 # if settings.DEBUG:  # Serve media files during development

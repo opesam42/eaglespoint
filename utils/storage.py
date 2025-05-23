@@ -171,3 +171,19 @@ class BackBlazeAPI:
         for file in files:
             self.delete_file(file['fileId'], file['fileName'])
             print(f'Deleted {file['fileName']}')
+
+
+
+
+from storages.backends.s3boto3 import S3Boto3Storage
+from django.conf import settings
+
+class CustomS3Storage(S3Boto3Storage):
+    access_key = os.getenv('B2_ACCESS_KEY')
+    secret_key = os.getenv('B2_SECRET_KEY')
+    bucket_name = os.getenv('B2_BUCKET_NAME')
+    region_name = B2_REGION = os.getenv('B2_REGION')
+    endpoint_url = os.getenv('B2_ENDPOINT')
+    default_acl = None
+    file_overwrite = False
+    location = "uploads"  # Store files in the 'uploads' folder

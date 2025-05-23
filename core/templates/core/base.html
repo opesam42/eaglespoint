@@ -109,7 +109,7 @@
                     <li><a class="block w-full" href="{% url 'core:home' %}">Home</a></li>
                     <li><a class="block w-full" href="{% url 'core:real_estate' %}">Real Estate</a></li>
                     <li><a class="block w-full" href="{% url 'core:home' %}">Travel</a></li>
-                    <li><a class="block w-full" href="#">Blogs</a></li>
+                    <li><a class="block w-full" href="{% url 'blog:home' %}">Blogs</a></li>
                     <li><a class="block w-full" href="{% url 'core:about' %}">About Us</a></li>
                     <li><a class="block w-full" href="{% url 'core:contact' %}">Contact</a></li>
 
@@ -180,17 +180,17 @@
                 <section>
                     <h2 class="text-lg uppercase font-semibold">Services</h2>
                     <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
-                        <li><a href="#">Real Estate</a></li>
-                        <li><a href="#">Travel and Study</a></li>
+                        <li><a href="{% url 'core:home' %}">Real Estate</a></li>
+                        <li><a href="{% url 'core:home' %}">Travel and Study</a></li>
                     </ul>
                 </section>
                 <section>
                     <h2 class="text-lg uppercase font-semibold">Quick Links</h2>
                     <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
                         <li><a href="#">List with Us</a></li>
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">About Us</a></li>
-                        <li><a href="#">Blog</a></li>
+                        <li><a href="{% url 'core:contact' %}">Contact Us</a></li>
+                        <li><a href="{% url 'core:about' %}">About Us</a></li>
+                        <li><a href="{% url 'blog:home' %}">Blog</a></li>
                     </ul>
                 </section>
                 

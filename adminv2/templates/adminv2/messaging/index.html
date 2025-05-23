@@ -49,7 +49,7 @@
         <div x-show="loading">   
             {% component "table_skeleton" %} {% endcomponent %}
         </div>
-        <div x-show="!loading" id="message-list-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        <div x-show="!loading" id="message-list-container" class="relative flex flex-col items-center shadow-md sm:rounded-lg">
         
         </div>
     </div>
@@ -71,13 +71,14 @@
          const messagesContainer = document.getElementById("message-list-container");
         const tableWrapper = document.getElementById("table-wrapper");
 
-        function fetchMessages(url){
-           if(!url){
-                url = '{% url 'adminv2:get-messages' %}';
-            }
-            console.log("URL", url)
+        let search_params = new URLSearchParams(window.location.search)
+        
+        function fetchMessages(page=1){
 
-            fetch(url, {
+            base_url = '{% url 'adminv2:get-messages' %}';
+            search_params.set('page', page)
+
+            fetch(`${base_url}?${search_params.toString()}`, {
                 method: "POST",
                 headers: {
                 "X-Requested-With": "XMLHttpRequest",
@@ -105,7 +106,7 @@
         }
 
 
-        function handleSearch(e){
+        function handleSearch(e, page=1){
             e.preventDefault();
 
             const search_query = document.getElementById('message-search');
@@ -118,15 +119,14 @@
                 }
             })
 
-            let params = new URLSearchParams({
-                search_query:search_query.value,
-                selected_sort: selectedSortValue
-            });
+            search_params = new URLSearchParams(); 
+            search_params.set('search_query', search_query.value);
+            search_params.set('selected_sort', selectedSortValue);
             
             alpineTableData = Alpine.$data(tableWrapper);
             alpineTableData.loading = true;
             base_url = '{% url 'adminv2:get-messages' %}';
-            fetchMessages(url=`${base_url}?${params.toString()}`);
+            fetchMessages(page);
         }
 
         function viewMessageInfo(message_id){

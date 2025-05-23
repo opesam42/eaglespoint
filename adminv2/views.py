@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 from django.utils.safestring import mark_safe
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -243,11 +244,7 @@ def search_listing(request, search_query=None):
     
 @admin_only
 def user_control_page(request):
-    users = User.objects.all()
-    return render(request, 'adminv2/users/users.html', {
-        'users': users,
-    })
-
+    return render(request, 'adminv2/users/users.html')
 
 @admin_only
 def get_users(request, message_id=None):
@@ -255,6 +252,8 @@ def get_users(request, message_id=None):
     users = User.objects.all()
 
     selected_sort = request.GET.get('selected_sort', '')
+    page_number = request.GET.get('page', 1)
+
     sort_options = {
         'date_desc': '-date_joined',
         'date_asc': 'date_joined',
@@ -282,6 +281,9 @@ def get_users(request, message_id=None):
         users = users.filter(is_active=True)
     elif active_status == '0':
         users = users.filter(is_active=False)
+    
+    paginator = Paginator(users, 10)
+    users = paginator.get_page(page_number)
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return render(request, "adminv2/users/partials/users-table.html", {
@@ -374,6 +376,12 @@ def get_messages(request, message_id=None):
         for word in search_words:
             query |= Q(subject__icontains=word) | Q(body__icontains=word) | Q(sender_name__icontains=word)
         messages = messages.filter(query)
+
+    page_number = request.GET.get('page', 1)
+
+    paginator = Paginator(messages, 10)
+    messages = paginator.get_page(page_number)
+
 
     # to get a single message
     if message_id:

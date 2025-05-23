@@ -35,7 +35,7 @@ def favourite_listing(request):
 def search_listing(request, default_listing_type = None):
     # listings = Listings.objects.filter(is_listed=True).order_by('-created_at')
     
-    
+    context_type = request.GET.get('context', 'user')
     selected_sort = request.GET.get('selected_sort', '')
     sort_options = {
         'date_desc': '-created_at',
@@ -45,7 +45,10 @@ def search_listing(request, default_listing_type = None):
     }
 
     order_by_field = sort_options.get(selected_sort, '-created_at') #default option '-created_at'
-    listings = Listings.objects.filter(is_listed=True).order_by(order_by_field)
+    if context_type == 'user':
+        listings = Listings.objects.filter(is_listed=True).order_by(order_by_field)
+    else:
+        listings = Listings.objects.all().order_by(order_by_field)
     
     if request.user.is_authenticated:
         user_favourites = Listings.objects.filter(favourites__user=request.user)
@@ -86,15 +89,38 @@ def search_listing(request, default_listing_type = None):
     
     paginator = Paginator(listings, 20) #show 20 listing per page
     listings = paginator.get_page(page_number)
+    total_pages = listings.paginator.num_pages
+    current_page = listings.number
     
     #handle ajax request
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        
-        return render(request, 'listing/partials/listing-items.html', {
+        if context_type == 'admin':
+            template = 'adminv2/listing/partials/listing-items.html'
+            # data = []
+            # for listing in listings:
+            #     data.append({
+            #         'id': listing.id,
+            #         'title': listing.title,
+            #         'description': listing.description,
+            #         'price': listing.price,
+            #         'state': listing.state,
+            #         'lga': listing.lga,
+            #         'listing_type': listing.listing_type,
+            #         'created_at': listing.created_at.strftime('%Y-%m-%d'),
+            #     })
+            #     return JsonResponse({'listings': data})
+        else:
+            template = 'listing/partials/listing-items.html'
+            
+        return render(request, template, {
             'results': listings,
             'user_favourites': user_favourites,
+            'has_previous': listings.has_previous(),
             'has_next': listings.has_next(),
             'next_page': listings.next_page_number() if listings.has_next() else None,
+            'previous_page': listings.previous_page_number() if listings.has_previous() else None,
+            'total_pages': total_pages,
+            'current_page': current_page,
             })
 
     context = {

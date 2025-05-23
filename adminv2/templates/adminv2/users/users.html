@@ -16,7 +16,7 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
                 </div>
-                <input type="text" id="user-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Messages..." />
+                <input type="text" id="user-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Users..." />
         
                 <!-- Filters Button with similar classes as Search -->
                 <button type="button" class="flex gap-1 items-center absolute end-2.5 bottom-1.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_sort_message_filter()'>
@@ -25,7 +25,7 @@
                 </button>
             </div>
 
-            <div class="flex gap-2">
+            <div class="flex gap-2 *:bg-white *:text-sm">
                 <button id="user_role_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_user_role_modal()">User Role</button>
                 
                 <button id="user_active_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_user_active_modal()">Active Status</button>
@@ -107,7 +107,7 @@
         <div x-show="loading">   
             {% component "table_skeleton" %} {% endcomponent %}
         </div>
-        <div x-show="!loading" id="user-list-container" class="relative overflow-x-auto shadow-md sm:rounded-lg"></div>
+        <div x-show="!loading" id="user-list-container" class="relative flex flex-col items-center shadow-md sm:rounded-lg"></div>
     </div>
     
     
@@ -188,12 +188,14 @@
         const activeStatusRadios = document.getElementsByName('active_status');
         radioInputs = [userRoleRadio, activeStatusRadios];
 
-        function fetchUsers(url){
-           if(!url){
-                url = '{% url 'adminv2:get-users' %}';
-            }
+        let search_params = new URLSearchParams(window.location.search)
 
-            fetch(url, {
+        function fetchUsers(page=1){
+
+            base_url = '{% url 'adminv2:get-users' %}';
+            search_params.set('page', page)
+
+            fetch(`${base_url}?${search_params.toString()}`, {
                 method: "POST",
                 headers: {
                 "X-Requested-With": "XMLHttpRequest",
@@ -217,7 +219,7 @@
             })
         }
 
-        function handleSearch(e){
+        function handleSearch(e, page=1){
             e.preventDefault();
 
             const search_query = document.getElementById('user-search');
@@ -243,17 +245,17 @@
                 }
             })
 
-            let params = new URLSearchParams({
-                search_query:search_query.value,
-                selected_sort: selectedSortValue,
-                user_role: userRoleValue,
-                active_status: activeStatusValue,
-            });
+            search_params = new URLSearchParams(); 
+            search_params.set('search_query', search_query.value);
+            search_params.set('selected_sort', selectedSortValue);
+            search_params.set('user_role', userRoleValue);
+            search_params.set('active_status', activeStatusValue);
+
             
             alpineTableData = Alpine.$data(tableWrapper);
             alpineTableData.loading = true;
             base_url = '{% url 'adminv2:get-users' %}';
-            fetchUsers(url=`${base_url}?${params.toString()}`);
+            fetchUsers(page);
         }
 
         function highlightActiveFilters(){

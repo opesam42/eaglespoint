@@ -1,52 +1,120 @@
-<table class="w-full text-sm text-left text-gray-500">
-    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr>
-            <th scope="col" class="px-6 py-3">
-                Title
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Price
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Listing Type
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Address
-            </th>
-            <th scope="col" class="px-6 py-3">
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for result in results %}
-        <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
-            <td class="px-6 py-4">
-                <a href="{% url 'listing:property_details' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
-            </td>
-            <td class="px-6 py-4 title">
-                &#8358; {{ result.price }}
-            </td>
-            <td class="px-6 py-4 capitalize">
-                {{ result.listing_type }}
-            </td>
-            <td class="px-6 py-4">
-                {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
-            </td>
-            <td class="px-6 py-4 flex gap-2">
-                {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
-                <button 
-                    class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
-                    data-listing-id="{{ result.id }}"
-                    data-is-listed="{{ result.is_listed }}">Unlist
-                    {% if result.is_listed %}
-                        Unlist
-                    {% else %}
-                        List
+{% if results %}
+    <table class="w-full text-sm text-left text-gray-500">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+            <tr>
+                <th scope="col" class="px-6 py-3">
+                    Title
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Price
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Listing Type
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Address
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+            <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
+                <td class="px-6 py-4">
+                    <a href="{% url 'core:property_details_by_id' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
+                </td>
+                <td class="px-6 py-4 title">
+                    &#8358; {{ result.price }}
+                </td>
+                <td class="px-6 py-4 capitalize">
+                    {{ result.listing_type }}
+                </td>
+                <td class="px-6 py-4">
+                    {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
+                </td>
+                <td class="px-6 py-4 flex gap-2 items-center">
+                    {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
+                    <button 
+                        class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
+                        data-listing-id="{{ result.id }}"
+                        data-is-listed="{{ result.is_listed }}">
+                        {% if result.is_listed %}
+                            Unlist
+                        {% else %}
+                            List
+                        {% endif %}
+                    </button>
+                    {% if request.user.is_superuser %}
+                        <form action="{% url 'adminv2:delete-listing' listing_id=result.id %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit">Delete</button>
+                        </form>
                     {% endif %}
-                </button>
-            </td>
-        </tr>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if total_pages > 1 %}
+    <nav aria-label="pagination" class="my-3">
+    <ul class="inline-flex -space-x-px text-base h-10">
+        
+        {# Previous button #}
+        {% if has_previous %}
+        <li>
+        <button type="button" onclick="handleSearch(event, {{results.previous_page_number}})" 
+            class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
+            Previous
+        </button>
+        </li>
+        {% else %}
+        <li>
+        <span class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-300 bg-white border border-e-0 border-gray-300 rounded-s-lg cursor-not-allowed">
+            Previous
+        </span>
+        </li>
+        {% endif %}
+
+        {# Page numbers #}
+        {% for num in results.paginator.page_range %}
+        {% if num == results.number %}
+        <li>
+            <span aria-current="page" 
+                class="flex items-center justify-center px-4 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700">
+            {{ num }}
+            </span>
+        </li>
+        {% else %}
+        <li>
+            <button type="button" onclick="handleSearch(event, {{ num }})" 
+            class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+            {{ num }}
+            </button>
+        </li>
+        {% endif %}
         {% endfor %}
-    </tbody>
-</table>
+
+        {# Next button #}
+        {% if has_next %}
+        <li>
+        <button type="button"  onclick="handleSearch(event, {{results.next_page_number}})" 
+            class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
+            Next
+        </button>
+        </li>
+        {% else %}
+        <li>
+        <span class="flex items-center justify-center px-4 h-10 leading-tight text-gray-300 bg-white border border-gray-300 rounded-e-lg cursor-not-allowed">
+            Next
+        </span>
+        </li>
+        {% endif %}
+
+    </ul>
+    </nav>
+    {% endif %}
+
+{% endif %}

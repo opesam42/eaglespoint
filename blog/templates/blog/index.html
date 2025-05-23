@@ -1,0 +1,48 @@
+{% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Home - Eaglespoint Horizon Limited{% endblock %}
+
+{% block content %}
+
+    <main class="mt-4">
+        <article class="relative w-full responsive-padding">
+            <a href="#" class="relative block h-80 lg:h-[75vh] lg:max-h-[580px] w-full lg:w-4/5">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-3xl"></div>
+                <img width="320px" src="{% static 'images/designthinking.webp' %}" class="w-full h-full object-cover rounded-3xl">
+            </a>
+            <div class="absolute flex flex-col gap-1.5 lg:gap-3 justify-center px-4 bg-white top-[80%] lg:top-1/2 transform left-1/2 lg:left-auto -translate-x-1/2 lg:-translate-x-0 lg:-translate-y-1/2 h-fit lg:h-80 w-[80%] lg:w-80 -bottom-2 lg:bottom-auto lg:right-10 py-5 rounded-lg shadow-2xl">
+                <div class="uppercase text-gray-600">Real Estate</div>
+                <a class="font-bold text-2xl" href="#">10 Mistake To Avoid When Getting a Property in Lagos</a>
+                <div></div>
+                <a class="text-gray-600 hover:text-gray-900" href="#">Read More <i class="fa fa-angle-right"></i></a>
+            </div>
+        </article>
+
+        <section class="flex flex-col gap-2 items-end pt-40 lg:pt-14 responsive-padding">
+            <div class="flex flex-col gap-4 xl:flex-row xl:gap-4">
+                <header class="xl:w-[15%]">
+                    <h2 class="text-xl font-semibold">Travel</h2>
+                    <div class="hidden md:block">Get to know the upcoming Windows 11, the Windows that brings you closer to what you love.</div>
+                </header>
+                <div class="w-full flex gap-4 overflow-x-scroll lg:overflow-x-visible lg:flex-wrap xl:flex-nowrap *:grow">
+                    {% component "blog_card" title="Reponsible AI and trustworthy innovation n Windows" tag="Travel" imageUrl="{% static 'images/smiling-on-workstation.png' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+                    
+                    {% component "blog_card" title="Reponsible AI and trustworthy innovation n Windows" tag="Travel" imageUrl="{% static 'images/smiling-on-workstation.png' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+
+                    {% component "blog_card" title="Reponsible AI and trustworthy innovation n Windows" tag="Travel" imageUrl="{% static 'images/smiling-on-workstation.png' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+                </div>
+            </div>
+            <a href="#" class="btn primary-btn w-fit">View more Travel's Articles</a>
+        </section>
+
+        <hr class="my-8 border-t border-gray-300" />
+    </main>
+
+    {% for blog in blogs %}
+        <div>
+            {{blog.content | safe}}
+        </div>
+    {% endfor %}
+    
+{% endblock %}

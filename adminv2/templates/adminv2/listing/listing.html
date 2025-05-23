@@ -15,7 +15,7 @@
     </div>
     
     
-    <form class="max-w-md mx-auto mb-6">
+    <form class="max-w-md mx-auto mb-6" onsubmit="handleSearch(event)">
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
         <div class="relative">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -26,240 +26,325 @@
             <input type="text" id="listing-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Listings..." />
     
             <!-- Filters Button with similar classes as Search -->
-            <button type="button" class="absolute end-2.5 bottom-2.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_search_fiters()'>
-                <i class="fa fa-filter"></i> Filters
+             <button type="button" class="flex gap-1 items-center absolute end-2.5 bottom-1.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_sort_listing_filter()'>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                <span>Sort</span>
             </button>
         </div>
+
+        <div class="flex gap-2 mt-2 *:bg-white *:text-sm">
+            <button id="property_type_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_property_type_modal()">Property Type</button>
+
+            <button id="price_range_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_price_modal()">Price</button>
+
+            <button id="location_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_location_modal()">Location</button>
+        </div>
+
+        <!-- sort modal -->
+        {% component "modal" modal_type="sort_listing_filter" modal_title="Sort by" %}
+            {% fill 'children' %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="block">
+                            <input type="radio" name="sort" value="date_desc" class="mr-2 accent-red-500" checked>
+                            Newest
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="sort" value="date_asc" class="mr-2 accent-red-500">
+                            Oldest
+                        </label>
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
+
+        <!-- PRICE TYPE FILTER MODAL -->
+        {% component "modal" modal_type="price_modal" modal_title="Price Range" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="gap-2">
+                        <div>
+                            <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
+                                <span class="px-2 block">&#8358;</span>
+                                <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="min_price" value="{{ min_price }}">
+                            </div>
+                            <label class="label-primary" for="min_price">Min:</label>
+                        </div>
+                        <div>
+                            <div tabindex="0" class="flex items-center shadow border rounded w-full focus:border-blue-500">
+                                <span class="px-2 block">&#8358;</span>
+                                
+                                <input class="py-2 px-2 focus:outline-0 h-full w-full" type="number" name="max_price" value="{{ max_price }}">
+                            </div>
+                            <label class="label-primary" for="min_price">Max:</label>
+                        </div>
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
+
+        
+        <!-- PROPERTY TYPE FILTER MODAL -->
+        {% component "modal" modal_type="property_type_modal" modal_title="Property Type" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="" {% if listing_type == '' %}checked{% endif %} class="mr-2 accent-red-500">
+                            All Properties
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="buy" {% if listing_type == 'buy' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Properties for Sale
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="rent" {% if selected_sort == 'rent' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Properties for Rent
+                        </label>
+                        <label class="block">
+                            <input type="radio" name="listing_type" value="land" {% if selected_sort == 'land' %}checked{% endif %} class="mr-2 accent-red-500">
+                            Landed Properties
+                        </label>
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
+
+        <!-- LOCATION TYPE FILTER MODAL -->
+        {% component "modal" modal_type="location_modal" modal_title="Property Type" %}
+            {% fill "children" %}
+                <div class="p-4 flex flex-col gap-6">
+                    <div class="space-y-2">
+                        <label class="block">
+                            <input type="radio" name="state" value="" {% if selectedState == '' %}checked{% endif %} class="mr-2 accent-red-500">
+                            All Locations
+                        </label>
+                        {% for state in nigeria_states %}
+                            <label class="block">
+                                <input type="radio" name="state" value="{{state}}" {% if selectedState ==  state %}checked{% endif %} class="mr-2 accent-red-500">
+                                {{ state }}
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <button class="btn primary-btn w-full" type="submit">Filter</button>
+                </div>
+            {% endfill %}
+        {% endcomponent %}
     </form>
     
-
-    <div id="listing-container" class="relative overflow-x-auto shadow-md sm:rounded-lg">
-        <table class="w-full text-sm text-left text-gray-500">
-            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-                <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Title
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Price
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Listing Type
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Address
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for result in results %}
-                <tr id="listing-row-{{ result.id }}" class="odd:bg-white even:bg-gray-50 border-b border-gray-200">
-                    <td class="px-6 py-4">
-                        <a href="{% url 'core:property_details_by_id' result.id %}" class="font-medium text-blue-600 hover:underline">{{ result.title }}</a>
-                    </td>
-                    <td class="px-6 py-4 title">
-                        &#8358; {{ result.price }}
-                    </td>
-                    <td class="px-6 py-4 capitalize">
-                        {{ result.listing_type }}
-                    </td>
-                    <td class="px-6 py-4">
-                        {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
-                    </td>
-                    <td class="px-6 py-4 flex gap-2 items-center">
-                        {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
-                        <button 
-                            class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
-                            data-listing-id="{{ result.id }}"
-                            data-is-listed="{{ result.is_listed }}">Unlist
-                            {% if result.is_listed %}
-                                Unlist
-                            {% else %}
-                                List
-                            {% endif %}
-                        </button>
-                        {% if request.user.is_superuser %}
-                            <form action="{% url 'adminv2:delete-listing' listing_id=result.id %}" method="POST">
-                                {% csrf_token %}
-                                <button type="submit">Delete</button>
-                            </form>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+    <div id="listing-wrapper" x-data={loading:true}>
+        <div x-show="loading">   
+            {% component "table_skeleton" %} {% endcomponent %}
+        </div>
+        <div id="listing-container" x-show="!loading" class="relative flex flex-col items-center shadow-md sm:rounded-lg"></div>
     </div>
-      
     
 
-    {% component "modal" modal_type="search_fiters" modal_title="Filters" %}
-        {% fill "children" %}
-        <form method="GET" id="filter-form" class="p-4 flex flex-col gap-2" x-data>
-            <section>
-                <input hidden type="search" name="search_query" value="{{ search_query }}" aria-label="Search">
-                <h5 class="font-bold">Type</h5>
-                <select name="listing_type" class="block input-primary">
-                    <option value="">Any</option>
-                    <option value="buy" {% if listing_type == 'buy' %}selected{% endif %}>Buy</option>
-                    <option value="rent" {% if listing_type == 'rent' %}selected{% endif %}>Rent</option>
-                    <option value="land" {% if listing_type == 'land' %}selected{% endif %}>Land</option>
-                </select>
-            </section>
 
-            <!-- for price -->
-            <section>
-                <h5 class="font-bold">Price</h5>
-                <div class="flex gap-x-2">
-                    <div>
-                        <input class="input-primary" type="number" name="min_price" value="{{ min_price }}">
-                        <label class="label-primary" for="min_price">Min:</label>
-                    </div>
-                    <div>
-                        <input class="input-primary" type="number" name="max_price" value="{{ max_price }}">
-                        <label class="label-primary" for="max_price">Max:</label>
-                    </div>
-                </div>
-            </section>
+    
 
-
-                    
-                    
-            <!-- for states -->
-            <section>
-                <div class="flex flex-col gap-2">
-                    <label for="state_location" class="font-bold">State</label>
-                    <select id="state_location" name="state" class="input-primary">
-                        <option value="">Any</option>
-                        {% for state in nigeria_states %}
-                            <option value="{{ state }}" {% if state == selectedState %}selected{% endif %}>{{ state }} </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </section>
-
-            {% component "button" html_tag="button" label="<i class='fa fa-filter'></i> Apply Fiters" type="primary" width="max" function="button" extraclass="mt-4 px-4 py-1 ml-auto" %} {% endcomponent %}
-        </form>
-            
-        
-
-        {% endfill %}
-    {% endcomponent %}
 
 {% endblock %}
 
 {% block script %}
     <script>
 
-        // function for handling the status of a listing
-        function attachEventListeners(){
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchListings();
+        });
 
-            toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
-            toggleStatusBtns.forEach((btn) => {
+    const search_query = document.querySelector('input[name="search_query"]');
+    const selectedSortRadio = document.getElementsByName('sort');
+    const listingTypeRadio = document.getElementsByName('listing_type');
+    const locationRadio = document.getElementsByName('state');
+    const property_type_filter_btn = document.getElementById('property_type_filter_btn');
+    const price_range_filter_btn = document.getElementById('price_range_filter_btn');
+    const location_filter_btn = document.getElementById('location_filter_btn');
+    
+    const min_price_input = document.querySelector('input[name="min_price"]');
+    const max_price_input = document.querySelector('input[name="max_price"]');
+    const priceInputs = [min_price_input, max_price_input];
+    const radioInputs = [listingTypeRadio, locationRadio];
 
-                if(btn.getAttribute('data-is-listed') == "True"){
-                    btn.className = "toggle-listing-btn text-red-500 hover:text-red-700 cursor-pointer p-1";
-                    btn.textContent = "Unlist";
-                }else{
-                    btn.className = "toggle-listing-btn text-green-500 hover:text-green-700 cursor-pointer p-1 ";
-                    btn.textContent = "List";
+    priceInputs.forEach(input => {
+        input.addEventListener('change', highlightActiveFilters);
+    });
+
+    radioInputs.forEach(radioInput => {
+        radioInput.forEach(radio => {
+            radio.addEventListener('change', highlightActiveFilters)
+        })
+    });
+
+    function highlightActiveFilters(){
+        const highlightClasses = ["text-red-400", "ring-2", "ring-red-400", "border-0"];
+
+        listingTypeRadio.forEach(radio => {
+            const anyListingTypeSelected = Array.from(listingTypeRadio).some(radio => radio.checked && radio.value !== '');
+            
+            if(anyListingTypeSelected){
+                property_type_filter_btn.classList.add(...highlightClasses);
+            } else{
+                property_type_filter_btn.classList.remove(...highlightClasses);
+            }
+        });
+
+        locationRadio.forEach(radio => {
+            const anyLocationSelected = Array.from(locationRadio).some(radio => radio.checked && radio.value !== '');
+
+            if(anyLocationSelected){
+                location_filter_btn.classList.add(...highlightClasses);
+            } else{
+                location_filter_btn.classList.remove(...highlightClasses);
+            }
+        });
+
+
+        
+        if(min_price_input.value != "" || max_price_input.value != ""){
+            price_range_filter_btn.classList.add(...highlightClasses);
+        } else{
+            price_range_filter_btn.classList.remove(...highlightClasses)
+        }
+
+    }
+
+
+        const listingContainer = document.getElementById('listing-container');
+        const listingWrapper = document.getElementById('listing-wrapper');
+        
+        let search_params = new URLSearchParams(window.location.search)
+        
+        function fetchListings(page = 1) {        
+            base_url = '{% url 'listing:search_listing' %}'
+            search_params.set('context', 'admin')
+            search_params.set('page', page)
+            
+            fetch(`${base_url}?${search_params.toString()}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
                 }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const listingsHtml = doc.body.innerHTML;
+                listingContainer.innerHTML = listingsHtml;
 
-                btn.addEventListener('click', function(){
-
-                    this.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
-                    const listingId = this.getAttribute('data-listing-id');
-                    const listingStatus = this.getAttribute('data-is-listed');
-                    url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
-
-                    fetch(url, {
-                        method: "POST",
-                        headers: {
-                        "X-Requested-With": "XMLHttpRequest",
-                        "X-CSRFToken": "{{ csrf_token }}"
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.success){
-                            if(data.is_listed){
-                                this.textContent = "Unlist";
-                                this.classList.remove("text-green-500", "hover:text-green-700");
-                                this.classList.add("text-red-500", "hover:text-red-700");
-                            }
-                            else{
-                                this.textContent = "List";
-                                this.classList.remove("text-red-500", "hover:text-red-700");
-                                this.classList.add("text-green-500", "hover:text-green-700");
-                            }
-                            this.setAttribute("data-is-listed", data.is_listed);
-
-                            console.log('success');
-                        }
-                        else{
-                            console.log('error');
-                        }
-                    })
-                    .catch(error => console.log("Error", error));
-                })
+                // Move load-more button if it exists
+                const loadMoreContainer = document.getElementById('load-more-container');
+                if (loadMoreContainer) {
+                    listingContainer.after(loadMoreContainer);
+                }
+            })
+            .finally(() => {
+                Alpine.nextTick(() => {
+                    alpineListingData = Alpine.$data(listingWrapper);
+                    if (alpineListingData) {
+                        alpineListingData.loading = false;
+                    }
+                });
             })
         }
 
-        document.addEventListener("DOMContentLoaded", attachEventListeners);
+        function handleSearch(e, page=1){
+            e.preventDefault();
 
+            const search_query = document.getElementById('listing-search');
+            const selectedSortRadio = document.getElementsByName('sort');
+            
+            let selectedSortValue = "";
+            selectedSortRadio.forEach(radio=>{
+                if(radio.checked){
+                    selectedSortValue = radio.value;
+                }
+            })
 
+            let listingTypeValue = "";
+            listingTypeRadio.forEach(radio=>{
+                if(radio.checked){
+                    listingTypeValue = radio.value;
+                }
+            })
 
-        // for live search
-        
-        function handleLiveSearch(){    
-            query = this.value;
-            if(query){
-                url = `/adminv2/listing-search/${query}`;
-                // url = '/adminv2/listing-search/bedroom?listing_type=&min_price=&max_price=&state=FCT'
-            } else{
-                url = `/adminv2/listing-search/`;
-            }
+            let selectedLocation = "";
+            locationRadio.forEach(radio=>{
+                if(radio.checked){
+                    selectedLocation = radio.value;
+                }
+            })
 
-            let params = new URLSearchParams({
-                listing_type: document.querySelector('select[name="listing_type"]').value,
-                min_price: document.querySelector('input[name="min_price"]').value,
-                max_price: document.querySelector('input[name="max_price"]').value,
-                state: document.querySelector('select[name="state"]').value,  
-            });
-            url = url + '?' + params.toString();
-
-            console.log(url);
-            // return;
-
-            this.delay = setTimeout(() => {
-
-                fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-                .then(response => response.text())
-                .then(data => {
-                    // since the data is a full html stuff, we need to extract the innerHTML of the body
-                    let parser = new DOMParser();
-                    let doc = parser.parseFromString(data, 'text/html');
-                    
-                    let newListings = doc.body.innerHTML;
-                    document.getElementById('listing-container').innerHTML = newListings;
-
-                    // Reinitialize event listeners for new elements
-                    attachEventListeners();
-
-                })
-
-            }, 400);            
-
+            search_params = new URLSearchParams(); 
+            search_params.set('search_query', search_query.value);
+            search_params.set('selected_sort', selectedSortValue);
+            search_params.set('context', 'admin');
+            search_params.set('selected_sort', selectedSortValue);
+            search_params.set('listing_type', listingTypeValue);
+            search_params.set('min_price', min_price_input.value);
+            search_params.set('max_price', max_price_input.value);
+            search_params.set('state', selectedLocation);
+            
+            
+            alpineTableData = Alpine.$data(listingWrapper);
+            alpineTableData.loading = true;
+            fetchListings(page);
         }
 
-        document.getElementById('listing-search').addEventListener('keyup', handleLiveSearch);
-        console.log(document.querySelector('#filter-form button[type="button"]'))
-        document.querySelector('#filter-form button[type="button"]').addEventListener('click', handleLiveSearch);
 
-            
+        toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
+        toggleStatusBtns.forEach((btn) => {
+
+            if(btn.getAttribute('data-is-listed') == "True"){
+                btn.className = "toggle-listing-btn text-red-500 hover:text-red-700 cursor-pointer p-1";
+                btn.textContent = "Unlist";
+            }else{
+                btn.className = "toggle-listing-btn text-green-500 hover:text-green-700 cursor-pointer p-1 ";
+                btn.textContent = "List";
+            }
+
+            btn.addEventListener('click', function(){
+
+                this.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
+                const listingId = this.getAttribute('data-listing-id');
+                const listingStatus = this.getAttribute('data-is-listed');
+                url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
+
+                fetch(url, {
+                    method: "POST",
+                    headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success){
+                        if(data.is_listed){
+                            this.textContent = "Unlist";
+                            this.classList.remove("text-green-500", "hover:text-green-700");
+                            this.classList.add("text-red-500", "hover:text-red-700");
+                        }
+                        else{
+                            this.textContent = "List";
+                            this.classList.remove("text-red-500", "hover:text-red-700");
+                            this.classList.add("text-green-500", "hover:text-green-700");
+                        }
+                        this.setAttribute("data-is-listed", data.is_listed);
+
+                        console.log('success');
+                    }
+                    else{
+                        console.log('error');
+                    }
+                })
+                .catch(error => console.log("Error", error));
+            })
+        })
+    
         
     </script>
 {% endblock  %}
