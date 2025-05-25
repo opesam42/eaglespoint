@@ -143,9 +143,22 @@
     </div>
     
 
+{% component "modal" modal_type="delete_listing_modal" modal_title="Delete Listing" %}
+    {% fill "children" %}
+        <section class="flex flex-col gap-6 py-4 px-6">
+            <div>
+                <div class="font-semibold">Are you sure you want to delete this listing?</div>
+                <div class="text-sm">This action cannot be undone.</div>
+            </div>
 
-    
-
+            <div class="flex self-start gap-6">
+                <button class="delete-btn btn bg-red-600 text-white">Delete</button>
+                <button class="btn tertiary-btn" onclick='closeModal_delete_listing_modal()'>Cancel</button>
+            </div>
+        </section>
+        
+    {% endfill %}
+{% endcomponent %}
 
 {% endblock %}
 
@@ -252,7 +265,9 @@
         }
 
         function handleSearch(e, page=1){
-            e.preventDefault();
+            if(e){
+                e.preventDefault();
+            } 
 
             const search_query = document.getElementById('listing-search');
             const selectedSortRadio = document.getElementsByName('sort');
@@ -294,6 +309,89 @@
             fetchListings(page);
         }
 
+        function changeListingStatus(e, listingId){
+            const element = e.target;
+            const listingStatus = element.getAttribute('data-is-listed');
+            element.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
+            
+            url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
+
+            fetch(url, {
+                method: "POST",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": "{{ csrf_token }}"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    if(data.is_listed){
+                        element.textContent = "Unlist";
+                        element.classList.remove("text-green-500", "hover:text-green-700");
+                        element.classList.add("text-red-500", "hover:text-red-700");
+                    } else {
+                        element.textContent = "List";
+                        element.classList.remove("text-red-500", "hover:text-red-700");
+                        element.classList.add("text-green-500", "hover:text-green-700");
+                    }
+                    element.setAttribute("data_is_listed", data.is_listed)
+                } else{
+                    console.log.log(data.error)
+                }
+            })
+            .catch(error => console.log("Error", error))
+        }
+
+        function openDeleteModal(e){
+            const element = e.target;
+            const data_id = element.getAttribute('data-id');
+            const modal = document.getElementById("modal-delete_listing_modal")
+            const del_btn = modal.querySelector('.delete-btn')
+            console.log(del_btn)
+            del_btn.onclick = function(){
+                deleteListing(data_id, event)
+            }
+            openModal_delete_listing_modal();
+
+        }
+
+        function deleteListing(listing_id, event){
+            const url = '{% url 'adminv2:delete-listing' 123 %}'.replace("123", listing_id);
+            
+            deleteBtn = event.currentTarget;
+            originalText = deleteBtn.innerHTML   
+            deleteBtn.disabled = true; 
+            deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
+            
+            fetch(url, {
+                method: "POST",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    showToastNotification('success', data.message)
+                    closeModal_delete_listing_modal(); 
+                    // refresh the listings
+                    handleSearch(null)
+                } else{
+                    console.error("Error", data.error)
+                    showToastNotification('danger', 'Something went wrong, please try again')
+                }
+            })
+            .catch(error => {
+                console.error("Error", error) 
+                showToastNotification('danger', 'Something went wrong, please try again')
+            })
+            .finally(() => {
+                deleteBtn.disabled = false
+                deleteBtn.innerHTML = originalText
+            })
+        }
 
         toggleStatusBtns = document.querySelectorAll('.toggle-listing-btn');
         toggleStatusBtns.forEach((btn) => {

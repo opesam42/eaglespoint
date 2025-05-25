@@ -107,8 +107,10 @@
 
 
         function handleSearch(e, page=1){
-            e.preventDefault();
-
+            if(e){
+                e.preventDefault();
+            }
+            
             const search_query = document.getElementById('message-search');
             const selectedSortRadio = document.getElementsByName('sort');
             
@@ -175,6 +177,7 @@
                 if(data.success){
                     showToastNotification('success', 'Message has been deleted')
                     closeModal_message_info(); //close modal after deleting
+                    handleSearch(null) //refresh list after deleting
                 } else{
                     console.error("Error", data.error)
                     showToastNotification('danger', 'Something went wrong, please try again')

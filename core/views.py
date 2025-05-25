@@ -1,10 +1,14 @@
 from django.shortcuts import render, redirect
 from listing.models import Listings
 from utils.choices import LISTING_TYPE
+from cmscontent.models import Testimonial, FAQ
 
 # Create your views here.
+
+# travel page
 def home(request):
-    return render(request, 'core/index.html')
+    testimonials = Testimonial.objects.filter(category='travel').order_by('?')
+    return render(request, 'core/index.html', {'testimonials': testimonials})
 
 
 def page_not_found_view(request, exception):
@@ -44,4 +48,5 @@ def about_us_page(request):
     return render(request, 'core/about-us.html')
 
 def contact_page(request):
-    return render(request, 'core/contact.html')
+    faqs = FAQ.objects.filter(is_active=True).order_by('order')
+    return render(request, 'core/contact.html', {'faqs':faqs })

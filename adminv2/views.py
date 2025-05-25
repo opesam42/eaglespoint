@@ -14,7 +14,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from listing.models import Listings
-from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
+from utils.storage import delete_cover_image_folder, append_image_prefix, BackBlazeAPI
 from messaging.models import ContactMessage
 
 User = get_user_model()
@@ -42,22 +42,27 @@ def listing(request):
     })
 
 
+@require_POST
 @admin_only
 def delete_listing(request, listing_id):
     listing = get_object_or_404(Listings, id=listing_id)
 
-    if request.method == "POST":
+    try:
         listing.delete()
         listing_media_dir = f'listing-images/listing_{listing_id}/'
-        print(listing_id)
+
         try:
             backblaze = BackBlazeAPI()
             backblaze.delete_files_with_prefix(listing_media_dir)
         except Exception as e:
             print(f'Backblaze error: {e}')
-        return redirect('adminv2:listing')
+
+        return JsonResponse({"success": True, "message": "Listing successfully deleted"})
+        # return redirect('adminv2:listing')
+    except Exception as e:
+        return JsonResponse({'success': False, 'error':str(e)}, status=500)
     
-    return redirect('adminv2:listing')
+    # return redirect('adminv2:listing')
 
 
 @admin_only
@@ -115,7 +120,7 @@ def edit_listing(request, property_id):
     # listingImageArray = mark_safe(json.dumps(listingImages).replace('"', "'"))
 
     property_images = ListingImages.objects.filter(listing_id=property_id).values_list('image', flat=True)
-    signed_image_urls = [get_signed_b2_url(img) for img in property_images]
+    signed_image_urls = [append_image_prefix(img) for img in property_images]
     listingImageArray = mark_safe(json.dumps(signed_image_urls))
     
     

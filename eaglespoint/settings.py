@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'adminv2',
     'messaging',
     'blog',
+    'cmscontent',
 
     'django_components',
     'django_ckeditor_5',
@@ -211,6 +212,7 @@ AWS_STORAGE_BUCKET_NAME = env('B2_BUCKET_NAME')
 AWS_S3_ENDPOINT_URL = env('B2_ENDPOINT')
 AWS_S3_REGION_NAME = env("B2_REGION")
 AWS_S3_ADDRESSING_STYLE = "path"
+AWS_QUERYSTRING_AUTH = False
 
 STORAGES = {
     "default": {
@@ -222,7 +224,7 @@ STORAGES = {
             "bucket_name": env('B2_BUCKET_NAME'),
             "region_name": env('B2_REGION'),
             "endpoint_url": env('B2_ENDPOINT'),
-            "default_acl": None,  
+            "default_acl": 'public-read',  
             "file_overwrite": False, 
         },
     },
@@ -285,7 +287,7 @@ CKEDITOR_5_CONFIGS = {
     }
 }
 
-CKEDITOR_5_CUSTOM_CSS = 'path_to.css' # optional
+CKEDITOR_5_CUSTOM_CSS = '/static/css/ckeditor_custom.css'
 CKEDITOR_5_FILE_STORAGE = "utils.storage.CustomS3Storage"
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'webp', 'jpg', 'png', 'gif']

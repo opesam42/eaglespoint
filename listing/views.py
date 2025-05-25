@@ -173,15 +173,17 @@ def get_listing_context(request, property):
         # check_if_favourite()
 
     # Generate signed URLs for images from backblaze
-    signed_image_urls = []
+    # signed_image_urls = []
+    image_urls = []
+    b2_url_prefex = f'{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}'
     for image in property_images:
-        image_url = get_signed_b2_url(image['image']) 
-        signed_image_urls.append(image_url)
+        image_url = f'{b2_url_prefex}/{image['image']}'
+        image_urls.append(image_url)
 
 
     return {
         'listing': property,
-        'listing_images': signed_image_urls,
+        'listing_images': image_urls,
         'features': features,
         'is_favourite': is_favourite,
         'whatsapp_link': whatsapp_link,
@@ -225,18 +227,24 @@ def toggle_listing_status(request, listing_id):
 
     if request.method == "POST":
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            if listing.is_listed == False:
-                listing.is_listed = True
-            else:
-                listing.is_listed = False
-            
-            listing.save()
+            try:
+                if listing.is_listed == False:
+                    listing.is_listed = True
+                else:
+                    listing.is_listed = False
+                
+                listing.save()
 
-            return JsonResponse({
-                "success": True,
-                "is_listed": listing.is_listed,
-                "message": f'Listing status of {listing.title} has been changed to {listing.is_listed}',
-            })
+                return JsonResponse({
+                    "success": True,
+                    "is_listed": listing.is_listed,
+                    "message": f'Listing status of {listing.title} has been changed to {listing.is_listed}',
+                })
+            except Exception as e:
+                return JsonResponse({
+                    "success": False,
+                    "error": f"Error: {str(e)}"
+                })
     return JsonResponse({
         "success": False,
         "message": "Invalid request",

@@ -84,15 +84,17 @@
     </form>
 </section>
 
+{% if faqs %}
 <section class="responsive-padding mt-20 w-full bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-2xl sm:rounded-lg sm:px-10" id="faq">
     <h1 class="text-4xl font-bold text-center">FAQ</h1>
     <p class="text-center mb-4">Frequently Asked Questions</p>
-
+    
     <dl>
+        {% for faq in faqs %}
         <dt>
             <details class="border-b-2 border-b-gray-100 group py-5">
                 <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
-                    <span>How does the billing work?</span>
+                    <span>{{ faq.question }}</span>
                     <span class="transition group-open:rotate-180">
                         <svg fill="none" height="24" shape-rendering="geometricPrecision"
                             stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -102,103 +104,14 @@
                     </span>
                 </summary>
                 <p class="group-open:animate-fadeIn mt-3 text-neutral-600">
-                    Our service offers monthly and annual subscription plans. Payments are processed via credit card or secure online payment gateways.
+                    {{ faq.answer }}
                 </p>
             </details>
         </dt>
-    
-        <dt>
-            <details class="border-b-2 border-b-gray-100 group py-5">
-                <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
-                    <span>Can I get a refund for my subscription?</span>
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </span>
-                </summary>
-                <p class="group-open:animate-fadeIn mt-3 text-neutral-600">
-                    We provide a 30-day money-back guarantee on most plans. Refunds beyond 30 days are reviewed on a case-by-case basis.
-                </p>
-            </details>
-        </dt>
-    
-        <dt>
-            <details class="border-b-2 border-b-gray-100 group py-5">
-                <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
-                    <span>How do I cancel my subscription?</span>
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </span>
-                </summary>
-                <p class="group-open:animate-fadeIn mt-3 text-neutral-600">
-                    Log into your account, go to "Subscription Settings," and click "Cancel Subscription."
-                </p>
-            </details>
-        </dt>
-    
-        <dt>
-            <details class="border-b-2 border-b-gray-100 group py-5">
-                <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
-                    <span>Is there a free trial?</span>
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </span>
-                </summary>
-                <p class="group-open:animate-fadeIn mt-3 text-neutral-600">
-                    Yes! We offer a free trial with limited features so you can explore before subscribing.
-                </p>
-            </details>
-        </dt>
-    
-        <dt>
-            <details class="border-b-2 border-b-gray-100 group py-5">
-                <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
-                    <span>How do I contact support?</span>
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </span>
-                </summary>
-                <p class="group-open:animate-fadeIn mt-3 text-neutral-600">
-                    Reach out to us via our support email at support@ourwebsite.com or use the contact form on our site.
-                </p>
-            </details>
-        </dt>
-    
-        <dt>
-            <details class="border-b-2 border-b-gray-100 group py-5">
-                <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
-                    <span>Do you offer any discounts or promotions?</span>
-                    <span class="transition group-open:rotate-180">
-                        <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                            stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                            stroke-width="1.5" viewBox="0 0 24 24" width="24">
-                            <path d="M6 9l6 6 6-6"></path>
-                        </svg>
-                    </span>
-                </summary>
-                <p class="group-open:animate-fadeIn mt-3 text-neutral-600">
-                    Yes! Follow us on social media or subscribe to our newsletter to stay updated on special offers.
-                </p>
-            </details>
-        </dt>
-    </dl>
-    
+        {% endfor %}
+    </dl>    
 </section>
+{% endif %}
 
 
     

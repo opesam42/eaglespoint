@@ -39,6 +39,9 @@ def get_signed_b2_url(key, method='get_object'):
         print(f"Error generating presigned URL: {e}")
         return None
 
+def append_image_prefix(image_url):
+    return f'{settings.AWS_S3_ENDPOINT_URL}/{settings.AWS_STORAGE_BUCKET_NAME}/{image_url}'
+
 
 def delete_cover_image_folder(listing_id):
     s3 = boto3.client(
