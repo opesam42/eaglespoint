@@ -1,14 +1,13 @@
 from django.db import models
 
 # Create your models here.
+TESTIMONIAL_CATEGORIES = (
+    ('real_estate', 'Real Estate'),
+    ('travel', 'Travel')
+)
 class Testimonial(models.Model):
-    
-    CATEGORIES = (
-        ('real_estate', 'Real Estate'),
-        ('travel', 'Travel')
-    )
     name = models.CharField(max_length=100)
-    category = models.CharField(max_length=50, choices=CATEGORIES)
+    category = models.CharField(max_length=50, choices=TESTIMONIAL_CATEGORIES)
     message = models.TextField()
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

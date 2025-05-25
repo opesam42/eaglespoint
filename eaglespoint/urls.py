@@ -15,7 +15,8 @@ urlpatterns = [
     path('messaging/', include('messaging.urls', namespace='messaging')),
     path('adminv2/', include('adminv2.urls', namespace='adminv2')),
     path('blog/', include('blog.urls', namespace='blog')),
-    
+    path('cmscontent', include('cmscontent.urls', namespace='cmscontent')),
+
     path("components/", include("django_components.urls")),
     path('ckeditor5/', include('django_ckeditor_5.urls')),
 ]

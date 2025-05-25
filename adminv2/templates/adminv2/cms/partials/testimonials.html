@@ -1,0 +1,39 @@
+<div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-2" >
+    
+    {% for testimonial in testimonials %}
+    <form method="post" action="{% url 'cmscontent:update-testimonial' testimonial.id %}" class="bg-white rounded-2xl py-6 px-2" onsubmit="updateTestimonial(event, {{ testimonial.id }})">
+        <div class="flex flex-col gap-3 lg:gap-4">
+            <div>
+                <label for="id_name" class="label-primary">Name</label>
+                <input class="input-primary" type="text" name="name" value="{{ testimonial.name }}" required id="id_name">
+            </div>
+
+            <div>
+                <label for="id_category" class="label-primary">Category</label>
+                <select class="input-primary" type="text" name="category" required id="id_category">
+                {% for value, label in categories %}
+                    <option value="{{ value }}">{{ label }} {% if value == testimonial.category %} checked {% endif %}</option>
+                {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label for="id_message" class="label-primary">Message</label>
+                <textarea class="input-primary h-36"name="message" required id="id_message">{{ testimonial.message }}</textarea>
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" name="is_active" value="1" {% if testimonial.is_active %} checked {% endif %}>
+                    Is Active
+                </label>
+            </div>
+
+            <div class="flex gap-x-2 justify-end md:flex-row">
+                <button type="button" class="btn primary-btn bg-red-500 hover:bg-red-700 w-max" onclick="deleteMessage(event, {{ testimonial.id }})">Delete</button>
+                <button class="btn primary-btn w-max" type="submit">Update</button>
+            </div>
+        </div>
+    </form>
+    {% endfor %}
+</div>

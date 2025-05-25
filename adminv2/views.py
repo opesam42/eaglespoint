@@ -16,6 +16,7 @@ from django.contrib.auth import get_user_model
 from listing.models import Listings
 from utils.storage import delete_cover_image_folder, append_image_prefix, BackBlazeAPI
 from messaging.models import ContactMessage
+from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES
 
 User = get_user_model()
 
@@ -417,4 +418,13 @@ def delete_message(request, message_id):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
     
+@admin_only
+def cms_admin_page(request):
+    return render(request, 'adminv2/cms/index.html')
 
+def testimonial_partial(request):
+    testimonials = Testimonial.objects.all()
+    return render(request, 'adminv2/cms/partials/testimonials.html', {'testimonials': testimonials, 'categories': TESTIMONIAL_CATEGORIES})
+
+def faqs_partial(request):
+    return render(request, 'adminv2/cms/partials/faqs.html')

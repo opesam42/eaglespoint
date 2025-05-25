@@ -11,7 +11,6 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import user_passes_test, login_required
 from utils.role_check import is_admin
 from utils.choices import STATE_CHOICES
-from utils.storage import get_signed_b2_url
 
 # Create your views here.
 def get_states_api(request):

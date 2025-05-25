@@ -1,0 +1,152 @@
+{% extends 'adminv2/base.html'%}
+{% load static %}
+
+{% block title %}{% endblock %}
+
+{% block section_title %} CMS Content {% endblock %}
+
+{% block content %} 
+    <div>
+        
+    </div>
+
+    
+    <div id="cms-container" x-data="{
+        activeTab: '{% url 'adminv2:testimonial-partial' %}',
+        templates : {
+            '{% url 'adminv2:testimonial-partial' %}': 'Testimonials',
+            '{% url 'adminv2:faqs-partial' %}': 'FAQs',
+        },
+        loadTemplate(url){
+            this.activeTab = url;
+            console.log(url);
+            fetch(url)
+            .then(response => response.text())
+            .then(html => {
+                this.$refs.content.innerHTML = html;
+                Alpine.initTree(this.$refs.content); // Re-initialize bindings in loaded content
+            })
+            .catch(error => {
+                console.error('Error loading template:', error);
+                this.$refs.content.innerHTML = '<p>Error loading content.</p>';
+            })
+        }
+    }"
+    x-init="loadTemplate(activeTab)">
+        <div class="tabs text-sm font-medium text-center text-gray-500 border-b border-gray-200">
+            <ul class="flex flex-wrap -mb-px">
+                <template x-for="[url, label] in Object.entries(templates)" :key="url">
+                    <li class="me-2">
+                        <a href="#" class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300" :class="{ 'text-blue-600 border-b-2 border-blue-600 rounded-t-lg active': activeTab === url }" @click.prevent="loadTemplate(url)" x-text="label"></a>
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+        <div x-ref="content" class="mb-6"></div>
+
+        
+    </div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+    const cms_container = document.getElementById('cms-container')
+    document.addEventListener('alpine:init', () => {
+        alpineTableData = Alpine.$data(cms_container);
+        console.log(alpineTableData.activeTab)
+    })
+
+    function updateTestimonial(event, testimonial_id){
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form)
+
+        console.log(...formData)
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        let originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Updating...`;
+        submitBtn.disabled = true; 
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+                
+            } else{
+                displayFormError(data.errors, form);
+                console.log(data.errors);
+                return;
+            }
+        })
+        .catch(error => {
+             console.error(error);
+             showToastNotification('danger', 'Something went wrong, please try again');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        })
+    }
+
+
+
+    function deleteMessage(event, testimonial_id){
+        const url = '{% url 'cmscontent:delete-testimonial' 123 %}'.replace("123", testimonial_id);
+        
+        deleteBtn = event.currentTarget;
+        originalText = deleteBtn.innerHTML   
+        deleteBtn.disabled = true; 
+        deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
+        
+        fetch(url, {
+            method: "POST",
+            headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCsrfToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+                
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+                // closeModal_message_info(); //close modal after deleting
+                // handleSearch(null) //refresh list after deleting
+            } else{
+                console.error("Error", data.error)
+                showToastNotification('danger', 'Something went wrong, please try again')
+            }
+        })
+        .catch(error => {
+            console.error("Error", error) 
+            showToastNotification('danger', 'Something went wrong, please try again')
+        })
+        .finally(() => {
+            deleteBtn.disabled = false
+            deleteBtn.innerHTML = originalText
+        })
+    }
+</script>
+
+
+{% endblock %}

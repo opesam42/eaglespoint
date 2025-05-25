@@ -19,8 +19,12 @@ urlpatterns = [
     path('user/toggle-admin/<int:user_id>', views.toggle_admin, name="toggle-admin"),
     path('user/info/<int:user_id>', views.user_info, name="user-info"),
 
-    path('message', views.message_page, name="message-page"),
+    path('message/', views.message_page, name="message-page"),
     path('get-messages/', views.get_messages, name="get-messages"),
     path('get-messages/<int:message_id>/', views.get_messages, name="get-messages"),
     path('delete-message/<int:message_id>/', views.delete_message, name='delete-message'),
+
+    path('cms/', views.cms_admin_page, name='cms-page'),
+    path('cms/testimonials/', views.testimonial_partial, name='testimonial-partial'),
+    path('cms/faqs', views.faqs_partial, name='faqs-partial')
 ]
