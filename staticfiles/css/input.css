@@ -125,6 +125,37 @@
       -ms-overflow-style: none; /* IE and Edge */
       scrollbar-width: none; /* Firefox */
     }
+
+    /* Article Styles */
+    .article-content p{
+      @apply mt-5 text-[min(max(16px,calc(1rem_+_0.1961vw_-_0.70596px)),20px)] leading-[1.7];
+    }
+
+    .article-content h3{
+      font-size: 1.7em;
+      @apply mt-5 mb-2.5 text-[calc(13.78571px+0.69196vw)]
+    }
+
+    .article-content ol{
+      @apply list-decimal px-[2em]
+    }
+
+    .article-content ul{
+      @apply list-disc mt-5 mb-7 pl-6
+    }
+
+    .article-content a{
+      @apply text-blue-600
+    }
+
+    .article-content figure{
+      @apply my-14 flex justify-center
+    }
+
+    .article-content blockquote{
+      @apply ml-10
+    }
+
   }
 
 

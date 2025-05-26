@@ -348,3 +348,42 @@ function showToastNotification(notification_type, message){
         }, 500);
     }, 6000);
 }
+
+function submitContactForm(e){
+    e.preventDefault();
+    let form = e.target;
+    formData = new FormData(form)
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    originalText = submitBtn.innerHTML   
+    submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Sending Message...`;
+    submitBtn.disabled = true; //prevent double click 
+
+    fetch(form.action, {
+        method: 'POST',
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCsrfToken(),
+        },
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        if(data.success){
+            showToastNotification('success', data.message)
+            form.reset();
+        } else{
+            displayFormError(data.errors, form);
+            console.log(data.errors)
+            showToastNotification('warning', "Invalid form details");
+        }
+    })
+    .catch(error => {
+        console.error("Error", error)
+        showToastNotification('danger', 'Something went wrong')
+    })
+    .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    })
+}

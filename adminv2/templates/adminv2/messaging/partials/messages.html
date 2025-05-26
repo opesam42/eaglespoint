@@ -1,106 +1,108 @@
-<table class="w-full text-sm text-left text-gray-500">
-    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr class="*:px-6 *:py-3">
-            <th scope="col" class="">
-                Sender Name
-            </th>
-            <th scope="col">
-                Phone No./Email
-            </th>    
-            <th scope="col" class="">
-                Subject
-            </th>
-            <th scope="col" class="">
-                Date
-            </th>
-            <th scope="col">
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for message in messages %}
-        <tr id="" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
-            <td>                        
-                {{ message.sender_name }}
-            </td>
-            <td>
-                {% if message.sender_phone %}
-                    <a class="text-blue-400 hover:text-blue-700" href="tel:{{ message.sender_phone }}">{{ message.sender_phone }}</a>
-                {% else %}
-                    <a class="text-blue-400 hover:text-blue-700" href="mailto:{{ message.sender_email}}">{{ message.sender_email }}</a>
-                {% endif %}
-                
-            </td>
-            <td>
-                {{ message.subject }}
-            </td>
-            <td class="">
-                {{ message.sent_at }}
-            </td>
-            <td>
-                <button class="btn primary-btn" onclick="viewMessageInfo({{ message.id }})">View</button>
-            </td>                  
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="overflow-x-auto max-h-[80vh]">
+    <table class="w-full text-sm text-left text-gray-500 overflow-x-scroll overflow-y-scroll">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10">
+            <tr class="*:px-6 *:py-3">
+                <th scope="col" class="">
+                    Sender Name
+                </th>
+                <th scope="col">
+                    Phone No./Email
+                </th>    
+                <th scope="col" class="">
+                    Subject
+                </th>
+                <th scope="col" class="">
+                    Date
+                </th>
+                <th scope="col">
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for message in messages %}
+            <tr id="" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
+                <td>                        
+                    {{ message.sender_name }}
+                </td>
+                <td>
+                    {% if message.sender_phone %}
+                        <a class="text-blue-400 hover:text-blue-700" href="tel:{{ message.sender_phone }}">{{ message.sender_phone }}</a>
+                    {% else %}
+                        <a class="text-blue-400 hover:text-blue-700" href="mailto:{{ message.sender_email}}">{{ message.sender_email }}</a>
+                    {% endif %}
+                    
+                </td>
+                <td>
+                    {{ message.subject }}
+                </td>
+                <td class="">
+                    {{ message.sent_at }}
+                </td>
+                <td>
+                    <button class="btn primary-btn" onclick="viewMessageInfo({{ message.id }})">View</button>
+                </td>                  
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-{% if messages.paginator.num_pages > 1 %}
-    <nav aria-label="pagination" class="my-3">
-    <ul class="inline-flex -space-x-px text-base h-10">
-        
-        {# Previous button #}
-        {% if messages.has_previous %}
-        <li>
-        <button type="button" onclick="handleSearch(event, {{messages.previous_page_number}})" 
-            class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
-            Previous
-        </button>
-        </li>
-        {% else %}
-        <li>
-        <span class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-300 bg-white border border-e-0 border-gray-300 rounded-s-lg cursor-not-allowed">
-            Previous
-        </span>
-        </li>
-        {% endif %}
-
-        {# Page numbers #}
-        {% for num in messages.paginator.page_range %}
-        {% if num == messages.number %}
-        <li>
-            <span aria-current="page" 
-                class="flex items-center justify-center px-4 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700">
-            {{ num }}
-            </span>
-        </li>
-        {% else %}
-        <li>
-            <button type="button" onclick="handleSearch(event, {{ num }})" 
-            class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
-            {{ num }}
+    {% if messages.paginator.num_pages > 1 %}
+        <nav aria-label="pagination" class="my-3">
+        <ul class="inline-flex -space-x-px text-base h-10">
+            
+            {# Previous button #}
+            {% if messages.has_previous %}
+            <li>
+            <button type="button" onclick="handleSearch(event, {{messages.previous_page_number}})" 
+                class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-500 bg-white border border-e-0 border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700">
+                Previous
             </button>
-        </li>
-        {% endif %}
-        {% endfor %}
+            </li>
+            {% else %}
+            <li>
+            <span class="flex items-center justify-center px-4 h-10 ms-0 leading-tight text-gray-300 bg-white border border-e-0 border-gray-300 rounded-s-lg cursor-not-allowed">
+                Previous
+            </span>
+            </li>
+            {% endif %}
 
-        {# Next button #}
-        {% if has_next %}
-        <li>
-        <button type="button"  onclick="handleSearch(event, {{messages.next_page_number}})" 
-            class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
-            Next
-        </button>
-        </li>
-        {% else %}
-        <li>
-        <span class="flex items-center justify-center px-4 h-10 leading-tight text-gray-300 bg-white border border-gray-300 rounded-e-lg cursor-not-allowed">
-            Next
-        </span>
-        </li>
-        {% endif %}
+            {# Page numbers #}
+            {% for num in messages.paginator.page_range %}
+            {% if num == messages.number %}
+            <li>
+                <span aria-current="page" 
+                    class="flex items-center justify-center px-4 h-10 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700">
+                {{ num }}
+                </span>
+            </li>
+            {% else %}
+            <li>
+                <button type="button" onclick="handleSearch(event, {{ num }})" 
+                class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700">
+                {{ num }}
+                </button>
+            </li>
+            {% endif %}
+            {% endfor %}
 
-    </ul>
-    </nav>
-{% endif %}
+            {# Next button #}
+            {% if has_next %}
+            <li>
+            <button type="button"  onclick="handleSearch(event, {{messages.next_page_number}})" 
+                class="flex items-center justify-center px-4 h-10 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700">
+                Next
+            </button>
+            </li>
+            {% else %}
+            <li>
+            <span class="flex items-center justify-center px-4 h-10 leading-tight text-gray-300 bg-white border border-gray-300 rounded-e-lg cursor-not-allowed">
+                Next
+            </span>
+            </li>
+            {% endif %}
+
+        </ul>
+        </nav>
+    {% endif %}

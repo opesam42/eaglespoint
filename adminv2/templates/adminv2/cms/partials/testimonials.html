@@ -4,62 +4,63 @@
         <span>Add Testimonial</span>
     </button>
 </div>
-
-<table class="w-full text-sm text-left text-gray-500">
-    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr class="*:px-6 *:py-3">
-            <th scope="col" class="">
-                Name
-            </th>
-            <th scope="col">
-                Category
-            </th>    
-            <th scope="col" class="">
-                Excerpt
-            </th>
-            <th scope="col" class="">
-                Status
-            </th>
-            <th scope="col">
-                Actions
-            </th>
-            <th scope="col">
-                Created at
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for testimonial in testimonials %}
-        <tr id="" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
-            <td>                        
-                {{ testimonial.name }}
-            </td>
-            <td>
-                {% if testimonial.category == 'real_estate' %}
-                    Real Estate
-                {% elif testimonial.category == 'travel'  %}
-                    Travel and Study
-                {% endif %}
-                
-            </td>
-            <td class="line-clamp-1">
-                {{ testimonial.message }}
-            </td>
-            <td>
-                {% if testimonial.is_active == True %}
-                    <div class="bg-green-100 text-green-600 p-1.5 rounded-md w-max">Active</div>
-                {% else %}
-                    <div class="bg-rsed-100 text-red-600 p-1.5 rounded-md w-max">Inactive</div>
-                {% endif %}
-            </td>
-            <td class="flex gap-1.5">
-                <button class="btn primary-btn" onclick="view_update_testimonial_form({{ testimonial.id }})">Edit</button>
-                <button class="btn primary-btn bg-red-500 hover:bg-red-700" data-id="{{ testimonial.id }}" onclick="openDeleteModal(event)">Delete</button>
-            </td>  
-             <td class="">
-                {{ testimonial.created_at|date:"d M Y" }}
-            </td>            
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="overflow-x-auto max-h-[80vh]">
+    <table class="w-full text-sm text-left text-gray-500  overflow-x-scroll overflow-y-scroll">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 sticky top-0 z-10">
+            <tr class="*:px-6 *:py-3">
+                <th scope="col" class="">
+                    Name
+                </th>
+                <th scope="col">
+                    Category
+                </th>    
+                <th scope="col" class="">
+                    Excerpt
+                </th>
+                <th scope="col" class="">
+                    Status
+                </th>
+                <th scope="col">
+                    Actions
+                </th>
+                <th scope="col">
+                    Created at
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for testimonial in testimonials %}
+            <tr id="" class="odd:bg-white even:bg-gray-50 border-b border-gray-200 *:px-6 *:py-4">
+                <td>                        
+                    {{ testimonial.name }}
+                </td>
+                <td>
+                    {% if testimonial.category == 'real_estate' %}
+                        Real Estate
+                    {% elif testimonial.category == 'travel'  %}
+                        Travel and Study
+                    {% endif %}
+                    
+                </td>
+                <td class="line-clamp-1">
+                    {{ testimonial.message }}
+                </td>
+                <td>
+                    {% if testimonial.is_active == True %}
+                        <div class="bg-green-100 text-green-600 p-1.5 rounded-md w-max">Active</div>
+                    {% else %}
+                        <div class="bg-rsed-100 text-red-600 p-1.5 rounded-md w-max">Inactive</div>
+                    {% endif %}
+                </td>
+                <td class="flex gap-1.5">
+                    <button class="btn primary-btn" onclick="view_update_testimonial_form({{ testimonial.id }})">Edit</button>
+                    <button class="btn primary-btn bg-red-500 hover:bg-red-700" data-id="{{ testimonial.id }}" onclick="openDeleteModal(event)">Delete</button>
+                </td>  
+                <td class="">
+                    {{ testimonial.created_at|date:"d M Y" }}
+                </td>            
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
