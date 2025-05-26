@@ -26,5 +26,7 @@ urlpatterns = [
 
     path('cms/', views.cms_admin_page, name='cms-page'),
     path('cms/testimonials/', views.testimonial_partial, name='testimonial-partial'),
-    path('cms/faqs', views.faqs_partial, name='faqs-partial')
+    path('cms/faqs/', views.faqs_partial, name='faqs-partial'),
+    path('cms/testimonial-form/', views.render_testimonial_form, name='testimonial-form'),
+    path('cms/update-testimonial-form/<int:id>',views.render_update_testimonial_form, name='update-testimonial-form')
 ]

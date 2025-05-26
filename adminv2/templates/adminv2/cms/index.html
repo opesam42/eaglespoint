@@ -48,6 +48,31 @@
         
     </div>
 
+
+    
+{% component "modal" modal_type="testimonial_form" modal_title="Testimonial Form" %}
+    {% fill 'children' %}
+    <div class="modal-body overflow-y-auto h-[80vh] px-4 py-6"></div>
+    {% endfill %}
+{% endcomponent %}
+
+{% component "modal" modal_type="delete_testimonial_modal" modal_title="Delete Testimonial" %}
+    {% fill "children" %}
+        <section class="flex flex-col gap-6 py-4 px-6">
+            <div>
+                <div class="font-semibold">Are you sure you want to delete this testimonial?</div>
+                <div class="text-sm">This action cannot be undone.</div>
+            </div>
+
+            <div class="flex self-start gap-6">
+                <button class="delete-btn btn bg-red-600 text-white">Delete</button>
+                <button class="btn tertiary-btn" onclick='closeModal_delete_testimonial_modal()'>Cancel</button>
+            </div>
+        </section>
+        
+    {% endfill %}
+{% endcomponent %}
+
 {% endblock %}
 
 {% block script %}
@@ -58,12 +83,59 @@
         console.log(alpineTableData.activeTab)
     })
 
-    function updateTestimonial(event, testimonial_id){
+    function addTestimonial(event){
         event.preventDefault();
         const form = event.target;
         const formData = new FormData(form)
 
-        console.log(...formData)
+        const submitBtn = form.querySelector('button[type="submit"]');
+        let originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i>`;
+        submitBtn.disabled = true;     
+
+        console.log(form.action)
+        fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+
+                //close modal
+                closeModal_testimonial_form();
+                
+            } else{
+                displayFormError(data.errors, form);
+                console.log(data.errors);
+                return;
+            }
+        })
+        .catch(error => {
+             console.error(error);
+             showToastNotification('danger', 'Something went wrong, please try again');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        })
+
+    }
+
+    function updateTestimonial(event, testimonial_id){
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form)
 
         const submitBtn = form.querySelector('button[type="submit"]');
         let originalText = submitBtn.innerHTML;
@@ -88,6 +160,8 @@
                 activeTab = alpineContainer.activeTab
                 alpineContainer.loadTemplate(activeTab)
                 
+                //close modal
+                closeModal_testimonial_form();
             } else{
                 displayFormError(data.errors, form);
                 console.log(data.errors);
@@ -105,8 +179,7 @@
     }
 
 
-
-    function deleteMessage(event, testimonial_id){
+    function deleteTestimonial(event, testimonial_id){
         const url = '{% url 'cmscontent:delete-testimonial' 123 %}'.replace("123", testimonial_id);
         
         deleteBtn = event.currentTarget;
@@ -130,8 +203,10 @@
                 alpineContainer = Alpine.$data(cms_container);
                 activeTab = alpineContainer.activeTab
                 alpineContainer.loadTemplate(activeTab)
-                // closeModal_message_info(); //close modal after deleting
-                // handleSearch(null) //refresh list after deleting
+
+                //close modal
+                closeModal_delete_testimonial_modal();
+                closeModal_testimonial_form();                
             } else{
                 console.error("Error", data.error)
                 showToastNotification('danger', 'Something went wrong, please try again')
@@ -146,6 +221,68 @@
             deleteBtn.innerHTML = originalText
         })
     }
+
+
+    function view_testimonial_form(){
+        url = "{% url 'adminv2:testimonial-form' %}"
+
+        fetch(url, {
+            method: "GET",
+            headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            // since the data is a full html stuff, we need to extract the innerHTML of the body
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(data, 'text/html');
+            let testimonial_form = doc.body.innerHTML;
+            let modal = document.getElementById('modal-testimonial_form')
+
+            modal.querySelector('.modal-body').innerHTML = testimonial_form;
+            openModal_testimonial_form();
+
+        })
+        .catch(error => console.log("Error:", error))
+    }
+
+    function view_update_testimonial_form(id){
+        url = "{% url 'adminv2:update-testimonial-form' 123 %}".replace('123', id);
+
+        fetch(url, {
+            method: "GET",
+            headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            }
+        })
+        .then(response => response.text())
+        .then(data => {
+            // since the data is a full html stuff, we need to extract the innerHTML of the body
+            let parser = new DOMParser();
+            let doc = parser.parseFromString(data, 'text/html');
+            let testimonial_form = doc.body.innerHTML;
+            let modal = document.getElementById('modal-testimonial_form')
+
+            modal.querySelector('.modal-body').innerHTML = testimonial_form;
+            openModal_testimonial_form();
+
+        })
+        .catch(error => console.log("Error:", error))
+    }
+
+    function openDeleteModal(e){
+        const element = e.target;
+        const data_id = element.getAttribute('data-id');
+        const modal = document.getElementById("modal-delete_testimonial_modal")
+        const del_btn = modal.querySelector('.delete-btn')
+        console.log(del_btn)
+        del_btn.onclick = function(){
+            deleteTestimonial(event, data_id)
+        }
+        openModal_delete_testimonial_modal();
+    }
+    
 </script>
 
 

@@ -422,9 +422,19 @@ def delete_message(request, message_id):
 def cms_admin_page(request):
     return render(request, 'adminv2/cms/index.html')
 
+@admin_only
 def testimonial_partial(request):
-    testimonials = Testimonial.objects.all()
+    testimonials = Testimonial.objects.all().order_by('created_at')
     return render(request, 'adminv2/cms/partials/testimonials.html', {'testimonials': testimonials, 'categories': TESTIMONIAL_CATEGORIES})
 
+@admin_only
 def faqs_partial(request):
     return render(request, 'adminv2/cms/partials/faqs.html')
+
+@admin_only
+def render_testimonial_form(request):
+    return render(request, 'adminv2/cms/partials/new-testimonial-form.html', {'categories': TESTIMONIAL_CATEGORIES})
+
+def render_update_testimonial_form(request, id):
+    testimonial = get_object_or_404(Testimonial, id=id)
+    return render(request, 'adminv2/cms/partials/update-testimonial-form.html', {'testimonial': testimonial, 'categories': TESTIMONIAL_CATEGORIES})

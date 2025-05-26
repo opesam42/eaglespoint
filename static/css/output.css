@@ -639,6 +639,9 @@
   .h-\[40vh\] {
     height: 40vh;
   }
+  .h-\[80vh\] {
+    height: 80vh;
+  }
   .h-\[90\%\] {
     height: 90%;
   }
@@ -979,11 +982,20 @@
   .self-center {
     align-self: center;
   }
+  .self-end {
+    align-self: flex-end;
+  }
   .self-start {
     align-self: flex-start;
   }
   .self-stretch {
     align-self: stretch;
+  }
+  .justify-self-end {
+    justify-self: flex-end;
+  }
+  .overflow-clip {
+    overflow: clip;
   }
   .overflow-hidden {
     overflow: hidden;
@@ -993,6 +1005,9 @@
   }
   .overflow-x-clip {
     overflow-x: clip;
+  }
+  .overflow-x-hidden {
+    overflow-x: hidden;
   }
   .overflow-x-scroll {
     overflow-x: scroll;
@@ -2393,6 +2408,16 @@
   .md\:px-8 {
     @media (width >= 48rem) {
       padding-inline: calc(var(--spacing) * 8);
+    }
+  }
+  .md\:px-12 {
+    @media (width >= 48rem) {
+      padding-inline: calc(var(--spacing) * 12);
+    }
+  }
+  .md\:px-48 {
+    @media (width >= 48rem) {
+      padding-inline: calc(var(--spacing) * 48);
     }
   }
   .md\:py-0 {

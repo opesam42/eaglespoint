@@ -1,0 +1,38 @@
+<form method="post" action="{% url 'cmscontent:update-testimonial' testimonial.id %}" onsubmit="updateTestimonial(event, {{ testimonial.id }})">
+    <div class="flex flex-col gap-3 lg:gap-4">
+        <div>
+            
+        </div>
+        
+        <div>
+            <label for="id_name" class="label-primary">Name</label>
+            <input class="input-primary" type="text" name="name" value="{{ testimonial.name }}" required id="id_name">
+        </div>
+
+        <div>
+            <label for="id_category" class="label-primary">Category</label>
+            <select class="input-primary" type="text" name="category" required id="id_category">
+            {% for value, label in categories %}
+                <option value="{{ value }}" {% if value == testimonial.category %} checked {% endif %}>{{ label }} </option>
+            {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="id_message" class="label-primary">Message</label>
+            <textarea class="input-primary h-36"name="message" required id="id_message">{{ testimonial.message }}</textarea>
+        </div>
+
+        <div>
+            <label>
+                <input type="checkbox" name="is_active" value="1" {% if testimonial.is_active %} checked {% endif %}>
+                Is Active
+            </label>
+        </div>
+
+        <div class="flex gap-x-2 justify-end md:flex-row">
+            <button type="button" class="btn primary-btn bg-red-500 hover:bg-red-700 w-max" data-id="{{ testimonial.id }}" onclick="openDeleteModal(event)">Delete</button>
+            <button class="btn primary-btn w-max" type="submit">Update</button>
+        </div>
+    </div>
+</form>

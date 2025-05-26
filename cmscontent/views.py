@@ -7,7 +7,7 @@ from .forms import TestimonialForm
 # Create your views here.
 
 
-
+@admin_only
 @require_POST
 def create_testimonial(request):
     form = TestimonialForm(request.POST)
@@ -25,6 +25,7 @@ def create_testimonial(request):
             'success': False,
             'errors': form.errors,
         }, status=400)
+
 
 @admin_only
 @require_POST
