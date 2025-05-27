@@ -17,6 +17,8 @@ from listing.models import Listings
 from utils.storage import delete_cover_image_folder, append_image_prefix, BackBlazeAPI
 from messaging.models import ContactMessage
 from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES
+from blog.models import BlogArticle
+from blog.forms import BlogArticleForm
 
 User = get_user_model()
 
@@ -438,3 +440,62 @@ def render_testimonial_form(request):
 def render_update_testimonial_form(request, id):
     testimonial = get_object_or_404(Testimonial, id=id)
     return render(request, 'adminv2/cms/partials/update-testimonial-form.html', {'testimonial': testimonial, 'categories': TESTIMONIAL_CATEGORIES})
+
+
+@require_POST
+@admin_only
+def create_blog(request):
+    form = BlogArticleForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        blog = form.save(commit=False)
+        blog.author = request.user
+        try:
+            blog.save()
+        except Exception as e:
+            print("Error saving blog:", e)
+            return JsonResponse({'success': False, 'message': str(e)}, status=500)
+
+        return JsonResponse({
+            'success': True, 'message': 'New blog article has been added.'}, status=201)
+    else:
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+    
+
+@admin_only
+def display_blog_form(request):
+    form = BlogArticleForm(request.POST, request.FILES)
+    categories = BlogArticle.ARTICLE_CATEGORY
+
+    return render(request, 'adminv2/blog/create-blog.html', {'form':form, 'categories': categories})
+
+
+@require_POST
+@admin_only
+def blog_update(request, id):
+    blogArticle = get_object_or_404(BlogArticle, id=id)
+    form = BlogArticleForm(request.POST, request.FILES, instance=blogArticle)
+    
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'success': True, 'message': 'Blog article updated successfully.'})
+    else:
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+
+@admin_only
+def display_update_blog_form(request, id):
+    blogArticle = get_object_or_404(BlogArticle, id=id)
+    form = BlogArticleForm(request.POST, request.FILES)
+    categories = BlogArticle.ARTICLE_CATEGORY
+
+    context = {
+        'form': form,
+        'categories': categories,
+        'article': blogArticle,
+    }
+    return render(request, 'adminv2/blog/update-blog.html', context)
+
+
+
+

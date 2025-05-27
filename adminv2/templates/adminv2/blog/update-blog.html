@@ -1,0 +1,175 @@
+{% extends 'adminv2/base.html'%}
+{% load static %}
+
+{% block title %}Update Blog Article - {{ article.title }}{% endblock %}
+
+{% block style %}
+    {{ form.media }}
+{% endblock %}
+
+{% block section_title %} Blog {% endblock %}
+
+{% block content %} 
+    {% if article %}
+        <form action="{% url 'adminv2:update-blog' article.id %}" onsubmit="updateBlog(event)" class="max-w-2xl">
+            <div class="flex flex-col gap-3 lg:gap-4">
+                <div>
+                    <label for="id_title" class="label-primary">Title</label>
+                    <input class="input-primary" type="text" name="title" value="{{ article.title }}" required id="id_title">
+                </div>
+
+                <div>
+                    <label for="id_category" class="label-primary">Category</label>
+                    <select name="category" class="input-primary">
+                        {% for value, label in categories %}
+                            <option value="{{ value }}" {% if article.category == value %} selected {% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <label for="id_excerpt" class="label-primary">Description</label>
+                    <textarea class="input-primary" type="text" name="excerpt" required id="id_excerpt" rows="7">{{ article.excerpt }}</textarea>
+                </div>
+
+                <!-- <div>
+                    <label for="id_cover_image" class="label-primary">Cover Image</label>
+                    <input class="input-primary" type="file" accept="image/*" name="cover_image" required id="id_cover_image">
+                </div> -->
+
+                <div x-data="{ image:'{{ article.cover_image.url }}' }">
+                    <div class="label-primary">Cover Image</div>
+                    <div class="flex items-center justify-center w-full">
+                        <label for="id_cover_image" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50">
+                            <template x-if="!image">
+                                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                    <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                    </svg>
+                                    <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                    <p class="text-xs text-gray-500">SVG, PNG, JPG or GIF (MAX. 800x400px)</p>
+                                </div>
+                            </template>
+
+                            <template x-if="image">
+                                <div class="relative w-full h-full">
+                                    <div class="w-full h-full flex  items-center justify-center absolute inset-0 bg-gradient-to-t from-black/40 to-transparent">
+                                        <label for="id_cover_image" type="button" class="btn text-white border-2 border-white rounded-xl w-fit h-fit">Replace</button>
+                                    </div>
+                                    <div class="w-full h-full">
+                                        <img :src="image" class="w-full h-full object-cover mt-2">
+                                    </div>
+                                    
+                                </div>
+                                
+                            </template>
+                            
+                            <input id="id_cover_image" type="file" name="cover_image" class="hidden" @change="image = URL.createObjectURL($event.target.files[0])" />
+                        </label>
+                    </div> 
+                </div>
+
+
+                <div>
+                    <label for="id_content" class="label-primary">Content</label>
+                    <div class="ck-editor-container">
+                        <textarea name="content" class="django_ckeditor_5" required aria-invalid="true" aria-describedby="id_content_error" id="id_content">{{ article.content }}
+                        </textarea>
+                        <span class="word-count" id="id_content_script-word-count"></span>
+                    </div>
+
+                    <input type="hidden" id="id_content_script-ck-editor-5-upload-url"
+                        data-upload-url="/ckeditor5/image_upload/"
+                        data-upload-file-types="[&quot;jpeg&quot;, &quot;webp&quot;, &quot;jpg&quot;, &quot;png&quot;, &quot;gif&quot;]"
+                        data-csrf_cookie_name="csrftoken">
+
+                    <span id="id_content_script-span">
+                        <script id="id_content_script" type="application/json">
+                            {
+                                "toolbar": [
+                                    "heading", "|", "bold", "italic", "link",
+                                    "bulletedList", "numberedList", "blockQuote",
+                                    "imageUpload", "insertTable", "fontSize", "fontColor"
+                                ],
+                                "image": {
+                                    "toolbar": [
+                                        "imageTextAlternative",
+                                        "imageStyle:alignLeft",
+                                        "imageStyle:alignCenter",
+                                        "imageStyle:alignRight"
+                                    ],
+                                    "styles": ["full", "alignLeft", "alignCenter", "alignRight"]
+                                }
+                            }
+                        </script>
+                    </span>
+                </div>
+
+                
+
+                <div>
+                    <label for="id_published" class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" value="0" name="published" class="sr-only peer" id="id_published" {% if article.published %}checked{% endif %}>
+                        <div class="relative w-11 h-6 bg-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-gray-200 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-blue-600"></div>
+                        <span class="ms-3 text-sm font-medium text-gray-900">Published</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label for="id_tags" class="label-primary">Tags</label>
+                    <input class="input-primary" type="text" name="tags" value="{{ article.tags }}" required id="id_tags">
+                </div>
+
+                <div>
+                    <button class="btn primary-btn w-max" type="submit">Update Blog Article</button>
+                </div>
+            </div>
+
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block script %}
+
+<script>
+    function updateBlog(event){
+        event.preventDefault();
+        let form = event.target;
+        const formData = new FormData(form);
+        console.log(...formData)
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        originalText = submitBtn.innerHTML   
+        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Updating Blog Article...`;
+        submitBtn.disabled = true; //prevent double click 
+
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+            },
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message);
+            } else{
+                displayFormError(data.errors, form);
+                showToastNotification('warning', "Invalid form details");
+            }
+        })
+        .catch(error => {
+            showToastNotification('danger', 'Something went wrong');
+            console.error("Error", error);
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        })
+    }
+</script>
+
+
+{% endblock %}

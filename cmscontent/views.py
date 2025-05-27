@@ -33,7 +33,6 @@ def update_testimonial(request, id):
     testimonial = get_object_or_404(Testimonial, id=id)
 
     form = TestimonialForm(request.POST, instance=testimonial)
-    print("Data", request.POST)
     
     if form.is_valid():
         form.save()

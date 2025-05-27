@@ -6,5 +6,7 @@ app_name = 'blog'
 
 urlpatterns = [
     path('', views.view_all_blogs, name='home'), 
-    path('<str:slug>', views.view_specific_blog, name='article')  
+    # path('create/', views.blog_create, name='create-blog'),
+    path('<str:slug>', views.view_specific_blog, name='article'),
+    
 ]

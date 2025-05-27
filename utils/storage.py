@@ -172,9 +172,11 @@ class BackBlazeAPI:
         files = self.list_fileName_and_fileIds_with_prefix(prefix)
         
         for file in files:
-            self.delete_file(file['fileId'], file['fileName'])
-            print(f'Deleted {file['fileName']}')
-
+            try:
+                self.delete_file(file['fileId'], file['fileName'])
+                print(f'Deleted {file['fileName']}')
+            except Exception as e:
+                print(f'Backblaze error: {e}')
 
 
 
