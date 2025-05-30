@@ -7,7 +7,7 @@
 
 {% block content %} 
 
-    <div class="flex mb-6 self-start md:justify-end">
+    <div class="flex self-start md:justify-end">
         <button class="btn primary-btn flex gap-0.5">
             <svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
             <span>Add Listing</span>
@@ -15,7 +15,7 @@
     </div>
     
     
-    <form class="max-w-md mx-auto mb-6" onsubmit="handleSearch(event)">
+    <form class="max-w-md w-full mx-auto mb-6" onsubmit="handleSearch(event)">
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
         <div class="relative">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
