@@ -1,0 +1,350 @@
+{% extends 'adminv2/base.html'%}
+{% load static %}
+
+{% block title %}Blog | Control Panel | Eaglespoint{% endblock %}
+
+{% block style %}
+
+{% endblock %}
+
+{% block section_title %} Blog {% endblock %}
+
+{% block content %}
+
+<div class="flex flex-col gap-7 mt-7">
+
+    <div class="w-full flex self-start md:justify-end">
+        <a class="btn primary-btn flex gap-0.5" href="{% url 'adminv2:display-blog-form' %}">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z"></path></svg>
+            <span>New Articles</span>
+        </a>
+    </div>
+
+    <div>
+        <form class="flex flex-col gap-2 max-w-md mx-auto" onsubmit="handleSearch(event)">
+            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
+                </div>
+                <input type="text" id="article-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Articles..." />
+        
+                <!-- Filters Button with similar classes as Search -->
+                <button type="button" class="flex gap-1 items-center absolute end-2.5 bottom-1.5 bg-blue-700 text-white hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" onclick='openModal_sort_article_filter()'>
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
+                    <span>Sort</span>
+                </button>
+            </div>
+
+            <!-- filter button  -->
+            <div class="flex gap-2 *:bg-white *:text-sm">
+                <button id="user_role_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_category_modal()">Category</button>
+                
+                <button id="user_active_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_published_status_modal()">Status</button>
+            </div>
+
+            <!-- sort modal -->
+            {% component "modal" modal_type="sort_article_filter" modal_title="Sort by" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="sort" value="date_desc" class="mr-2 accent-red-500" checked>
+                                Newest
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="sort" value="date_asc" class="mr-2 accent-red-500">
+                                Oldest
+                            </label>
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+
+            <!-- category modal -->
+            {% component "modal" modal_type="category_modal" modal_title="Category" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="category" value="" class="mr-2 accent-red-500" checked>
+                                All articles
+                            </label>
+                            {% for value, label in categories %}
+                                <label class="block">
+                                    <input type="radio" name="category" value="{{ value }}" class="mr-2 accent-red-500">
+                                    {{ label }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit" onclick="closeModal_category_modal()">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+        
+            <!-- published modal -->
+            {% component "modal" modal_type="published_status_modal" modal_title="Published Status" %}
+                {% fill 'children' %}
+                    <div class="p-4 flex flex-col gap-6">
+                        <div class="space-y-2">
+                            <label class="block">
+                                <input type="radio" name="published_status" value="" class="mr-2 accent-red-500" checked>
+                                All articles
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="published_status" value="1" class="mr-2 accent-red-500">
+                                Published articles
+                            </label>
+                            <label class="block">
+                                <input type="radio" name="published_status" value="0" class="mr-2 accent-red-500">
+                                Unpublished articles
+                            </label>
+                        </div>
+                        <button class="btn primary-btn w-full" type="submit" onclick="closeModal_published_status_modal()">Filter</button>
+                    </div>
+                {% endfill %}
+            {% endcomponent %}
+        </form>
+    </div>
+
+
+    <div x-data="{loading:true}" id="table-wrapper">
+        <div x-show="loading">   
+            {% component "table_skeleton" %} {% endcomponent %}
+        </div>
+        <div x-show="!loading" id="articles-list-container" class="relative flex flex-col shadow-md sm:rounded-lg"></div>
+    </div>
+
+</div>
+
+
+
+{% component "modal" modal_type="delete_article_modal" modal_title="Delete Article" %}
+    {% fill "children" %}
+        <section class="flex flex-col gap-6 py-4 px-6">
+            <div>
+                <div class="font-semibold">Are you sure you want to delete this article?</div>
+                <div class="text-sm">This action cannot be undone.</div>
+            </div>
+
+            <div class="flex self-start gap-6">
+                <button class="delete-btn btn bg-red-600 text-white">Delete</button>
+                <button class="btn tertiary-btn" onclick='closeModal_delete_article_modal()'>Cancel</button>
+            </div>
+        </section>
+        
+    {% endfill %}
+{% endcomponent %}
+
+{% endblock %}
+
+{% block script %}
+ <script>
+         window.addEventListener('DOMContentLoaded', () => {
+            fetchArticles();
+        });
+
+        const container = document.getElementById("articles-list-container");
+        const tableWrapper = document.getElementById("table-wrapper");
+        const categoryRadio = document.getElementsByName('category');
+        const publishedStatusRadio = document.getElementsByName('published_status');
+
+        radioInputs = [categoryRadio, publishedStatusRadio]
+
+        let search_params = new URLSearchParams(window.location.search)
+        
+        function fetchArticles(page=1){
+
+            base_url = '{% url 'blog:search-blog' %}';
+            search_params.set('page', page)
+
+            fetch(`${base_url}?${search_params.toString()}`, {
+                method: "POST",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const HTML = doc.body.innerHTML;
+                container.innerHTML = HTML;
+                console.log('done')
+
+                
+            })
+            .finally(() => {
+                Alpine.nextTick(() => {
+                    alpineTableData = Alpine.$data(tableWrapper);
+                    if (alpineTableData) {
+                        alpineTableData.loading = false;
+                    }
+                });
+            })
+        }
+
+
+        function handleSearch(e, page=1){
+            if(e){
+                e.preventDefault();
+            }
+            
+            const search_query = document.getElementById('article-search');
+            const selectedSortRadio = document.getElementsByName('sort');
+            
+            let selectedSortValue = "";
+            selectedSortRadio.forEach(radio=>{
+                if(radio.checked){
+                    selectedSortValue = radio.value;
+                }
+            })
+
+            let categoryValue = "";
+            categoryRadio.forEach(radio=>{
+                if(radio.checked){
+                    categoryValue = radio.value
+                }
+            })
+
+            let publishedStatusValue = "";
+            publishedStatusRadio.forEach(radio=>{
+                if(radio.checked){
+                    publishedStatusValue = radio.value
+                }
+            })
+
+            search_params = new URLSearchParams(); 
+            search_params.set('query', search_query.value);
+            search_params.set('selected_sort', selectedSortValue);
+            search_params.set('category', categoryValue);
+            search_params.set('published_status', publishedStatusValue);
+            
+            alpineTableData = Alpine.$data(tableWrapper);
+            alpineTableData.loading = true;
+            //base_url = 
+            fetchArticles(page);
+        }
+
+
+        function highlightActiveFilters(){
+            const highlightClasses = ["text-red-400", "ring-2", "ring-red-400", "border-0"];
+
+            categoryRadio.forEach(radio => {
+                let selected = Array.from(categoryRadio).some(radio => radio.checked && radio.value !== '');
+                let filter_btn = document.getElementById('user_role_filter_btn');
+                if(selected){
+                    filter_btn.classList.add(...highlightClasses);
+                } else{
+                    filter_btn.classList.remove(...highlightClasses);
+                }
+            });
+
+            publishedStatusRadio.forEach(radio => {
+                let selected = Array.from(publishedStatusRadio).some(radio => radio.checked && radio.value !== '');
+                const filter_btn = document.getElementById('user_active_filter_btn');
+                if(selected){
+                    filter_btn.classList.add(...highlightClasses);
+                } else{
+                    filter_btn.classList.remove(...highlightClasses);
+                }
+            });
+        }
+
+        
+        radioInputs.forEach(radioInput => {
+            radioInput.forEach(radio => {
+                radio.addEventListener('change', highlightActiveFilters)
+            })
+        });
+
+          
+        function openDeleteArticleModal(e){
+            const element = e.target;
+            const data_id = element.getAttribute('data-id');
+            const modal = document.getElementById("modal-delete_article_modal")
+            const del_btn = modal.querySelector('.delete-btn')
+            console.log(del_btn)
+            del_btn.onclick = function(){
+                deleteArticle(data_id, event)
+            }
+            openModal_delete_article_modal();
+        }
+       
+        function deleteArticle(article_id, event){
+            const url = '{% url 'adminv2:delete-article' 123 %}'.replace("123", article_id);
+            
+            deleteBtn = event.currentTarget;
+            originalText = deleteBtn.innerHTML   
+            deleteBtn.disabled = true; 
+            deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
+            
+            fetch(url, {
+                method: "POST",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    showToastNotification('success', 'Article has been deleted');
+                    closeModal_delete_article_modal();
+                    handleSearch(null) //refresh list after deleting
+                } else{
+                    console.error("Error", data.error)
+                    showToastNotification('danger', 'Something went wrong, please try again')
+                }
+            })
+            .catch(error => {
+                console.error("Error", error) 
+                showToastNotification('danger', 'Something went wrong, please try again')
+            })
+            .finally(() => {
+                deleteBtn.disabled = false
+                deleteBtn.innerHTML = originalText
+            })
+        }
+
+        function changePublishStatus(article_id, event){
+            const url = '{% url 'adminv2:change-publish-status' 123 %}'.replace("123", article_id);
+            
+            btn = event.currentTarget;
+            originalText = btn.innerHTML   
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Changing...`;
+
+             fetch(url, {
+                method: "POST",
+                headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken()
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    showToastNotification('success', data.message)
+                    
+                    handleSearch(null) //refresh list after deleting
+                } else{
+                    console.error("Error", data.error)
+                    showToastNotification('danger', 'Something went wrong, please try again')
+                }
+            })
+            .catch(error => {
+                console.error("Error", error) 
+                showToastNotification('danger', 'Something went wrong, please try again')
+            })
+            .finally(() => {
+                btn.disabled = false
+                btn.innerHTML = originalText
+            })
+        }
+    </script>
+{% endblock  %}

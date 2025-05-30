@@ -1,13 +1,13 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %}Blog | Control Panel | Eaglespoint{% endblock %}
 
 {% block style %}
     {{ form.media }}
 {% endblock %}
 
-{% block section_title %} Contact Messages {% endblock %}
+{% block section_title %} Blog {% endblock %}
 
 {% block content %} 
     <form action="{% url 'adminv2:create-blog' %}" onsubmit="submitBlogForm(event)" class="max-w-2xl">
@@ -110,13 +110,8 @@
                 <label for="id_published" class="inline-flex items-center cursor-pointer">
                     <input type="checkbox" value="0" name="published" class="sr-only peer" id="id_published">
                     <div class="relative w-11 h-6 bg-white peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-gray-200 after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-blue-600"></div>
-                    <span class="ms-3 text-sm font-medium text-gray-900">Published</span>
+                    <span class="ms-3 font-medium text-gray-900">Published</span>
                 </label>
-
-
-
-                <label for="id_published" class="label-primary">Published</label>
-                <input class="input-primary" type="number" name="published" required id="id_published">
             </div>
 
             <div>

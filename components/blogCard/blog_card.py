@@ -4,10 +4,11 @@ from django_components import Component, register
 class BlogCard(Component):
     template_file = "blogCard/template.html"
 
-    def get_context_data(self, title="", tag="", imageUrl="", excerpt=""):
+    def get_context_data(self, title="", tag="", imageUrl="", excerpt="", articleURL="#"):
         return {
             'title': title,
             'tag': tag,
             'imageUrl': imageUrl,
+            'articleURL': articleURL,
             'excerpt': excerpt,
         }

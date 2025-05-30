@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from django.utils.text import slugify
 from django_ckeditor_5.fields import CKEditor5Field
 from django.contrib.auth import get_user_model
@@ -27,7 +28,30 @@ class BlogArticle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     published = models.BooleanField(default=False)
+    is_featured = models.BooleanField(default=False)
     tags = models.CharField(max_length=200, blank=True)
+
+
+    def get_related_posts(self, limit=4):
+        """Return posts with similar category and tags."""
+        if not self.tags:
+            # Fallback to category if no tags
+            return BlogArticle.objects.filter(
+                category=self.category,
+                published=True
+            ).exclude(pk=self.pk).order_by('-created_at')[:limit]
+
+        tag_list = [tag.strip() for tag in self.tags.split(',')]
+        query = Q()
+        for tag in tag_list:
+            query |= Q(tags__icontains=tag)
+
+        return BlogArticle.objects.filter(
+            query,
+            category=self.category,
+            published=True
+        ).exclude(pk=self.pk).distinct().order_by('-created_at')[:limit]
+
 
     def _normalize_signed_media_urls(self):
         if self.content:

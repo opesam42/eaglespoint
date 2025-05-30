@@ -6,12 +6,12 @@
 {% block section_title %} Listings {% endblock %}
 
 {% block content %} 
-    <div>
-        
-    </div>
-    <div class="flex mb-6">
-        {% component "button" extraclass="ml-auto" label="<svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
-        <span>Add Listing</span>" type="secondary" width="max" href="{% url 'adminv2:add_listing' %}" %} {% endcomponent %}
+
+    <div class="flex mb-6 self-start md:justify-end">
+        <button class="btn primary-btn flex gap-0.5">
+            <svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
+            <span>Add Listing</span>
+        </button>
     </div>
     
     
@@ -310,9 +310,10 @@
         }
 
         function changeListingStatus(e, listingId){
-            const element = e.target;
-            const listingStatus = element.getAttribute('data-is-listed');
-            element.innerHTML += '<i class="fa fa-spinner fa-spin"></i>';
+            const btn = e.target;
+            originalText = btn.innerHTML   
+            btn.disabled = true; 
+            btn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Changing...`;
             
             url = "{% url 'listing:toggle_listing_status' 123 %}".replace("123", listingId);
 
@@ -326,21 +327,18 @@
             .then(response => response.json())
             .then(data => {
                 if(data.success){
-                    if(data.is_listed){
-                        element.textContent = "Unlist";
-                        element.classList.remove("text-green-500", "hover:text-green-700");
-                        element.classList.add("text-red-500", "hover:text-red-700");
-                    } else {
-                        element.textContent = "List";
-                        element.classList.remove("text-red-500", "hover:text-red-700");
-                        element.classList.add("text-green-500", "hover:text-green-700");
-                    }
-                    element.setAttribute("data_is_listed", data.is_listed)
+                    showToastNotification('success', data.message)
+                    handleSearch(null)
                 } else{
-                    console.log.log(data.error)
+                    console.log(data.error)
+                    showToastNotification('danger', "Something went wrong")
                 }
             })
             .catch(error => console.log("Error", error))
+            .finally(() => {
+                btn.disabled = false
+                btn.innerHTML = originalText
+            })
         }
 
         function openDeleteModal(e){

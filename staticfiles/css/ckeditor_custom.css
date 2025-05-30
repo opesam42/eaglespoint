@@ -33,6 +33,7 @@
     color: #333333;
     padding: 16px;
     min-height: 200px;
+    max-height: 70vh;
     border-radius: 0 0 8px 8px;
     background: #ffffff;
 }

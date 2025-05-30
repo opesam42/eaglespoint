@@ -13,6 +13,9 @@
                     Listing Type
                 </th>
                 <th scope="col" class="px-6 py-3">
+                    Listing Status
+                </th>                
+                <th scope="col" class="px-6 py-3">
                     Address
                 </th>
                 <th scope="col" class="px-6 py-3">
@@ -32,22 +35,21 @@
                 <td class="px-6 py-4 capitalize">
                     {{ result.listing_type }}
                 </td>
+                <td class="px-6 py-4 capitalize">
+                    <div class="flex flex-col items-center justify-center gap-1.5">
+                        {% if result.is_listed %}
+                            <div class="bg-green-100 text-green-600 px-2 py-1 rounded-md w-max">Listed</div>
+                        {% else %}
+                            <div class="bg-red-100 text-red-600 px-2 py-1 rounded-md w-max">Unlisted</div>
+                        {% endif %}
+                        <button class="text-sm text-blue-600 underline cursor-pointer" onclick="changeListingStatus(event, {{ result.id }})">Change</button>
+                    </div>
+                </td>
                 <td class="px-6 py-4">
                     {{ result.street_address }}, {{ result.lga }}, {{ result.state }}
                 </td>
                 <td class="px-6 py-4 flex gap-2 items-center">
                     {% component "button" label="Edit" type="primary" width="max" href="{% url 'adminv2:edit-listing' result.id %}" %} {% endcomponent %}
-                    <button 
-                        class="toggle-listing-btn cursor-pointer {% if result.is_listed %} text-red-500 hover:text-red-700 {% else %} text-green-500 hover:text-green-700 {% endif %} "
-                        data-listing-id="{{ result.id }}"
-                        data-is-listed="{{ result.is_listed }}"
-                        onclick="changeListingStatus(event, {{ result.id }})">
-                        {% if result.is_listed %}
-                            Unlist
-                        {% else %}
-                            List
-                        {% endif %}
-                    </button>
                     {% if request.user.is_superuser %}
                         <button data-id="{{ result.id }}" onclick="openDeleteModal(event)" class="btn primary-btn bg-red-600 hover:bg-red-800">Delete</button>
                     {% endif %}

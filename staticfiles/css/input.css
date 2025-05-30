@@ -19,6 +19,10 @@
 
 @layer components{
 
+  html, body {
+    overflow-x: hidden;
+  }
+
   .responsive-padding{
     @apply px-4 md:px-8 lg:px-20;
   }

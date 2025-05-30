@@ -5,38 +5,92 @@
 
 {% block content %}
 
-    <main class="mt-4">
-        <article class="relative w-full responsive-padding">
-            <a href="#" class="relative block h-80 lg:h-[75vh] lg:max-h-[580px] w-full lg:w-4/5">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-3xl"></div>
-                <img width="320px" src="{% static 'images/designthinking.webp' %}" class="w-full h-full object-cover rounded-3xl">
-            </a>
-            <div class="absolute flex flex-col gap-1.5 lg:gap-3 justify-center px-4 bg-white top-[80%] lg:top-1/2 transform left-1/2 lg:left-auto -translate-x-1/2 lg:-translate-x-0 lg:-translate-y-1/2 h-fit lg:h-80 w-[80%] lg:w-80 -bottom-2 lg:bottom-auto lg:right-10 py-5 rounded-lg shadow-2xl">
-                <div class="uppercase text-gray-600">Real Estate</div>
-                <a class="font-bold text-2xl" href="#">10 Mistake To Avoid When Getting a Property in Lagos</a>
-                <div></div>
-                <a class="text-gray-600 hover:text-gray-900" href="#">Read More <i class="fa fa-angle-right"></i></a>
-            </div>
-        </article>
+    <main class="mt-9">
 
-        <section class="flex flex-col gap-2 items-start pt-40 lg:pt-14 responsive-padding">
-            <div class="flex flex-col gap-4 xl:flex-row xl:gap-4">
-                <header class="xl:w-[15%]">
-                    <h2 class="text-xl font-semibold">Travel</h2>
-                    <div class="hidden md:block">Get to know the upcoming Windows 11, the Windows that brings you closer to what you love.</div>
-                </header>
-                <div class="w-full flex gap-4 overflow-x-auto lg:overflow-x-visible lg:flex-wrap xl:flex-nowrap *:grow">
-                    {% component "blog_card" title="Reponsible AI and trustworthy innovation n Windows" tag="Travel" imageUrl="{% static 'images/smiling-on-workstation.png' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
-                    
-                    {% component "blog_card" title="Reponsible AI and trustworthy innovation n Windows" tag="Travel" imageUrl="{% static 'images/smiling-on-workstation.png' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
-
-                    {% component "blog_card" title="Reponsible AI and trustworthy innovation n Windows" tag="Travel" imageUrl="{% static 'images/smiling-on-workstation.png' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
+        <form class="max-w-md mx-auto mb-6 mt-6" action="{% url 'blog:search-blog' %}">
+            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
+            <div class="relative">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                    <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                    </svg>
                 </div>
+                <input type="text" name="query" id="message-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500" placeholder="Search Articles..." />
             </div>
-            <a href="#" class="btn primary-btn w-fit">View more Travel's Articles</a>
-        </section>
+        </form>
 
         <hr class="my-8 border-t border-gray-300" />
+
+        {% if hero_article %}
+            <article class="relative w-full responsive-padding">
+                <a href="{% url 'blog:article' hero_article.slug %}" class="relative block h-80 lg:h-[75vh] lg:max-h-[580px] w-full lg:w-4/5">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent rounded-3xl"></div>
+                    <img width="320px" src="{{ hero_article.cover_image.url }}" class="w-full h-full object-cover rounded-3xl">
+                </a>
+                <div class="absolute flex flex-col gap-1.5 lg:gap-3 justify-center px-4 bg-white top-[80%] lg:top-1/2 transform left-1/2 lg:left-auto -translate-x-1/2 lg:-translate-x-0 lg:-translate-y-1/2 h-fit lg:h-80 w-[80%] lg:w-80 -bottom-2 lg:bottom-auto lg:right-10 py-5 rounded-lg shadow-2xl">
+                    <div class="uppercase text-gray-600">{{ hero_article.get_category_display }}</div>
+                    <a class="font-bold text-2xl" href="#">{{ hero_article.title }}</a>
+                    <div></div>
+                    <a class="text-gray-600 hover:text-gray-900" href="{% url 'blog:article' hero_article.slug %}">Read More <i class="fa fa-angle-right"></i></a>
+                </div>
+            </article>
+        {% endif %}
+
+        
+
+        {% if travel_articles %}
+            <section class="w-full flex flex-col gap-2 items-start pt-40 lg:pt-14 responsive-padding">
+                <div class="w-full flex flex-col gap-4 xl:flex-row xl:gap-4">
+                    <header class="xl:w-[15%]">
+                        <h2 class="text-xl font-semibold">Travel</h2>
+                        <div class="hidden md:block">Get to know the upcoming Windows 11, the Windows that brings you closer to what you love.</div>
+                    </header>
+                    <div class="w-full flex gap-4 overflow-x-scroll lg:overflow-x-visible lg:flex-wrap xl:flex-nowrap">
+                        {% for article in travel_articles|slice:":3" %}
+                            {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <a href="#" class="border-b border-gray-500 self-end">View more Travel's Articles</a>
+            </section>
+        {% endif %}
+        <hr class="my-8 border-t border-gray-300" />
+
+        {% if real_estate_articles %}
+            <section class="w-full flex flex-col gap-2 items-start pt-40 lg:pt-14 responsive-padding">
+                <div class="w-full flex flex-col gap-4 xl:flex-row xl:gap-4">
+                    <header class="xl:w-[15%]">
+                        <h2 class="text-xl font-semibold">Real Estate</h2>
+                        <div class="hidden md:block">Get to know the upcoming Windows 11, the Windows that brings you closer to what you love.</div>
+                    </header>
+                    <div class="w-full flex gap-4 overflow-x-scroll lg:overflow-x-visible lg:flex-wrap xl:flex-nowrap">
+                        {% for article in real_estate_articles|slice:":3" %}
+                            {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <a href="#" class="border-b border-gray-500 self-end">View more Real Estate's Articles</a>
+            </section>
+        {% endif %}
+
+        <hr class="my-8 border-t border-gray-300" />
+
+        {% if general_articles %}
+            <section class="w-full flex flex-col gap-2 items-start pt-40 lg:pt-14 responsive-padding">
+                <div class="w-full flex flex-col gap-4 xl:flex-row xl:gap-4">
+                    <header class="xl:w-[15%]">
+                        <h2 class="text-xl font-semibold">General</h2>
+                        <div class="hidden md:block">Get to know the upcoming Windows 11, the Windows that brings you closer to what you love.</div>
+                    </header>
+                    <div class="w-full flex gap-4 overflow-x-scroll lg:overflow-x-visible lg:flex-wrap xl:flex-nowrap">
+                        {% for article in general_articles|slice:":3" %}
+                            {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <a href="#" class="border-b border-gray-500 self-end">View more Articles</a>
+            </section>
+        {% endif %}
     </main>
 
     <!-- {% for blog in blogs %}
@@ -45,4 +99,9 @@
         </div>
     {% endfor %} -->
     
+{% endblock %}
+
+{% block script %}
+
+
 {% endblock %}

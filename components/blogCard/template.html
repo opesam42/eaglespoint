@@ -1,11 +1,11 @@
 {% load static %}
-<div class="w-full min-w-2xs max-w-[400px] lg:max-w-xs xl:max-w-none rounded-xl outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col justify-start items-start overflow-hidden">
-    <a href="#" class="w-full block">
+<div class="w-full min-w-2xs max-w-[400px] lg:max-w-xs rounded-xl outline-1 outline-offset-[-1px] outline-slate-200 flex flex-col justify-start items-start overflow-hidden">
+    <a href="{{ articleURL }}" class="w-full block">
         <img src="{{ imageUrl }}" class="w-full object-cover h-44 relative">
     </a>
     <div class="bg-white flex flex-col gap-2 py-6 px-3 -mt-2 rounded-xl z-10">
-        <div class="px-3 py-1 w-max bg-slate-200 rounded inline-flex justify-center items-center overflow-hidden text-blue-600 text-sm font-bold leading-snug">{{ tag }}</div>
-        <a href="#" class="block w-full">
+        <div class="px-3 py-1 w-max bg-slate-200 rounded inline-flex justify-center items-center overflow-hidden text-blue-600 text-sm font-bold leading-snug capitalize">{{ tag }}</div>
+        <a href="{{ articleURL }}" class="block w-full">
             <h3 class="text-xl font-bold mb-2">{{ title }}</h3>
             <p class="text-sm text-gray-700 line-clamp-3">{{ excerpt }}</p>
         </a>

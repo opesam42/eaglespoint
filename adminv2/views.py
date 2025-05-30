@@ -442,6 +442,12 @@ def render_update_testimonial_form(request, id):
     return render(request, 'adminv2/cms/partials/update-testimonial-form.html', {'testimonial': testimonial, 'categories': TESTIMONIAL_CATEGORIES})
 
 
+@admin_only
+def blog_index_page(request):
+    categories = BlogArticle.ARTICLE_CATEGORY
+    return render(request, 'adminv2/blog/index.html', {'categories': categories})
+
+
 @require_POST
 @admin_only
 def create_blog(request):
@@ -495,6 +501,36 @@ def display_update_blog_form(request, id):
         'article': blogArticle,
     }
     return render(request, 'adminv2/blog/update-blog.html', context)
+
+
+@require_POST
+@admin_only
+def delete_article(request, id):
+    article = get_object_or_404(BlogArticle, id=id)
+
+    try:
+        article.delete()
+        return JsonResponse({"success": True})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
+    
+
+@require_POST
+@admin_only
+def change_publish_status(request, id):
+    article = get_object_or_404(BlogArticle, id=id)
+
+    try:
+        if article.published == True:
+            article.published = False
+        else:
+            article.published = True
+
+        article.save()
+        return JsonResponse({"success": True, "message": "Article publishing status has being changed"})
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
 
 
 

@@ -30,8 +30,11 @@ urlpatterns = [
     path('cms/testimonial-form/', views.render_testimonial_form, name='testimonial-form'),
     path('cms/update-testimonial-form/<int:id>',views.render_update_testimonial_form, name='update-testimonial-form'),
 
+    path('blog/', views.blog_index_page, name='blog-page'),
     path('blog/create-form', views.display_blog_form, name='display-blog-form'),
     path('blog/add', views.create_blog, name='create-blog'),
     path('blog/update-form/<int:id>', views.display_update_blog_form, name='display-update-blog-form'),
-    path('blog/update/<int:id>', views.blog_update, name='update-blog')
+    path('blog/update/<int:id>', views.blog_update, name='update-blog'),
+    path('blog/delete/<int:id>', views.delete_article, name='delete-article'),
+    path('blog/publish/<int:id>', views.change_publish_status, name='change-publish-status'),
 ]
