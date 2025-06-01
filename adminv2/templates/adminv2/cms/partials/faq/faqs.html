@@ -12,7 +12,7 @@
     
     <dl 
         x-data="sortList( JSON.parse('{{ faqs_json|escapejs }}'), '{% url 'cmscontent:save-order-faq' %}', '{{ csrf_token }}' )"
-        x-sort="updateOrder">
+        x-sort="updateOrder" x-sort:config="{ handle: '[x-sort\\:handle]' }">
         <template x-for="(item, index) in items" :key="item.id">
             <dt x-sort:item="item">
                 <div class="flex items-start gap-3 py-5">
