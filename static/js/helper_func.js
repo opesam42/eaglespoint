@@ -30,4 +30,28 @@ function getFileName(fullUrl){
 }
 
 
-DOMAIN_URL = 'http://127.0.0.1:8000'
+/**
+ * Injects HTML into a container and re-executes any scripts inside the HTML.
+ * @param {HTMLElement} container - The DOM element to inject HTML into.
+ * @param {string} html - The HTML string to inject.
+ */
+function injectHTMLWithScripts(container, html) {
+    container.innerHTML = html;
+
+    const scripts = container.querySelectorAll('script');
+
+    scripts.forEach(oldScript => {
+    const newScript = document.createElement('script');
+
+    // Copy all attributes from the original script tag
+    Array.from(oldScript.attributes).forEach(attr =>
+        newScript.setAttribute(attr.name, attr.value)
+    );
+
+    // Copy inline script content
+    newScript.text = oldScript.textContent;
+
+    // Replace old script with new one to execute it
+    oldScript.parentNode.replaceChild(newScript, oldScript);
+    });
+}

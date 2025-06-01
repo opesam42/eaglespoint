@@ -47,7 +47,15 @@
             </div>
         </article>
         {% endif %}
-        
     </main>
+
+    <aside class="responsive-padding mt-12">
+        <h2 class="font-bold text-2xl">Continue Reading</h2>
+        <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 justify-items-center">
+            {% for article in related_articles %}
+                {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
+            {% endfor %}
+        </div>
+    </aside>
     
 {% endblock %}

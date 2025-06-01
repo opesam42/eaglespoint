@@ -36,22 +36,34 @@ class BlogArticle(models.Model):
         """Return posts with similar category and tags."""
         if not self.tags:
             # Fallback to category if no tags
-            return BlogArticle.objects.filter(
+            related_posts = BlogArticle.objects.filter(
                 category=self.category,
                 published=True
-            ).exclude(pk=self.pk).order_by('-created_at')[:limit]
+            ).exclude(pk=self.pk).order_by('-created_at')
 
         tag_list = [tag.strip() for tag in self.tags.split(',')]
         query = Q()
         for tag in tag_list:
             query |= Q(tags__icontains=tag)
 
-        return BlogArticle.objects.filter(
+        related_posts = BlogArticle.objects.filter(
             query,
             category=self.category,
             published=True
-        ).exclude(pk=self.pk).distinct().order_by('-created_at')[:limit]
+        ).exclude(pk=self.pk).distinct().order_by('-created_at')
 
+        related_posts = list(related_posts[:limit])
+
+        if len(related_posts) < limit:
+            additional_posts = BlogArticle.objects.filter(
+                published=True
+            ).exclude(
+                pk__in=[self.pk] + [post.pk for post in related_posts]
+            ).order_by('-created_at')[:limit - len(related_posts)]
+            
+            related_posts.extend(additional_posts)
+
+        return related_posts
 
     def _normalize_signed_media_urls(self):
         if self.content:

@@ -54,7 +54,7 @@
                 </td>
                 <td class="flex gap-1.5">
                     <button class="btn primary-btn" onclick="view_update_testimonial_form({{ testimonial.id }})">Edit</button>
-                    <button class="btn primary-btn bg-red-500 hover:bg-red-700" data-id="{{ testimonial.id }}" onclick="openDeleteModal(event)">Delete</button>
+                    <button class="btn primary-btn bg-red-500 hover:bg-red-700" data-id="{{ testimonial.id }}" onclick="openDeleteTestimonialModal(event)">Delete</button>
                 </td>  
                 <td class="">
                     {{ testimonial.created_at|date:"d M Y" }}

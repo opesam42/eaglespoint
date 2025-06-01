@@ -10,8 +10,9 @@
 {% block section_title %} Blog {% endblock %}
 
 {% block content %} 
-    <form action="{% url 'adminv2:create-blog' %}" onsubmit="submitBlogForm(event)" class="max-w-2xl">
+    <form action="{% url 'adminv2:create-blog' %}" onsubmit="submitBlogForm(event)" class="max-w-2xl self-center lg:self-start">
         <div class="flex flex-col gap-3 lg:gap-4">
+            <h3 class="text-xl font-bold">Create Blog Article</h3>
             <div>
                 <label for="id_title" class="label-primary">Title</label>
                 <input class="input-primary" type="text" name="title" required id="id_title">
@@ -152,6 +153,9 @@
         .then(data => {
             if(data.success){
                 showToastNotification('success', data.message);
+
+                article_url = '{% url 'blog:article' 123 %}'.replace('123', data.blog_slug)
+                window.location.href = article_url; //redirect to new article
             } else{
                 displayFormError(data.errors, form);
                 showToastNotification('warning', "Invalid form details");

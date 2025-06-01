@@ -2,16 +2,15 @@
 {% load static %}
 
 {% block title %}{% endblock %}
-
 {% block section_title %} Listings {% endblock %}
 
 {% block content %} 
 
     <div class="flex self-start md:justify-end">
-        <button class="btn primary-btn flex gap-0.5">
+        <a class="btn primary-btn flex gap-0.5" href="{% url 'adminv2:add_listing' %}">
             <svg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='currentColor'><path d='M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z'/></svg>
             <span>Add Listing</span>
-        </button>
+        </a>
     </div>
     
     

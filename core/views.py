@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from listing.models import Listings
 from utils.choices import LISTING_TYPE
-from cmscontent.models import Testimonial, FAQ
+from cmscontent.models import Testimonial, FAQ, TeamMember
 
 # Create your views here.
 
@@ -45,8 +45,12 @@ def real_estate_page(request):
     return render(request, 'core/real_estate.html', context)
 
 def about_us_page(request):
-    return render(request, 'core/about-us.html')
+    team_members = TeamMember.objects.all().order_by('order')
+    
+    return render(request, 'core/about-us.html', {'team_members': team_members})
+
 
 def contact_page(request):
     faqs = FAQ.objects.filter(is_active=True).order_by('order')
+
     return render(request, 'core/contact.html', {'faqs':faqs })

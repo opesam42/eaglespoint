@@ -24,46 +24,23 @@
         </div>   
     </section>
 
-    <section class="py-8 responsive-padding mt-12 mb-12">
-        <h1 class="text-4xl font-bold text-center mb-4">Meet Our Team</h1>
-        <div class="flex gap-3 justify-start items-center flex-nowrap overflow-x-auto scrollbar-none">
-            <figure class="relative h-[408px] w-full min-w-52 rounded-lg overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                <img src="{% static 'images/ceo-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
-                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
-                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
-                    <span>C.E.O and Founder</span>
-                </figcaption> 
-            </figure>
-    
-            <figure class="relative h-[408px] w-full min-w-52 rounded-lg overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                <img src="{% static 'images/pr-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
-                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
-                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
-                    <span>C.E.O and Founder</span>
-                </figcaption> 
-            </figure>
-    
-            <figure class="relative h-[408px] w-full min-w-52 rounded-lg overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                <img src="{% static 'images/accountant-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
-                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
-                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
-                    <span>C.E.O and Founder</span>
-                </figcaption> 
-            </figure>
-            <figure class="relative h-[408px] w-full min-w-52 rounded-lg overflow-hidden">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-                <img src="{% static 'images/customer-service-holder.jpeg'%}" width="320px" class="h-full w-full object-cover">
-                <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
-                    <span class="uppercase font-bold">Mr. Lorem Ispum</span>
-                    <span>C.E.O and Founder</span>
-                </figcaption> 
-            </figure>
-        </div>
-        
-    </section>
+    {% if team_members %}
+        <section class="py-8 responsive-padding mt-12 mb-12">
+            <h1 class="text-4xl font-bold text-center mb-4">Meet Our Team</h1>
+            <div class="flex gap-3 justify-start items-center flex-nowrap overflow-x-auto">
+                {% for member in team_members %}
+                    <figure class="relative h-[408px] w-full min-w-52 rounded-lg overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
+                        <img src="{{ member.photo.url }}" width="320px" class="h-full w-full object-cover">
+                        <figcaption class="absolute w-full bottom-4 *:block text-white text-center">
+                            <span class="uppercase font-bold">{{ member.name }}</span>
+                            <span>{{ member.position }}</span>
+                        </figcaption> 
+                    </figure>
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
 
     {% component "stats_partner" %} {% endcomponent %}
 

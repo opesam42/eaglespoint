@@ -7,5 +7,10 @@ app_name = 'cmscontent'
 urlpatterns = [
     path('testimonial/add/', views.create_testimonial, name='create-testimonial'),
     path('testimonial/update/<int:id>/', views.update_testimonial, name='update-testimonial'),
-    path('testimonial/delete<int:id>/', views.delete_testimonial, name='delete-testimonial')
+    path('testimonial/delete<int:id>/', views.delete_testimonial, name='delete-testimonial'),
+
+    path('member/create', views.create_team_member, name='create-team-member'),
+    path('memeber/update/<int:id>', views.update_team_member, name='update-team-member'),
+    path('/member/save-order/', views.save_order_team_member, name='save-order-team-member'),
+    path('member/delete/<int:id>', views.delete_team_member, name='delete-member'),
 ]

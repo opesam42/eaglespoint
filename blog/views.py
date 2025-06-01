@@ -83,6 +83,7 @@ def search_blog(request):
 
 
 def view_specific_blog(request, slug=None, id=None):
+    articles = BlogArticle.objects.all().order_by('-created_at')
     if slug:
         article = get_object_or_404(BlogArticle, slug=slug)
     else:
@@ -93,5 +94,6 @@ def view_specific_blog(request, slug=None, id=None):
     context = {
         'article': article,
         'related_articles': related_articles,
+        'articles': articles,
     }
     return render(request, 'blog/article.html', context)

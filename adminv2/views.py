@@ -16,7 +16,7 @@ from django.contrib.auth import get_user_model
 from listing.models import Listings
 from utils.storage import delete_cover_image_folder, append_image_prefix, BackBlazeAPI
 from messaging.models import ContactMessage
-from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES
+from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES, TeamMember
 from blog.models import BlogArticle
 from blog.forms import BlogArticleForm
 
@@ -28,11 +28,13 @@ User = get_user_model()
 def dashboard(request):
     users_count = User.objects.count()
     listings_count = Listings.objects.count()
+    articles_count = BlogArticle.objects.count()
+
     context = {
         'users_count': users_count,
         'listings_count': listings_count,
+        'articles_count': articles_count,
     }
-
     return render(request, 'adminv2/dashboard.html', context)
 
 @admin_only
@@ -427,19 +429,40 @@ def cms_admin_page(request):
 @admin_only
 def testimonial_partial(request):
     testimonials = Testimonial.objects.all().order_by('created_at')
-    return render(request, 'adminv2/cms/partials/testimonials.html', {'testimonials': testimonials, 'categories': TESTIMONIAL_CATEGORIES})
+    return render(request, 'adminv2/cms/partials/testimonial/testimonials.html', {'testimonials': testimonials, 'categories': TESTIMONIAL_CATEGORIES})
 
 @admin_only
 def faqs_partial(request):
     return render(request, 'adminv2/cms/partials/faqs.html')
 
 @admin_only
+def team_partial(request):
+    team_members = TeamMember.objects.all().order_by('order')
+    team_members_json = [
+        {
+            'id': member.id,
+            'name': member.name,
+            'position': member.position,
+            'photo': member.photo.url if member.photo else '',  # Safely get the full URL
+        }
+        for member in team_members
+    ]
+
+    print
+
+    context = {
+        'team_members': team_members,
+        'team_members_json': team_members_json,
+    }
+    return render(request, 'adminv2/cms/partials/team/team.html', context)
+
+@admin_only
 def render_testimonial_form(request):
-    return render(request, 'adminv2/cms/partials/new-testimonial-form.html', {'categories': TESTIMONIAL_CATEGORIES})
+    return render(request, 'adminv2/cms/partials/testimonial/new-testimonial-form.html', {'categories': TESTIMONIAL_CATEGORIES})
 
 def render_update_testimonial_form(request, id):
     testimonial = get_object_or_404(Testimonial, id=id)
-    return render(request, 'adminv2/cms/partials/update-testimonial-form.html', {'testimonial': testimonial, 'categories': TESTIMONIAL_CATEGORIES})
+    return render(request, 'adminv2/cms/partials/testimonial/update-testimonial-form.html', {'testimonial': testimonial, 'categories': TESTIMONIAL_CATEGORIES})
 
 
 @admin_only
@@ -463,7 +486,7 @@ def create_blog(request):
             return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
         return JsonResponse({
-            'success': True, 'message': 'New blog article has been added.'}, status=201)
+            'success': True, 'message': 'New blog article has been added.', 'blog_slug': blog.slug}, status=201)
     else:
         return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     
@@ -483,8 +506,8 @@ def blog_update(request, id):
     form = BlogArticleForm(request.POST, request.FILES, instance=blogArticle)
     
     if form.is_valid():
-        form.save()
-        return JsonResponse({'success': True, 'message': 'Blog article updated successfully.'})
+        blog = form.save()
+        return JsonResponse({'success': True, 'message': 'Blog article updated successfully.', 'blog_slug': blog.slug})
     else:
         return JsonResponse({'success': False, 'errors': form.errors}, status=400)
 
@@ -534,4 +557,11 @@ def change_publish_status(request, id):
 
 
 
+@admin_only
+def render_add_member_form(request):
+    return render(request, 'adminv2/cms/partials/team/add-member.html')
 
+@admin_only
+def render_edit_member_form(request, id):
+    member = get_object_or_404(TeamMember, id=id)
+    return render(request, 'adminv2/cms/partials/team/edit-member.html', {'member': member})

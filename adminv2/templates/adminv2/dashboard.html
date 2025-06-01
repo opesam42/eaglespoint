@@ -40,7 +40,7 @@
                     Total Articles
                 </div>
                 <div class="text-2xl font-bold">
-                    0
+                    {{ articles_count }}
                 </div>
             </div>
             <div class="bg-black w-max p-3 rounded-lg">
@@ -51,6 +51,20 @@
 
 
     </section>
-    
+
+    <ul x-sort>
+    <li x-sort:item>
+        <span x-sort:handle> - </span>foo
+    </li>
+ 
+    <li x-sort:item>
+        <span x-sort:handle> - </span>bar
+    </li>
+ 
+    <li x-sort:item>
+        <span x-sort:handle> - </span>baz
+    </li>
+</ul>
+
 {% endblock %}
 
