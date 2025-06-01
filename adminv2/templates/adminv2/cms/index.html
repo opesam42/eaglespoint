@@ -15,17 +15,22 @@
             '{% url 'adminv2:team-partial' %}': 'Team',
         },
         loadTemplate(url){
+            openLoadingModal()
             this.activeTab = url;
             console.log(url);
             fetch(url)
             .then(response => response.text())
             .then(html => {
                 this.$refs.content.innerHTML = html;
+                injectHTMLWithScripts(this.$refs.content, html); //the func is in the utils
                 Alpine.initTree(this.$refs.content); // Re-initialize bindings in loaded content
             })
             .catch(error => {
                 console.error('Error loading template:', error);
                 this.$refs.content.innerHTML = '<p>Error loading content.</p>';
+            })
+            .finally(() => {
+                closeLoadingModal()
             })
         }
     }"
@@ -52,12 +57,23 @@
     </div>
 
 
-    
 {% component "modal" modal_type="testimonial_form" modal_title="Testimonial Form" %}
     {% fill 'children' %}
     <div class="modal-body overflow-y-auto h-[80vh] px-4 py-6"></div>
+    <script>
+        function view_testimonial_form(){
+            url = "{% url 'adminv2:testimonial-form' %}"
+            loadModalForm(url, 'modal-testimonial_form', openModal_testimonial_form)
+        }
+
+        function view_update_testimonial_form(id){
+            url = "{% url 'adminv2:update-testimonial-form' 123 %}".replace('123', id);
+            loadModalForm(url, 'modal-testimonial_form', openModal_testimonial_form)
+        }
+    </script>
     {% endfill %}
 {% endcomponent %}
+
 
 {% component "modal" modal_type="delete_testimonial_modal" modal_title="Delete Testimonial" %}
     {% fill "children" %}
@@ -72,10 +88,23 @@
                 <button class="btn tertiary-btn" onclick='closeModal_delete_testimonial_modal()'>Cancel</button>
             </div>
         </section>
+
+        <script>
+            function openDeleteTestimonialModal(e){
+                const element = e.target;
+                const data_id = element.getAttribute('data-id');
+                const modal = document.getElementById("modal-delete_testimonial_modal")
+                const del_btn = modal.querySelector('.delete-btn')
+                console.log(del_btn)
+                del_btn.onclick = function(){
+                    deleteTestimonial(event, data_id)
+                }
+                openModal_delete_testimonial_modal();
+            }
+        </script>
         
     {% endfill %}
 {% endcomponent %}
-
 
 
 {% component "modal" modal_type="delete_member_modal" modal_title="Delete Member" %}
@@ -95,9 +124,21 @@
     {% endfill %}
 {% endcomponent %}
 
+
 {% component "modal" modal_type="team_member_form" modal_title="Team Form" %}
     {% fill 'children' %}
-    <div class="modal-body overflow-y-auto max-h-[80vh] px-4 py-6"></div>
+        <div class="modal-body overflow-y-auto max-h-[80vh] px-4 py-6"></div>
+        <script>
+            function view_add_member_form(){
+                url = "{% url 'adminv2:add-member-form' %}"
+                loadModalForm(url, 'modal-team_member_form', openModal_team_member_form)
+            }
+
+            function view_edit_member_form(id){
+                url = "{% url 'adminv2:edit-member-form' 123 %}".replace('123', id);
+                loadModalForm(url, 'modal-team_member_form', openModal_team_member_form)
+            }
+        </script>
     {% endfill %}
 {% endcomponent %}
 
@@ -110,409 +151,6 @@
         alpineTableData = Alpine.$data(cms_container);
         console.log(alpineTableData.activeTab)
     })
-
-    function addTestimonial(event){
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form)
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        let originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i>`;
-        submitBtn.disabled = true;     
-
-        console.log(form.action)
-        fetch(form.action, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCsrfToken(),
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                showToastNotification('success', data.message)
-
-                // Refresh 
-                alpineContainer = Alpine.$data(cms_container);
-                activeTab = alpineContainer.activeTab
-                alpineContainer.loadTemplate(activeTab)
-
-                //close modal
-                closeModal_testimonial_form();
-                
-            } else{
-                displayFormError(data.errors, form);
-                console.log(data.errors);
-                return;
-            }
-        })
-        .catch(error => {
-             console.error(error);
-             showToastNotification('danger', 'Something went wrong, please try again');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        })
-
-    }
-
-    function updateTestimonial(event, testimonial_id){
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form)
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        let originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Updating...`;
-        submitBtn.disabled = true; 
-
-        fetch(form.action, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCsrfToken(),
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                showToastNotification('success', data.message)
-
-                // Refresh 
-                alpineContainer = Alpine.$data(cms_container);
-                activeTab = alpineContainer.activeTab
-                alpineContainer.loadTemplate(activeTab)
-                
-                //close modal
-                closeModal_testimonial_form();
-            } else{
-                displayFormError(data.errors, form);
-                console.log(data.errors);
-                return;
-            }
-        })
-        .catch(error => {
-             console.error(error);
-             showToastNotification('danger', 'Something went wrong, please try again');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        })
-    }
-
-
-    function deleteTestimonial(event, testimonial_id){
-        const url = '{% url 'cmscontent:delete-testimonial' 123 %}'.replace("123", testimonial_id);
-        
-        deleteBtn = event.currentTarget;
-        originalText = deleteBtn.innerHTML   
-        deleteBtn.disabled = true; 
-        deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
-        
-        fetch(url, {
-            method: "POST",
-            headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCsrfToken()
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                showToastNotification('success', data.message)
-                
-                // Refresh 
-                alpineContainer = Alpine.$data(cms_container);
-                activeTab = alpineContainer.activeTab
-                alpineContainer.loadTemplate(activeTab)
-
-                //close modal
-                closeModal_delete_testimonial_modal();
-                closeModal_testimonial_form();                
-            } else{
-                console.error("Error", data.error)
-                showToastNotification('danger', 'Something went wrong, please try again')
-            }
-        })
-        .catch(error => {
-            console.error("Error", error) 
-            showToastNotification('danger', 'Something went wrong, please try again')
-        })
-        .finally(() => {
-            deleteBtn.disabled = false
-            deleteBtn.innerHTML = originalText
-        })
-    }
-
-
-    function view_testimonial_form(){
-        url = "{% url 'adminv2:testimonial-form' %}"
-
-        fetch(url, {
-            method: "GET",
-            headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            // since the data is a full html stuff, we need to extract the innerHTML of the body
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(data, 'text/html');
-            let testimonial_form = doc.body.innerHTML;
-            let modal = document.getElementById('modal-testimonial_form')
-
-            modal.querySelector('.modal-body').innerHTML = testimonial_form;
-            openModal_testimonial_form();
-
-        })
-        .catch(error => console.log("Error:", error))
-    }
-
-    function view_update_testimonial_form(id){
-        url = "{% url 'adminv2:update-testimonial-form' 123 %}".replace('123', id);
-
-        fetch(url, {
-            method: "GET",
-            headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            // since the data is a full html stuff, we need to extract the innerHTML of the body
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(data, 'text/html');
-            let testimonial_form = doc.body.innerHTML;
-            let modal = document.getElementById('modal-testimonial_form')
-
-            modal.querySelector('.modal-body').innerHTML = testimonial_form;
-            openModal_testimonial_form();
-
-        })
-        .catch(error => console.log("Error:", error))
-    }
-
-    function openDeleteTestimonialModal(e){
-        const element = e.target;
-        const data_id = element.getAttribute('data-id');
-        const modal = document.getElementById("modal-delete_testimonial_modal")
-        const del_btn = modal.querySelector('.delete-btn')
-        console.log(del_btn)
-        del_btn.onclick = function(){
-            deleteTestimonial(event, data_id)
-        }
-        openModal_delete_testimonial_modal();
-    }
-
-    function openDeleteMemberModal(e){
-        const element = e.target;
-        const data_id = element.getAttribute('data-id');
-        const modal = document.getElementById("modal-delete_member_modal")
-        const del_btn = modal.querySelector('.delete-btn')
-        console.log(del_btn)
-        del_btn.onclick = function(){
-            deleteMember(event, data_id)
-        }
-        openModal_delete_member_modal();
-    }
-    
-
-    function view_add_member_form(){
-        url = "{% url 'adminv2:add-member-form' %}"
-
-        fetch(url, {
-            method: "GET",
-            headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            // since the data is a full html stuff, we need to extract the innerHTML of the body
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(data, 'text/html');
-            let form = doc.body.innerHTML;
-            let modal = document.getElementById('modal-team_member_form')
-
-            injectHTMLWithScripts(modal.querySelector('.modal-body'), form);
-            //modal.querySelector('.modal-body').innerHTML = form;
-            openModal_team_member_form();
-
-        })
-        .catch(error => console.log("Error:", error))
-    }
-
-
-    function view_edit_member_form(id){
-        url = "{% url 'adminv2:edit-member-form' 123 %}".replace('123', id);
-
-        fetch(url, {
-            method: "GET",
-            headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            }
-        })
-        .then(response => response.text())
-        .then(data => {
-            // since the data is a full html stuff, we need to extract the innerHTML of the body
-            let parser = new DOMParser();
-            let doc = parser.parseFromString(data, 'text/html');
-            let form = doc.body.innerHTML;
-            let modal = document.getElementById('modal-team_member_form')
-
-            modal.querySelector('.modal-body').innerHTML = form;
-            openModal_team_member_form();
-
-        })
-        .catch(error => console.log("Error:", error))
-    }
-
-    function submitTeamMemberForm(event){
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form)
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        let originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i>`;
-        submitBtn.disabled = true;     
-
-        console.log(form.action)
-        fetch(form.action, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCsrfToken(),
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                showToastNotification('success', data.message)
-
-                // Refresh 
-                alpineContainer = Alpine.$data(cms_container);
-                activeTab = alpineContainer.activeTab
-                alpineContainer.loadTemplate(activeTab)
-
-                //close modal
-                closeModal_team_member_form();
-                
-            } else{
-                displayFormError(data.errors, form);
-                console.log(data.errors);
-                return;
-            }
-        })
-        .catch(error => {
-             console.error(error);
-             showToastNotification('danger', 'Something went wrong, please try again');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        })
-
-    }
-
-
-    function updateTeamMember(event, testimonial_id){
-        event.preventDefault();
-        const form = event.target;
-        const formData = new FormData(form)
-
-        const submitBtn = form.querySelector('button[type="submit"]');
-        let originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Updating...`;
-        submitBtn.disabled = true; 
-
-        fetch(form.action, {
-            method: "POST",
-            body: formData,
-            headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCsrfToken(),
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                showToastNotification('success', data.message)
-
-                // Refresh 
-                alpineContainer = Alpine.$data(cms_container);
-                activeTab = alpineContainer.activeTab
-                alpineContainer.loadTemplate(activeTab)
-                
-                //close modal
-                closeModal_team_member_form();
-
-            } else{
-                displayFormError(data.errors, form);
-                console.log(data.errors);
-                return;
-            }
-        })
-        .catch(error => {
-             console.error(error);
-             showToastNotification('danger', 'Something went wrong, please try again');
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = originalText;
-        })
-    }
-
-    
-    function deleteMember(event, id){
-        const url = '{% url 'cmscontent:delete-member' 123 %}'.replace("123", id);
-        
-        deleteBtn = event.currentTarget;
-        originalText = deleteBtn.innerHTML   
-        deleteBtn.disabled = true; 
-        deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
-        
-        fetch(url, {
-            method: "POST",
-            headers: {
-            "X-Requested-With": "XMLHttpRequest",
-            "X-CSRFToken": getCsrfToken()
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if(data.success){
-                showToastNotification('success', data.message)
-                
-                // Refresh 
-                alpineContainer = Alpine.$data(cms_container);
-                activeTab = alpineContainer.activeTab
-                alpineContainer.loadTemplate(activeTab)
-
-                //close modal
-                closeModal_delete_member_modal();         
-            } else{
-                console.error("Error", data.error)
-                showToastNotification('danger', 'Something went wrong, please try again')
-            }
-        })
-        .catch(error => {
-            console.error("Error", error) 
-            showToastNotification('danger', 'Something went wrong, please try again')
-        })
-        .finally(() => {
-            deleteBtn.disabled = false
-            deleteBtn.innerHTML = originalText
-        })
-    }
 
 </script>
 
