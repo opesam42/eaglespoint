@@ -4,7 +4,7 @@ from utils.role_check import is_admin, admin_only
 from django.http import JsonResponse
 import json
 from django.views.decorators.http import require_POST
-from .forms import TestimonialForm, TeamMemberForm
+from .forms import TestimonialForm, TeamMemberForm, FAQForm
 # Create your views here.
 
 
@@ -116,3 +116,65 @@ def delete_team_member(request, id):
         return JsonResponse({"success": True, "message": "Team member successfully deleted"})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
+    
+
+@admin_only
+@require_POST
+def add_faq(request):
+    form = FAQForm(request.POST)
+
+    if form.is_valid():
+        form = form.save()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'FAQ was successfully added.',
+        }, status=201)
+    
+    else:
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors,
+        }, status=400)
+    
+
+@admin_only
+@require_POST
+def update_faq(request, id):
+    faq = get_object_or_404(FAQ, id=id)
+
+    form = FAQForm(request.POST, instance=faq)
+    
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'success': True, 'message': 'FAQ updated successfully.'})
+
+    else:
+        # Return form errors
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+@admin_only
+@require_POST
+def save_order_faqs(request):
+    print('hello')
+    try:
+        data = json.loads(request.body)
+        items = data.get('items', [])
+        print("Items", items)
+        for index, item in enumerate(items):
+            FAQ.objects.filter(pk=item['id']).update(order=index)
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'status': False, 'message': str(e)}, status=400)
+
+@require_POST
+@admin_only
+def delete_faq(request, id):
+    faq = get_object_or_404(FAQ, id=id)
+
+    try:
+        faq.delete()
+        return JsonResponse({"success": True, "message": "FAQ successfully deleted"})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})
+    

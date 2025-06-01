@@ -10,3 +10,8 @@ class TeamMemberForm(forms.ModelForm):
     class Meta:
         model = TeamMember
         fields = ['name', 'photo', 'position']
+
+class FAQForm(forms.ModelForm):
+    class Meta:
+        model = FAQ
+        fields = ['question', 'answer']

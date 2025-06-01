@@ -113,9 +113,13 @@
     
     {% component "modal" modal_type="user_info" modal_title="User Information" classes="lg:w-4/5 h-[90%] overflow-y-auto" %}
         {% fill "children" %}
-        <div class="modal-body overflow-y-auto h-[90%] px-4 py-6">
-
-        </div>
+        <div class="modal-body overflow-y-auto h-[90%] px-4 py-6"></div>
+        <script>
+            function view_user_info(id){
+                url = "{% url 'adminv2:user-info' 123 %}".replace("123", id);
+                loadModalForm(url, 'modal-user_info', openModal_user_info);
+            }
+        </script>
         {% endfill %}
     {% endcomponent %}
 
@@ -318,33 +322,7 @@
         }
 
         
-        function view_user_info(user_id){
-            url = "{% url 'adminv2:user-info' 123 %}".replace("123", user_id);
-
-            fetch(url, {
-                method: "GET",
-                headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                // since the data is a full html stuff, we need to extract the innerHTML of the body
-                let parser = new DOMParser();
-                let doc = parser.parseFromString(data, 'text/html');
-                let user_info = doc.body.innerHTML;
-                let modal = document.getElementById('modal-user_info')
-
-                modal.querySelector('.modal-body').innerHTML = user_info;
-                openModal_user_info();
-                // let newListings = doc.body.innerHTML;
-                // document.getElementById('listing-container').innerHTML = newListings;
-
-            })
-            .catch(error => console.log("Error:", error))
-
-
-        }
+        
 
         // function for handling the status of a listing
         function attachEventListeners(){

@@ -1,0 +1,95 @@
+<div class="my-4 flex justify-end">
+    <button class="btn primary-btn" type="button" onclick="view_add_faq_form()">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z"></path></svg>
+        <span>Add FAQ</span>
+    </button>
+</div>
+ 
+{% if faqs %}
+<section class="w-full bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-2xl sm:rounded-lg sm:px-10" id="faq">
+    <h1 class="text-4xl font-bold text-center">FAQ</h1>
+    <p class="text-center mb-4">Frequently Asked Questions</p>
+    
+    <dl 
+        x-data="sortList( JSON.parse('{{ faqs_json|escapejs }}'), '{% url 'cmscontent:save-order-faq' %}', '{{ csrf_token }}' )"
+        x-sort="updateOrder">
+        <template x-for="(item, index) in items" :key="item.id">
+            <dt x-sort:item="item">
+                <div class="flex items-start gap-3 py-5">
+                    <span x-sort:handle class="cursor-grab">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-160q-33 0-56.5-23.5T280-240q0-33 23.5-56.5T360-320q33 0 56.5 23.5T440-240q0 33-23.5 56.5T360-160Zm240 0q-33 0-56.5-23.5T520-240q0-33 23.5-56.5T600-320q33 0 56.5 23.5T680-240q0 33-23.5 56.5T600-160ZM360-400q-33 0-56.5-23.5T280-480q0-33 23.5-56.5T360-560q33 0 56.5 23.5T440-480q0 33-23.5 56.5T360-400Zm240 0q-33 0-56.5-23.5T520-480q0-33 23.5-56.5T600-560q33 0 56.5 23.5T680-480q0 33-23.5 56.5T600-400ZM360-640q-33 0-56.5-23.5T280-720q0-33 23.5-56.5T360-800q33 0 56.5 23.5T440-720q0 33-23.5 56.5T360-640Zm240 0q-33 0-56.5-23.5T520-720q0-33 23.5-56.5T600-800q33 0 56.5 23.5T680-720q0 33-23.5 56.5T600-640Z"/></svg>
+                    </span>
+                    <details class="w-full border-b-2 border-b-gray-100 group">
+                        <summary class="flex cursor-pointer list-none items-center justify-between font-medium">
+                            <span x-text="item.question"></span>
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision"
+                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="1.5" viewBox="0 0 24 24" width="24">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </summary>
+                        <div class="flex flex-col gap-4 group-open:animate-fadeIn mt-3 text-neutral-600">
+                            <p x-text='item.answer'></p>
+                            <div class="flex gap-4">
+                                <button class="btn primary-btn" @click="view_update_faq_form(item.id)">Edit</button>
+                                <button class="btn del-btn" :data-id="item.id" onclick="open_delete_faq_modal(event)">Delete</button>
+                            </div>
+                        </div>
+                    </details>
+                </div>
+            </dt>
+        </template>
+    </dl>    
+</section>
+{% endif %}
+
+
+
+
+<script>
+    
+    function deleteFAQ(event, id){
+        const url = '{% url 'cmscontent:delete-faq' 123 %}'.replace("123", id);
+        
+        deleteBtn = event.currentTarget;
+        originalText = deleteBtn.innerHTML   
+        deleteBtn.disabled = true; 
+        deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
+        
+        fetch(url, {
+            method: "POST",
+            headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCsrfToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+                
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+
+                //close modal
+                closeModal_delete_faq_modal();             
+            } else{
+                console.error("Error", data.error)
+                showToastNotification('danger', 'Something went wrong, please try again')
+            }
+        })
+        .catch(error => {
+            console.error("Error", error) 
+            showToastNotification('danger', 'Something went wrong, please try again')
+        })
+        .finally(() => {
+            deleteBtn.disabled = false
+            deleteBtn.innerHTML = originalText
+        })
+    }
+
+</script>

@@ -26,12 +26,16 @@ urlpatterns = [
 
     path('cms/', views.cms_admin_page, name='cms-page'),
     path('cms/testimonials/', views.testimonial_partial, name='testimonial-partial'),
-    path('cms/faqs/', views.faqs_partial, name='faqs-partial'),
     path('cms/testimonial-form/', views.render_testimonial_form, name='testimonial-form'),
     path('cms/update-testimonial-form/<int:id>',views.render_update_testimonial_form, name='update-testimonial-form'),
+
     path('cms/team/',views.team_partial, name='team-partial'),
     path('cms/team/create-form', views.render_add_member_form, name='add-member-form'),
     path('cms/team/edit-form/<int:id>', views.render_edit_member_form, name='edit-member-form'),
+
+    path('cms/faqs/', views.faqs_partial, name='faqs-partial'),
+    path('cms/faq/create-form', views.render_add_faq_form, name='add-faq-form'),
+    path('cms/faq/update-form/<int:id>', views.render_update_faq_form, name='update-faq-form'),
 
     path('blog/', views.blog_index_page, name='blog-page'),
     path('blog/create-form', views.display_blog_form, name='display-blog-form'),

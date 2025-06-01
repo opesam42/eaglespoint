@@ -1,10 +1,10 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %}Update Listing - {{ listing.title }}{% endblock %}
+{% block section_title %} Listings {% endblock %}
 
 {% block content %} 
-    <h1>Add Listing</h1>
 
     <form method="post" enctype="multipart/form-data" class="max-w-2xl self-center lg:self-start" onsubmit="submitForm(event)">
         {% csrf_token %}        

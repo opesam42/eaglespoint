@@ -26,6 +26,14 @@ class FAQ(models.Model):
     class Meta:
         ordering = ['order']
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            last_order = TeamMember.objects.aggregate(max_order=models.Max('order'))['max_order']
+            self.order = (last_order or 0) + 1
+        
+        super().save(*args, **kwargs)
+
+
     def __str__(self):
         return f"{self.question}"
     

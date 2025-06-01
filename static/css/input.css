@@ -38,6 +38,10 @@
   .tertiary-btn{
     @apply rounded-lg shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] bg-white text-gray-800 hover:bg-gray-300
   }
+  
+  .del-btn{
+    @apply bg-red-500 hover:bg-red-700 text-white
+  }
 
   @keyframes infinite-scroll {
     from {

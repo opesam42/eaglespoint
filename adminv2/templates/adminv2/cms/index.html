@@ -3,7 +3,7 @@
 
 {% block title %}{% endblock %}
 
-{% block section_title %} CMS Content {% endblock %}
+{% block section_title %}Content Management{% endblock %}
 
 {% block content %} 
     
@@ -125,7 +125,7 @@
 {% endcomponent %}
 
 
-{% component "modal" modal_type="team_member_form" modal_title="Team Form" %}
+{% component "modal" modal_type="team_member_form" modal_title="Team Member Form" %}
     {% fill 'children' %}
         <div class="modal-body overflow-y-auto max-h-[80vh] px-4 py-6"></div>
         <script>
@@ -141,6 +141,58 @@
         </script>
     {% endfill %}
 {% endcomponent %}
+
+
+{% component "modal" modal_type="faq_form" modal_title="FAQ Form" %}
+    {% fill 'children' %}
+    <div class="modal-body overflow-y-auto max-h-[80vh] px-4 py-6"></div>
+    <script>
+        function view_add_faq_form(){
+            url = "{% url 'adminv2:add-faq-form' %}"
+            loadModalForm(url, 'modal-faq_form', openModal_faq_form)
+        }
+
+        function view_update_faq_form(id){
+            url = "{% url 'adminv2:update-faq-form' 123 %}".replace('123', id);
+            loadModalForm(url, 'modal-faq_form', openModal_faq_form)
+        }
+    </script>
+    {% endfill %}
+{% endcomponent %}
+
+
+{% component "modal" modal_type="delete_faq_modal" modal_title="Delete FAQ" %}
+    {% fill "children" %}
+        <section class="flex flex-col gap-6 py-4 px-6">
+            <div>
+                <div class="font-semibold">Are you sure you want to delete this FAQ?</div>
+                <div class="text-sm">This action cannot be undone.</div>
+            </div>
+
+            <div class="flex self-start gap-6">
+                <button class="delete-btn btn bg-red-600 text-white">Delete</button>
+                <button class="btn tertiary-btn" onclick='closeModal_delete_faq_modal()'>Cancel</button>
+            </div>
+        </section>
+
+        <script>
+            function open_delete_faq_modal(e){
+                const element = e.target;
+                const data_id = element.getAttribute('data-id');
+                const modal = document.getElementById("modal-delete_faq_modal")
+                const del_btn = modal.querySelector('.delete-btn')
+                console.log(del_btn)
+                del_btn.onclick = function(){
+                    deleteFAQ(event, data_id)
+                }
+                openModal_delete_faq_modal();
+            }
+        </script>
+        
+    {% endfill %}
+{% endcomponent %}
+
+
 
 {% endblock %}
 

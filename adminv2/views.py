@@ -433,7 +433,27 @@ def testimonial_partial(request):
 
 @admin_only
 def faqs_partial(request):
-    return render(request, 'adminv2/cms/partials/faqs.html')
+    faqs = FAQ.objects.all().order_by('order')
+    faqs_json = [
+        {
+            'id': faq.id,
+            'question': faq.question,
+            'answer': faq.answer,
+            'order': faq.order,
+            'is_active': faq.is_active,
+        }
+        for faq in faqs
+    ]
+
+    print("Pre", faqs_json)
+    faqs_json = json.dumps(faqs_json)
+    print("Post", faqs_json)
+
+    context = {
+        'faqs': faqs,
+        'faqs_json': faqs_json,
+    }
+    return render(request, 'adminv2/cms/partials/faq/faqs.html', context)
 
 @admin_only
 def team_partial(request):
@@ -448,7 +468,6 @@ def team_partial(request):
         for member in team_members
     ]
 
-    print
 
     context = {
         'team_members': team_members,
@@ -565,3 +584,12 @@ def render_add_member_form(request):
 def render_edit_member_form(request, id):
     member = get_object_or_404(TeamMember, id=id)
     return render(request, 'adminv2/cms/partials/team/edit-member.html', {'member': member})
+
+@admin_only
+def render_add_faq_form(request):
+    return render(request, 'adminv2/cms/partials/faq/add-faq.html')
+
+@admin_only
+def render_update_faq_form(request, id):
+    faq = get_object_or_404(FAQ, id=id)
+    return render(request, 'adminv2/cms/partials/faq/update-faq.html', {'faq': faq})

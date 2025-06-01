@@ -57,9 +57,13 @@
     
     {% component "modal" modal_type="message_info" modal_title="Contact Message Information" classes="lg:w-4/5 h-[90%] overflow-y-auto" %}
         {% fill "children" %}
-        <div class="modal-body overflow-y-auto h-[90%] px-4 py-6">
-
-        </div>
+        <div class="modal-body overflow-y-auto h-[90%] px-4 py-6"></div>
+        <script>
+            function viewMessageInfo(id){
+                url = '{% url 'adminv2:get-messages' 123 %}'.replace("123", id);
+                loadModalForm(url, 'modal-message_info', openModal_message_info);
+            }
+        </script>
         {% endfill %}
     {% endcomponent %}
 
@@ -130,32 +134,6 @@
             base_url = '{% url 'adminv2:get-messages' %}';
             fetchMessages(page);
         }
-
-        function viewMessageInfo(message_id){
-            const url = '{% url 'adminv2:get-messages' 123 %}'.replace("123", message_id);
-             fetch(url, {
-                method: "GET",
-                headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                }
-            })
-            .then(response => response.text())
-            .then(data => {
-                // since the data is a full html stuff, we need to extract the innerHTML of the body
-                let parser = new DOMParser();
-                let doc = parser.parseFromString(data, 'text/html');
-                let message_info = doc.body.innerHTML;
-                let modal = document.getElementById('modal-message_info')
-
-                modal.querySelector('.modal-body').innerHTML = message_info;
-                openModal_message_info();
-            })
-            .catch(error => {
-                console.log("Error:", error);
-                showToastNotification('danger', 'Something went wrong');
-            })
-        }
-          
        
         function deleteMessage(message_id, event){
             const url = '{% url 'adminv2:delete-message' 123 %}'.replace("123", message_id);
