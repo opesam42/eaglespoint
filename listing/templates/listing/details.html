@@ -160,9 +160,9 @@
     </main>
 
     <!-- PROPERTY ENQUIRY FORM MODAL -->
-        {% component "modal" modal_type="property_equiry_form_modal" modal_title="Property Inquiry Form" classes="h-[90vh] max-h-[90vh] max-w-[400px]" %}
+        {% component "modal" modal_type="property_equiry_form_modal" modal_title="Property Inquiry Form" classes="max-h-[90vh] max-w-[400px]" %}
             {% fill "children" %}
-                <div class="p-4 overflow-y-auto h-[90%]">
+                <div class="p-4 overflow-y-auto max-h-[90vh]">
                     <form  class="" method="post" action="{% url 'messaging:send-contact-form' %}" onsubmit="submitContactForm(event)">
                         <!-- <h2 class="text-2xl font-bold mb-2"><span class="font-cursive text-red-600">Property Inquiry</span> Form </h2> -->
 

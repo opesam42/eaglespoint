@@ -12,7 +12,7 @@
     </div>
         
     <form method="GET" action="{% url 'listing:search_listing' %}" id="filter-form" x-data="{ priceModalOpen: false }" onsubmit="handleLiveSearch(event)">
-        <div class="flex gap-2 items-end overflow-x-scroll snap-x snap-mandatory scrollbar-hide p-2">
+        <div class="flex gap-2 items-end *:shrink-0 overflow-x-scroll snap-x snap-mandatory scrollbar-hide p-2">
 
             <button id="sort_filter_btn" class="flex gap-1 w-max rounded-2xl border border-gray-700 appearance-none px-4 py-1 focus:outline-none focus:ring-2 focus:ring-red-400 focus:border-0 focus:bg-gray-100 cursor-pointer" type="button" onclick="openModal_sort_modal()">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M120-240v-80h240v80H120Zm0-200v-80h480v80H120Zm0-200v-80h720v80H120Z"/></svg>
