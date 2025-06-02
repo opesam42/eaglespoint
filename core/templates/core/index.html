@@ -145,12 +145,9 @@
     <section class="responsive-padding flex flex-col gap-7" data-aos="fade-up">
         <h2 class="text-4xl font-semibold">Stay Informed with Our Blog</h2>
         <div class="flex flex-row flex-wrap gap-6 items-center justify-center">
-            {% component "blog_card" title="The Ultimate Guide to Stress-Free Travel Planning" tag="Travel" imageUrl="{% static 'images/aiplane-window.jpeg' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
-
-            {% component "blog_card" title="The Ultimate Guide to Stress-Free Travel Planning" tag="Travel" imageUrl="{% static 'images/aiplane-window.jpeg' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
-
-            {% component "blog_card" title="The Ultimate Guide to Stress-Free Travel Planning" tag="Travel" imageUrl="{% static 'images/aiplane-window.jpeg' %}" excerpt="Traveling can be overwhelming, but with the right planning, it becomes an exciting experience. This blog will cover essential travel hacks, packing tips, and how to find the best flight deals." %} {% endcomponent %}
-            
+            {% for article in articles %}
+                {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
+            {% endfor %}           
              
         </div>
     </section>

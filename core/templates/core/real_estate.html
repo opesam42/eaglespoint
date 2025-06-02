@@ -216,7 +216,7 @@
             <a class="primary-btn w-max btn self-center lg:hidden" href="{% url 'listing:properties_for_rent'%}">View More Properties</a>
         </section>
     {% endif %}
-
+{% comment %} 
     <section class="py-8 responsive-padding" data-aos="fade-up">
         <h3 class="text-4xl font-semibold mb-6">Popular Cities</h3>
         <div class="flex gap-6 justify-start items-center flex-nowrap overflow-x-auto *:shrink-0 *:h[420]">
@@ -265,7 +265,7 @@
             </div>
         </div>
         
-    </section>
+    </section> {% endcomment %}
     
     <section class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center responsive-padding" data-aos="fade-up">
         <h2 class="text-4xl lg:text-5xl font-extrabold text-center lg:w-1/4 lg:text-left">Why Chose <span class="text-blue-600 font-cursive">Us?</span></h2>
@@ -287,7 +287,7 @@
             </div>
         </div>
     </section>
-
+{% comment %} 
     <section class="lg:pr-0 bg-slate-100 flex flex-col gap-3 lg:flex-row lg:justify-between lg:items-center">
         <div class="responsive-padding py-4 md:py-0 pr-0">
             <h3 class="text-4xl lg:text-5xl font-extrabold mb-1.5 pr-20"><span class="font-cursive text-blue-600">SELL</span> Your Property or <span class="font-cursive text-blue-600">RENT</span> Your Apartment with Confidence!</h3>
@@ -295,7 +295,43 @@
             {% component "button" label="List with Us" type="primary" %} {% endcomponent %}
         </div>
         <img src="{% static 'images/8f8b116b79ed25b75ae82abf0a2e31a6.jpeg' %}" class="w-full lg:max-w-96 h-auto max-h-64 lg:h-full object-cover">
+    </section> {% endcomment %}
+
+    {% if testimonials %}
+    <section class="testimonial responsive-padding relative bg-repeat py-8 bg-[100px] text-white" style="background-image: url({% static 'images/pattern4.svg' %}); background-color:blue;" data-aos="fade-up">
+        <!-- overlay -->
+        <div class="absolute inset-0"></div>
+        <!-- content -->
+        <div class="relative z-10 flex flex-col gap-7 items-center">
+            <h3 class="text-4xl font-semibold">Listen to our Trusted Clients <span class="text-red-600 fa fa-heart"></span></h3>
+            <div class="card-container flex flex-col md:flex-row md:flex-wrap justify-center gap-6 *:bg-white *:text-gray-700 *:py-6 *:px-4 *:w-full *:md:w-72 *:rounded-xl *:shadow-[0px_4px_4px_0px_rgba(0,0,0,0.25)] *:inline-flex *:flex-col *:items-start *:gap-4 *:overflow-hidden">
+                {% for testimonial in testimonials %}
+                <div class="card">
+                    <img src="{% static 'images/quote-svgrepo-com.svg' %}" width="20" class="w-14 h-14">
+                    <div class="body">
+                        {{ testimonial.message }}
+                    </div>
+                    <div>
+                        <img>
+                        <span class="border-b-1 border-gray-800 uppercase text-gray-950 font-semibold">{{ testimonial.name }}</span>
+                    </div>
+                </div>
+                {% endfor %} 
+            </div>
+        </div>
     </section>
+    {% endif %}
+    
+    <section class="responsive-padding flex flex-col gap-7" data-aos="fade-up">
+        <h2 class="text-4xl font-semibold">Stay Informed with Our Blog</h2>
+        <div class="flex flex-row flex-wrap gap-6 items-center justify-center">
+            {% for article in articles %}
+                {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
+            {% endfor %}           
+             
+        </div>
+    </section>
+
 </main>
 
     
