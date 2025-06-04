@@ -16,7 +16,7 @@ from django.contrib.auth import get_user_model
 from listing.models import Listings
 from utils.storage import delete_cover_image_folder, append_image_prefix, BackBlazeAPI
 from messaging.models import ContactMessage
-from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES, TeamMember
+from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES, TeamMember, Partners
 from blog.models import BlogArticle
 from blog.forms import BlogArticleForm
 
@@ -593,3 +593,32 @@ def render_add_faq_form(request):
 def render_update_faq_form(request, id):
     faq = get_object_or_404(FAQ, id=id)
     return render(request, 'adminv2/cms/partials/faq/update-faq.html', {'faq': faq})
+
+@admin_only
+def partners_partial(request):
+    partners = Partners.objects.all(). order_by('-order')
+    partners_json = [
+        {
+            'id': partner.id,
+            'name': partner.name,
+            'logo': partner.logo.url if partner.logo else '',
+        }
+        for partner in partners
+    ]
+
+    context = {
+        'partners': partners,
+        'partners_json': partners_json
+    }
+    return render(request, 'adminv2/cms/partials/partners/partners.html', context)
+
+
+@admin_only
+def render_add_partner_form(request):
+    return render(request, 'adminv2/cms/partials/partners/add-partner.html')
+
+@admin_only
+def render_update_partner_form(request, id):
+    partner = get_object_or_404(Partners, id=id)
+    return render(request, 'adminv2/cms/partials/partners/update-partner.html', {'partner': partner})
+

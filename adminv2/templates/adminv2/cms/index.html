@@ -13,6 +13,7 @@
             '{% url 'adminv2:testimonial-partial' %}': 'Testimonials',
             '{% url 'adminv2:faqs-partial' %}': 'FAQs',
             '{% url 'adminv2:team-partial' %}': 'Team',
+            '{% url 'adminv2:partners-partial' %}' : 'Partners',
         },
         loadTemplate(url){
             openLoadingModal()
@@ -36,7 +37,7 @@
     }"
     x-init="loadTemplate(activeTab)">
         <div class="tabs text-sm font-medium text-center text-gray-500 border-b border-gray-200">
-            <ul class="flex flex-wrap -mb-px">
+            <ul class="flex flex-nowrap overflow-x-auto scrollbar-none -mb-px">
                 <template x-for="[url, label] in Object.entries(templates)" :key="url">
                     <li class="me-2">
                         <button 
@@ -193,6 +194,55 @@
 {% endcomponent %}
 
 
+{% component "modal" modal_type="partner_form" modal_title="Partner Form" %}
+    {% fill 'children' %}
+    <div class="modal-body overflow-y-auto max-h-[80vh] px-4 py-6"></div>
+    <script>
+        function view_add_partner_form(){
+            url = "{% url 'adminv2:add-partner-form' %}"
+            loadModalForm(url, 'modal-partner_form', openModal_partner_form)
+        }
+
+        function view_update_partner_form(id){
+            url = "{% url 'adminv2:update-partner-form' 123 %}".replace('123', id);
+            loadModalForm(url, 'modal-partner_form', openModal_partner_form)
+        }
+    </script>
+    {% endfill %}
+{% endcomponent %}
+
+
+{% component "modal" modal_type="delete_partner_modal" modal_title="Delete Partner" %}
+    {% fill "children" %}
+        <section class="flex flex-col gap-6 py-4 px-6">
+            <div>
+                <div class="font-semibold">Are you sure you want to delete this partner?</div>
+                <div class="text-sm">This action cannot be undone.</div>
+            </div>
+
+            <div class="flex self-start gap-6">
+                <button class="delete-btn btn bg-red-600 text-white">Delete</button>
+                <button class="btn tertiary-btn" onclick='closeModal_delete_partner_modal()'>Cancel</button>
+            </div>
+        </section>
+
+        <script>
+            function open_delete_partner_modal(e){
+                const element = e.currentTarget;;
+                const data_id = element.getAttribute('data-id');
+                const modal = document.getElementById("modal-delete_partner_modal")
+                const del_btn = modal.querySelector('.delete-btn')
+                console.log(del_btn)
+                console.log(data_id)
+                del_btn.onclick = function(){
+                    deletePartner(event, data_id)
+                }
+                openModal_delete_partner_modal();
+            }
+        </script>
+        
+    {% endfill %}
+{% endcomponent %}
 
 {% endblock %}
 

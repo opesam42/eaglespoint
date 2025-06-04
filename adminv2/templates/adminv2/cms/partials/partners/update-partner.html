@@ -1,0 +1,96 @@
+<form method="post" action="{% url 'cmscontent:update-partner' partner.id %}" enctype="multipart/form-data" class="" onsubmit="updatePartnerForm(event)">
+    <div class="flex flex-col gap-3 lg:gap-4">
+        <div>
+            <label for="id_name" class="label-primary">Name</label>
+            <input class="input-primary" type="text" name="name" value="{{ partner.name }}" required id="id_name">
+        </div>
+
+        <div x-data="{ image:'{{ partner.logo.url }}' }">
+                <div class="label-primary">Logo</div>
+                <div class="flex items-center justify-center w-full">
+                    <label for="id_logo" class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50">
+                        <template x-if="!image">
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                                <svg class="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Click to upload</span> or drag and drop</p>
+                                <!-- <p class="text-xs text-gray-500">SVG, PNG, JPG or GIF (MAX. 800x400px)</p> -->
+                            </div>
+                        </template>
+
+                        <template x-if="image">
+                            <div class="relative w-full h-full">
+                                <div class="w-full h-full flex  items-center justify-center absolute inset-0 bg-gradient-to-t from-black/40 to-transparent">
+                                    <label for="id_logo" type="button" class="btn text-white border-2 border-white rounded-xl w-fit h-fit">Replace</button>
+                                </div>
+                                <div class="w-full h-full">
+                                    <img :src="image" class="w-full h-full object-cover mt-2">
+                                </div>
+                            </div>
+                        </template>
+                        
+                        <input id="id_logo" type="file" name="logo" class="hidden" @change="image = URL.createObjectURL($event.target.files[0])" />
+                    </label>
+                </div> 
+            </div>
+
+        <div class="flex gap-x-2 justify-end md:flex-row">
+            <button class="btn primary-btn w-max" type="submit">Add Partner</button>
+        </div>
+
+    </div>
+</form>
+
+
+<script>
+    function updatePartnerForm(event, id){
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form)
+        console.log("Form Data", ...formData)
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        let originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Updating...`;
+        submitBtn.disabled = true; 
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+                
+                //close modal
+                closeModal_partner_form();
+
+            } else{
+                displayFormError(data.errors, form);
+                console.log(data.errors);
+                return;
+            }
+        })
+        .catch(error => {
+             console.error(error);
+             showToastNotification('danger', 'Something went wrong, please try again');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        })
+    }
+
+
+</script>

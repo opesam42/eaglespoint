@@ -1,5 +1,5 @@
 from django import forms
-from .models import Testimonial, FAQ, TeamMember
+from .models import Testimonial, FAQ, TeamMember, Partners
 
 class TestimonialForm(forms.ModelForm):
     class Meta:
@@ -15,3 +15,8 @@ class FAQForm(forms.ModelForm):
     class Meta:
         model = FAQ
         fields = ['question', 'answer']
+
+class PartnerForm(forms.ModelForm):
+    class Meta:
+        model = Partners
+        fields = ['name', 'logo']

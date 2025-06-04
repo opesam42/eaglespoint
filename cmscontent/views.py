@@ -1,10 +1,10 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Testimonial, FAQ, TeamMember
+from .models import Testimonial, FAQ, TeamMember, Partners
 from utils.role_check import is_admin, admin_only
 from django.http import JsonResponse
 import json
 from django.views.decorators.http import require_POST
-from .forms import TestimonialForm, TeamMemberForm, FAQForm
+from .forms import TestimonialForm, TeamMemberForm, FAQForm, PartnerForm
 # Create your views here.
 
 
@@ -178,3 +178,64 @@ def delete_faq(request, id):
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
     
+
+
+@admin_only
+@require_POST
+def add_partner(request):
+    form = PartnerForm(request.POST, request.FILES)
+
+    if form.is_valid():
+        form = form.save()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Saved successfully.',
+        }, status=201)
+    
+    else:
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors,
+        }, status=400)
+    
+
+@admin_only
+@require_POST
+def update_partner(request, id):
+    partner = get_object_or_404(FAQ, id=id)
+
+    form = PartnerForm(request.POST, request.FILES, instance=partner)
+    
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'success': True, 'message': 'Updated successfully.'})
+
+    else:
+        # Return form errors
+        return JsonResponse({'success': False, 'errors': form.errors}, status=400)
+
+@admin_only
+@require_POST
+def save_order_partner(request):
+    print('hello')
+    try:
+        data = json.loads(request.body)
+        items = data.get('items', [])
+        print("Items", items)
+        for index, item in enumerate(items):
+            Partners.objects.filter(pk=item['id']).update(order=index)
+        return JsonResponse({'success': True})
+    except Exception as e:
+        return JsonResponse({'status': False, 'message': str(e)}, status=400)
+
+@require_POST
+@admin_only
+def delete_partner(request, id):
+    partner = get_object_or_404(Partners, id=id)
+
+    try:
+        partner.delete()
+        return JsonResponse({"success": True, "message": "Successfully deleted"})
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)})

@@ -88,5 +88,21 @@ class Partners(models.Model):
     logo = models.ImageField(upload_to='partners/')
     order = models.PositiveIntegerField(default=0)
 
+    def _delete_photo(self):
+        # delete photo when team member is deleted
+        if self.logo:
+            try:
+                backblaze = BackBlazeAPI()
+                print(self.logo.name)
+                backblaze.delete_files_with_prefix(self.logo.name)
+            except Exception as e:
+                print(f'Backblaze error: {e}')
+
+    def delete(self, *args, **kwargs):
+        self._delete_photo()
+        super().delete(*args, **kwargs)
+
     def __str__(self):
         return f"{self.name}"
+    
+    

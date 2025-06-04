@@ -1,0 +1,86 @@
+<div class="partners w-full">
+    <div class="my-8 flex justify-end">
+        <button class="btn primary-btn" type="button" onclick="view_add_partner_form()">
+            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M450-450H220v-60h230v-230h60v230h230v60H510v230h-60v-230Z"></path></svg>
+            <span>Add Partner</span>
+        </button>
+    </div>
+        
+    <section class="w-full bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 sm:mx-auto sm:max-w-2xl sm:rounded-lg sm:px-10" id="faq">
+    <h1 class="text-4xl font-bold text-center">Our Partners</h1>
+        <div
+            x-data="sortList( {{ partners_json|safe }}, '{% url 'cmscontent:save-order-partner' %}', '{{ csrf_token }}' )"  
+            x-sort="updateOrder" x-sort:config="{ handle: '[x-sort\\:handle]' }"
+            class="flex flex-col bg-white w-full">
+            <template x-for="(item, index) in items" :key="item.id">
+                <figure class="group relative cursor-pointer flex gap-4 border-b border-b-gray-300 py-3 px-2.5" x-sort:item="item">
+                    <div class="self-center" x-sort:handle class="cursor-grab">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-160q-33 0-56.5-23.5T280-240q0-33 23.5-56.5T360-320q33 0 56.5 23.5T440-240q0 33-23.5 56.5T360-160Zm240 0q-33 0-56.5-23.5T520-240q0-33 23.5-56.5T600-320q33 0 56.5 23.5T680-240q0 33-23.5 56.5T600-160ZM360-400q-33 0-56.5-23.5T280-480q0-33 23.5-56.5T360-560q33 0 56.5 23.5T440-480q0 33-23.5 56.5T360-400Zm240 0q-33 0-56.5-23.5T520-480q0-33 23.5-56.5T600-560q33 0 56.5 23.5T680-480q0 33-23.5 56.5T600-400ZM360-640q-33 0-56.5-23.5T280-720q0-33 23.5-56.5T360-800q33 0 56.5 23.5T440-720q0 33-23.5 56.5T360-640Zm240 0q-33 0-56.5-23.5T520-720q0-33 23.5-56.5T600-800q33 0 56.5 23.5T680-720q0 33-23.5 56.5T600-640Z"/></svg>
+                    </div>
+                    {% comment %} <div class="absolute right-0 top-0 p-2 bg-gray-50 cursor-move z-10" x-sort:handle>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M360-160q-33 0-56.5-23.5T280-240q0-33 23.5-56.5T360-320q33 0 56.5 23.5T440-240q0 33-23.5 56.5T360-160Zm240 0q-33 0-56.5-23.5T520-240q0-33 23.5-56.5T600-320q33 0 56.5 23.5T680-240q0 33-23.5 56.5T600-160ZM360-400q-33 0-56.5-23.5T280-480q0-33 23.5-56.5T360-560q33 0 56.5 23.5T440-480q0 33-23.5 56.5T360-400Zm240 0q-33 0-56.5-23.5T520-480q0-33 23.5-56.5T600-560q33 0 56.5 23.5T680-480q0 33-23.5 56.5T600-400ZM360-640q-33 0-56.5-23.5T280-720q0-33 23.5-56.5T360-800q33 0 56.5 23.5T440-720q0 33-23.5 56.5T360-640Zm240 0q-33 0-56.5-23.5T520-720q0-33 23.5-56.5T600-800q33 0 56.5 23.5T680-720q0 33-23.5 56.5T600-640Z"/></svg>
+                    </div>    {% endcomment %}
+                    <img class="object-contain w-12 h-12" :src="item.logo" src="{{ partner.logo.url }}">
+                    <figcaption class="mt-2 px-3 py- text-sm font-semibold" x-text="item.name"></figcaption>
+
+                    <div class="ml-auto flex gap-2 items-center *:p-1.5 *:rounded-full *:hover:bg-gray-300">
+                        <button aria-label="Edit" @click="view_update_partner_form(item.id)">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#5985E1"><path d="M120-120v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm584-528 56-56-56-56-56 56 56 56Z"/></svg>
+                        </button>
+
+                        <button aria-label="Delete" onclick="open_delete_partner_modal(event)" :data-id="item.id">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#EA3323"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z"/></svg>
+                        </button>
+                    </div>
+                </figure>
+            </template>
+        </div>
+    </section>
+</div>
+
+<script>
+    
+    function deletePartner(event, id){
+        console.log(id)
+        const url = "{% url 'cmscontent:delete-partner' 123 %}".replace("123", id);
+        
+        deleteBtn = event.currentTarget;
+        originalText = deleteBtn.innerHTML   
+        deleteBtn.disabled = true; 
+        deleteBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Deleting...`;
+        
+        fetch(url, {
+            method: "POST",
+            headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCsrfToken()
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+                
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+
+                //close modal
+                closeModal_delete_partner_modal();             
+            } else{
+                console.error("Error", data.error)
+                showToastNotification('danger', 'Something went wrong, please try again')
+            }
+        })
+        .catch(error => {
+            console.error("Error", error) 
+            showToastNotification('danger', 'Something went wrong, please try again')
+        })
+        .finally(() => {
+            deleteBtn.disabled = false
+            deleteBtn.innerHTML = originalText
+        })
+    }
+
+</script>

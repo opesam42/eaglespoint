@@ -18,4 +18,9 @@ urlpatterns = [
     path('faq/update/<int:id>', views.update_faq, name='update-faq'),
     path('faq/save-order', views.save_order_faqs, name='save-order-faq'),
     path('faq/delete/<int:id>', views.delete_faq, name='delete-faq'),
+
+    path('partner/create', views.add_partner, name='add-partner'),
+    path('partner/update/<int:id>', views.update_partner, name='update-partner'),
+    path('partner/save-order', views.save_order_partner, name='save-order-partner'),
+    path('partner/delete/<int:id>', views.delete_partner, name='delete-partner'),
 ]
