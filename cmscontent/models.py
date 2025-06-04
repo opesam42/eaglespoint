@@ -88,6 +88,27 @@ class Partners(models.Model):
     logo = models.ImageField(upload_to='partners/')
     order = models.PositiveIntegerField(default=0)
 
+
+    def _delete_old_photo(self):
+        if self.pk:
+            old_instance = Partners.objects.get(pk=self.pk)
+            if old_instance.logo and old_instance.logo != self.logo:
+                try:
+                    backblaze = BackBlazeAPI()
+                    backblaze.delete_files_with_prefix(old_instance.logo.name)
+                except Exception as e:
+                    print(f'Backblaze error: {e}')
+
+
+    def save(self, *args, **kwargs):
+        self._delete_old_photo()
+        if not self.pk:
+            last_order = TeamMember.objects.aggregate(max_order=models.Max('order'))['max_order']
+            self.order = (last_order or 0) + 1
+        
+        super().save(*args, **kwargs)
+
+
     def _delete_photo(self):
         # delete photo when team member is deleted
         if self.logo:
@@ -98,9 +119,11 @@ class Partners(models.Model):
             except Exception as e:
                 print(f'Backblaze error: {e}')
 
+
     def delete(self, *args, **kwargs):
         self._delete_photo()
         super().delete(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.name}"

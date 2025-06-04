@@ -203,9 +203,10 @@ def add_partner(request):
 @admin_only
 @require_POST
 def update_partner(request, id):
-    partner = get_object_or_404(FAQ, id=id)
+    partner = get_object_or_404(Partners, id=id)
 
     form = PartnerForm(request.POST, request.FILES, instance=partner)
+    print("request.FILES:", request.FILES)
     
     if form.is_valid():
         form.save()

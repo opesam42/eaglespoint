@@ -54,3 +54,55 @@
         </div>
     </form>
 {% endif %}
+
+<script>
+    
+    function updateTeamMember(event, testimonial_id){
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form)
+        console.log("Form Data", ...formData)
+
+        const submitBtn = form.querySelector('button[type="submit"]');
+        let originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = `<i class="fa fa-spinner fa-spin"></i> Updating...`;
+        submitBtn.disabled = true; 
+
+        fetch(form.action, {
+            method: "POST",
+            body: formData,
+            headers: {
+                "X-Requested-With": "XMLHttpRequest",
+                "X-CSRFToken": getCsrfToken(),
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.success){
+                showToastNotification('success', data.message)
+
+                // Refresh 
+                alpineContainer = Alpine.$data(cms_container);
+                activeTab = alpineContainer.activeTab
+                alpineContainer.loadTemplate(activeTab)
+                
+                //close modal
+                closeModal_team_member_form();
+
+            } else{
+                displayFormError(data.errors, form);
+                console.log(data.errors);
+                return;
+            }
+        })
+        .catch(error => {
+             console.error(error);
+             showToastNotification('danger', 'Something went wrong, please try again');
+        })
+        .finally(() => {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        })
+    }
+
+</script>
