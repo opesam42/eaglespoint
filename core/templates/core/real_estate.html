@@ -73,7 +73,7 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                 </button>
 
-                <div class="listingScroll w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:*:w-[280px]">
+                <div class="listingScroll w-full flex gap-6 overflow-x-scroll snap-x snap-mandatory scrollbar-hide md:scrollbar-default *:max-w-min *:*:w-[280px]">
                     {% for result in listings %}
                         {% component "listing_card" 
                             title=result.title 

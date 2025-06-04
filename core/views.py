@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from listing.models import Listings
 from utils.choices import LISTING_TYPE
 from blog.models import BlogArticle
-from cmscontent.models import Testimonial, FAQ, TeamMember
+from cmscontent.models import Testimonial, FAQ, TeamMember, Partners
 
 # Create your views here.
 
@@ -10,10 +10,12 @@ from cmscontent.models import Testimonial, FAQ, TeamMember
 def home(request):
     testimonials = Testimonial.objects.filter(category='travel').order_by('?')
     articles = BlogArticle.objects.filter(published=True).order_by('-created_at')[:3]
+    partners = Partners.objects.all().order_by('-order')
 
     context = {
         'testimonials': testimonials,
         'articles': articles,
+        'partners': partners,
     }
     return render(request, 'core/index.html', context)
 
@@ -36,6 +38,7 @@ def real_estate_page(request):
     houses_for_rent = all_listings.filter(listing_type='rent')[:6]
     articles = BlogArticle.objects.filter(published=True).order_by('-created_at')[:3]
     testimonials = Testimonial.objects.filter(category='real_estate').order_by('?')
+    partners = Partners.objects.all().order_by('-order')
 
     if request.user.is_authenticated:
         user_favourites = Listings.objects.filter(is_listed=True, favourites__user=request.user)
@@ -51,6 +54,7 @@ def real_estate_page(request):
         'houses_for_rent': houses_for_rent,
         'articles': articles,
         'testimonials': testimonials,
+        'partners': partners,
     }
 
     return render(request, 'core/real_estate.html', context)

@@ -16,7 +16,13 @@
     <div class="partners">
         <h4 class="font-bold mb-2">Our Trusted Partners</h4>
         <div class="flex gap-4 *:relative *:cursor-pointer *:h-16 *:w-16 *:flex *:flex-col *:justify-center">
-            <figure class="group">
+            {% for partner in partners %}
+                <figure class="group">
+                    <img class="object-contain w-full h-full" src="{{ partner.logo.url }}">
+                    <figcaption class="absolute top-full mt-2 px-3 py-1 text-white bg-gray-800 text-sm rounded opacity-0 group-hover:opacity-70 transition-opacity duration-300 whitespace-nowrap">{{ partner.name }}</figcaption>
+                </figure>
+            {% endfor %}
+            {% comment %} <figure class="group">
                 <img class="object-contain w-full h-full" src="{% static 'images/cabanna-logo.webp' %}">
                 <figcaption class="absolute top-full mt-2 px-3 py-1 text-white bg-gray-800 text-sm rounded opacity-0 group-hover:opacity-70 transition-opacity duration-300 whitespace-nowrap">Cabanna Homes</figcaption>
             </figure>
@@ -31,7 +37,7 @@
             <figure class="flex flex-col justify-center group">
                 <img class="object-contain w-full h-full" src="{% static 'images/landnest-logo.webp' %}">
                 <figcaption class="absolute top-full mt-2 px-3 py-1 text-white bg-gray-800 text-sm rounded opacity-0 group-hover:opacity-70 transition-opacity duration-300 whitespace-nowrap">Landnest Properties</figcaption>
-            </figure>
+            </figure> {% endcomment %}
 
         </div>
 

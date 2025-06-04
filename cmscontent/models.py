@@ -81,3 +81,12 @@ class TeamMember(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.position}"
+
+
+class Partners(models.Model):
+    name = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to='partners/')
+    order = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.name}"
