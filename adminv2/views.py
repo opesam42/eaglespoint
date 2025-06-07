@@ -11,6 +11,7 @@ from listing.models import Listings, Feature, ListingImages
 from utils.choices import LISTING_TYPE, STATE_CHOICES
 from utils.role_check import is_admin, admin_only
 from django.db.models import Q
+from django.urls import reverse
 from django.core.paginator import Paginator
 from django.contrib.auth import get_user_model
 from listing.models import Listings
@@ -29,11 +30,15 @@ def dashboard(request):
     users_count = User.objects.count()
     listings_count = Listings.objects.count()
     articles_count = BlogArticle.objects.count()
+    breadcrumbs = [
+        {'title': 'Home', 'url': None},
+    ]
 
     context = {
         'users_count': users_count,
         'listings_count': listings_count,
         'articles_count': articles_count,
+        'breadcrumbs': breadcrumbs,
     }
     return render(request, 'adminv2/dashboard.html', context)
 
@@ -41,9 +46,16 @@ def dashboard(request):
 def listing(request):
     listings = Listings.objects.all()
     nigeria_states = Listings.objects.values_list('state', flat=True).order_by('state').distinct()
+
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'Listing', 'url': None}
+    ]
+
     return render(request, 'adminv2/listing/listing.html', {
         'results': listings,
         'nigeria_states': nigeria_states,
+        'breadcrumbs': breadcrumbs,
     })
 
 
@@ -104,12 +116,18 @@ def add_listing(request):
             # return redirect('adminv2:listing')
     else:
         form = ListingForm()
+        breadcrumbs = [
+            {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+            {'title': 'Listings', 'url': reverse('adminv2:listing')},
+            {'title': 'Add Listing', 'url': None}
+        ]
 
     context = {
         'form': form,
         'listing_types': LISTING_TYPE,
         'nigeria_states': STATE_CHOICES,
         'features': Feature.objects.all(),
+        'breadcrumbs': breadcrumbs,
     }
 
     return render(request, 'adminv2/listing/add.html', context)
@@ -127,6 +145,12 @@ def edit_listing(request, property_id):
     property_images = ListingImages.objects.filter(listing_id=property_id).values_list('image', flat=True)
     signed_image_urls = [append_image_prefix(img) for img in property_images]
     listingImageArray = mark_safe(json.dumps(signed_image_urls))
+
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'Listings', 'url': reverse('adminv2:listing')},
+        {'title': 'Update Listing', 'url': None}
+    ]
     
     
     form = ListingForm(instance=listingEdit)
@@ -200,7 +224,8 @@ def edit_listing(request, property_id):
 
         'listing': listingEdit,
         'listing_features': list(listingEdit.features.values_list('id', flat=True)),
-        'listing_images': listingImageArray
+        'listing_images': listingImageArray,
+        'breadcrumbs': breadcrumbs,
     }
 
     return render(request, 'adminv2/listing/edit.html', context)
@@ -362,7 +387,12 @@ def user_info(request, user_id):
 # messaging views
 @admin_only
 def message_page(request):
-    return render(request, "adminv2/messaging/index.html")
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'Inbox', 'url':None},
+    ]
+        
+    return render(request, "adminv2/messaging/index.html", {'breadcrumbs': breadcrumbs})
 
 @admin_only
 def get_messages(request, message_id=None):
@@ -424,7 +454,11 @@ def delete_message(request, message_id):
     
 @admin_only
 def cms_admin_page(request):
-    return render(request, 'adminv2/cms/index.html')
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'CMS', 'url':None},
+    ]
+    return render(request, 'adminv2/cms/index.html', { 'breadcrumbs': breadcrumbs })
 
 @admin_only
 def testimonial_partial(request):
@@ -487,7 +521,12 @@ def render_update_testimonial_form(request, id):
 @admin_only
 def blog_index_page(request):
     categories = BlogArticle.ARTICLE_CATEGORY
-    return render(request, 'adminv2/blog/index.html', {'categories': categories})
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'Blog Articles', 'url':None},
+    ]
+
+    return render(request, 'adminv2/blog/index.html', {'categories': categories, 'breadcrumbs': breadcrumbs})
 
 
 @require_POST
@@ -514,8 +553,18 @@ def create_blog(request):
 def display_blog_form(request):
     form = BlogArticleForm(request.POST, request.FILES)
     categories = BlogArticle.ARTICLE_CATEGORY
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'Blog Articles', 'url': reverse('adminv2:display-blog-form')},
+        {'title': 'Create Blog Article', 'url':None},
+    ]
 
-    return render(request, 'adminv2/blog/create-blog.html', {'form':form, 'categories': categories})
+    context = {
+        'form': form,
+        'categories': categories,
+        'breadcrumbs': breadcrumbs,
+    }
+    return render(request, 'adminv2/blog/create-blog.html', context)
 
 
 @require_POST
@@ -536,11 +585,17 @@ def display_update_blog_form(request, id):
     blogArticle = get_object_or_404(BlogArticle, id=id)
     form = BlogArticleForm(request.POST, request.FILES)
     categories = BlogArticle.ARTICLE_CATEGORY
+    breadcrumbs = [
+        {'title': 'Home', 'url': reverse('adminv2:dashboard')},
+        {'title': 'Blog Articles', 'url': reverse('adminv2:display-blog-form')},
+        {'title': 'Update Blog Article', 'url':None},
+    ]
 
     context = {
         'form': form,
         'categories': categories,
         'article': blogArticle,
+        'breadcrumbs': breadcrumbs,
     }
     return render(request, 'adminv2/blog/update-blog.html', context)
 
