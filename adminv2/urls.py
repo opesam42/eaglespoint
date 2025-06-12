@@ -41,8 +41,6 @@ urlpatterns = [
     path('cms/partner/create-form', views.render_add_partner_form, name='add-partner-form'),
     path('cms/partner/update-form/<int:id>', views.render_update_partner_form, name='update-partner-form'),
     
-
-
     path('blog/', views.blog_index_page, name='blog-page'),
     path('blog/create-form', views.display_blog_form, name='display-blog-form'),
     path('blog/add', views.create_blog, name='create-blog'),

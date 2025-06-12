@@ -27,6 +27,7 @@ class CustomUser(AbstractUser):
         blank=True,
         null=True,
     )
+    is_block = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

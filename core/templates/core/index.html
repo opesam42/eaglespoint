@@ -23,7 +23,7 @@
                
                 <div class="flex flex-row gap-3 border rounded-lg w-max p-1 border-slate-400">
                     {% component "button" label="Start your Journey" type="primary" %} {% endcomponent %}
-                    {% component "button" label="Study Abroad" type="tertiary" %} {% endcomponent %}
+                    {% component "button" label="Contact" type="tertiary" href="#contact-form" %} {% endcomponent %}
                 </div>
             </div>
         
@@ -141,6 +141,52 @@
         </div>
     </section>
     {% endif %}
+
+    <section class="contact responsive-padding pt-12 flex flex-col lg:flex-row  gap-12 items-center lg:items-stretch justify-between">
+        <form  class="w-full lg:w-3/5 max-w-2xl px-6 order-1 lg:order-2" method="post" action="{% url 'messaging:send-contact-form' %}" onsubmit="submitContactForm(event)" id="contact-form">
+            <h1 class="text-4xl font-bold mb-2"><span class="font-cursive text-red-600">Reach</span> Out To Us Today</h1>
+            <p class="mb-4">
+                Fill out  your information and our representative will reach out to you.
+            </p>
+
+            <div class="flex flex-col gap-3 lg:gap-4">
+                <div>
+                    <label for="sender_name" class="label-primary">Full Name</label>
+                    <input class="input-primary" type="text" id="sender_name" name="sender_name" required>
+                </div>
+
+                <div>
+                    <label for="sender_phone" class="label-primary">Phone Number</label>
+                    <input class="input-primary" type="tel" id="sender_phone" name="sender_phone" required>
+                </div>
+
+                <div>
+                    <label for="sender_email" class="label-primary">Email <i class="text-xs"> (optional)</i></label>
+                    <input class="input-primary" type="email" id="sender_email" name="sender_email">
+                </div>
+
+                <div>
+                    <label for="subject" class="label-primary">Subject</label>
+                    <input list="reasons" class="input-primary" type="text" id="subject" name="subject" required>
+                    <datalist id="reasons">
+                        <option value="Property Inquiry">
+                        <option value="Vacation Package Booking">
+                        <option value="Relocation Services">
+                        <option value="Corporate Travel">
+                        <option value="Custom Tour Request">
+                        <option value="Other">
+                    </datalist>
+                </div>
+
+                <div>
+                    <label for="message" class="label-primary">Your Message</label>
+                    <textarea class="input-primary resize-none" id="body" name="body" rows="4"  required></textarea>
+                </div>
+
+                {% component "button" html_tag="button" label="Send Inquiry" type="primary" width="full" function="submit" %} {% endcomponent %}
+            </div>
+        </form>
+    </section>
 
     <section class="responsive-padding flex flex-col gap-7" data-aos="fade-up">
         <h2 class="text-4xl font-semibold">Stay Informed with Our Blog</h2>
