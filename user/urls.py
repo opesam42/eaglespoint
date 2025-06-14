@@ -16,6 +16,8 @@ urlpatterns = [
     path('reset-password', views.reset_password, name='reset-password'),
     path('activate/<uidb64>/<token>', views.activate_account, name='activate'),
     path('resend-activation/<uid>', views.resend_activation_token, name='resend_activation'),
+    path('unblock-account/', views.unblock_account_page, name='unblock-account-page'),
+    path('send-unblock-request/', views.unblock_request, name='send-unblock-request'),
 
     path('password-reset/', views.ResetPasswordView.as_view(), name='password_reset'),
     path('password-reset-confirm/<uidb64>/<token>/',

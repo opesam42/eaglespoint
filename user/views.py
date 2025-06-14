@@ -3,6 +3,7 @@ from .forms import SignUpForm, LoginForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 import json
+from django.db import OperationalError
 from django.http import JsonResponse, HttpResponse
 from django.contrib.auth import get_user_model
 from django.utils.http import urlsafe_base64_decode
@@ -22,6 +23,7 @@ from .utils import send_verification_email, is_user_active
 from django.views.decorators.http import require_POST
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
+from messaging.forms import ContactMessageForm
 
 User = get_user_model()
 
@@ -90,30 +92,39 @@ def user_login(request):
         
         #handle ajax request
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            data = json.loads(request.body)
-            email = data.get('username')
-            password = data.get('password') 
+            try:
+                data = json.loads(request.body)
+                email = data.get('username')
+                password = data.get('password') 
 
-            user = authenticate(request, email=email, password=password)
-            
-            
-            if user:         
-                login(request, user)
-                full_url = request.session.get('full_url')
-                print(full_url)
-
-                if 'full_url' in request.session:
-                    del request.session['full_url']
-
-                return JsonResponse({'message': 'Login successful', 'next_url': full_url}, status=200)
-
-            user = User.objects.filter(email=email).first()
-            if user:
-                if not is_user_active(email):
-                    send_verification_email(request, user)
-                    return JsonResponse({'message': 'Verification email sent'}, status=403)
+                user = authenticate(request, email=email, password=password)
                 
-            return JsonResponse({'message': 'Invalid login details'}, status=401)
+                
+                if user:         
+                    login(request, user)
+                    full_url = request.session.get('full_url')
+
+                    if 'full_url' in request.session:
+                        del request.session['full_url']
+
+                    return JsonResponse({'status': 'success', 'message': 'Login successful', 'next_url': full_url}, status=200)
+
+                user = User.objects.filter(email=email).first()
+                if user:
+                    if not is_user_active(email):
+                        send_verification_email(request, user)
+                        return JsonResponse({'status':'error', 'error_type': 'user_not_verified', 'message': 'Verification email sent'}, status=403)
+                    
+                    if user.is_block:
+                        print('yes')
+                        return JsonResponse({'status': 'error', 'error_type': 'blocked_user', 'message': 'This account is blocked', 'redirect_url': reverse('user:unblock-account-page')})
+                    
+                return JsonResponse({'status': 'error', 'error_type': 'invalid_credentials', 'message': 'Invalid login details'}, status=401)
+            
+            except OperationalError:
+                return JsonResponse({'status': 'error', 'error_type': 'server_error', 'message': 'A server error has occured. Please try again later'}, status=500)
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'error_type': 'unexpected_error', 'message': f'Unexpected error {str(e)}'}, status=500)
 
         else:
             form = LoginForm(data=request.POST)
@@ -306,3 +317,44 @@ def reset_password(request):
 
         return JsonResponse({'success': True, 'message': 'Password successfully updated.'})
 
+
+def unblock_account_page(request):
+    return render(request, 'user/unblock_account.html')
+
+@require_POST
+def unblock_request(request):
+    """ 
+        It handles sending the unblock request form.
+        The function checks if the user exist and if he does, it check if the user's account is blocked. If not, return as invalid.
+        But if it fulfil this condition, send the unblock request form using the ContactMessage Form 
+    """
+
+    if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+    
+    post_data = request.POST.copy()
+    post_data['subject'] = "Unblock Request" 
+    email = post_data['sender_email']
+
+    user = User.objects.filter(email=email).first()
+
+    if not user:
+        return JsonResponse({'status': 'error', 'error_type': 'user_not_found', 'message': 'No account found with this email address'}, status=404)
+    
+    if not user.is_block:
+        return JsonResponse({'status': 'error', 'error_type': 'user_not_blocked', 'message': 'This account is not currently blocked'}, status=400)
+    
+    if user.phone_number:
+        post_data['sender_phone'] = user.phone_number
+    else:
+        post_data['sender_phone'] = None
+
+    post_data['sender_name'] = f"{user.first_name} {user.last_name}"
+    
+
+    form = ContactMessageForm(post_data)
+    if form.is_valid():
+        form.save()
+        return JsonResponse({'status': 'success', 'message': 'Your unblock request has been submitted successfully!'}, status=201)
+    else:
+        return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)

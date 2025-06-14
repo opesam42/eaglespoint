@@ -1,0 +1,43 @@
+{% load static %}
+<footer class="bg-slate-100 responsive-padding py-12 mt-28 flex flex-col gap-8">
+    <div class="flex flex-col gap-2">
+        <img src="{% static 'images/eaglespoint-logo.png' %}" width="72"> 
+        <p>Your trusted partner in real estate, travel, and education consulting.</p>
+        <hr class="border-t border-gray-300 my-4">
+    </div>
+
+    <nav aria-label="Footer Navigation" class="flex flex-col">
+        <div class="flex flex-col md:flex-row gap-y-6 gap-x-12 md:self-center" >
+            <section>
+                <h2 class="text-lg uppercase font-semibold">Services</h2>
+                <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
+                    <li><a href="{% url 'core:home' %}">Real Estate</a></li>
+                    <li><a href="{% url 'core:home' %}">Travel and Study</a></li>
+                </ul>
+            </section>
+            <section>
+                <h2 class="text-lg uppercase font-semibold">Quick Links</h2>
+                <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
+                    <li><a href="#">List with Us</a></li>
+                    <li><a href="{% url 'core:contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'core:about' %}">About Us</a></li>
+                    <li><a href="{% url 'blog:home' %}">Blog</a></li>
+                </ul>
+            </section>
+            
+        </div>
+    </nav>
+
+    <div>
+        <hr class="border-t border-gray-300 my-4">
+        <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700">
+            <li><span class="font-bold">Telephone: </span><a class="hover:text-blue-600" href="tel:+2348165704879">+2348165704879</a></li>
+            <li><span class="font-bold">Email: </span><a class="hover:text-blue-600" href="mailto:eaglespointglobal@gmail.com">eaglespointglobal@gmail.com</a></li>
+            <li><span class="font-bold">Address: </span>No 5, Rumuwegwu, Igwuruta Road. Eneka first market, Port-Harcout, Rivers State</li>
+        </ul>
+    </div>
+
+    <div>
+        <p class="text-gray-700">&copy; <span x-data x-text="new Date().getFullYear()">2025</span> Eaglespoint Horizon Limited. All rights reserved. </p>
+    </div>        
+</footer>

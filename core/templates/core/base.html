@@ -70,146 +70,19 @@
     <div id="page-loader" class="fixed inset-0 flex items-center justify-center bg-red-600 z-[10000000]">
         <img src="{% static 'images/eaglespoint-logo.png' %}" alt="Loading..." class="w-24 h-auto animate-pulse">
     </div>
-
-    <header x-data="{ isOpen:false }" class="w-full bg-white border-gray-200 py-2.5 sticky top-0 z-30 drop-shadow-md">
-        <div id="headerWrapper" class="relative flex gap-6 items-center justify-between mx-auto">
-            
-            <!-- Logo Section -->
-            <a href="{% url 'core:home' %}" class="block ml-4 md:ml-8 lg:ml-20" id="logo">
-                <img src="{% static 'images/eaglespoint-logo.png' %}" width="32" class="w-16" alt="EaglesPoint Logo" />
-            </a>
     
-            <!-- Search Bar -->
-            <form method="GET" action="{% url 'listing:search_listing' %}" role="search" class="flex items-stretch w-full max-w-96 h-10 border border-gray-50 bg-slate-200/100 rounded-lg focus:ring-2 focus:ring-blue-500 hover:border-blue-500 transition">
-                <input type="search" name="search_query" value="{{ search_query }}" aria-label="Search" class="block w-full px-4 py-2 focus:outline-none" 
-                       placeholder="Search Location or Properties">
-                <button class="bg-blue-600 text-white h-full p-2 rounded-r-lg" type="submit"><i class="fa fa-search fa-lg"></i></button>
-            </form>
-    
-           <!-- Mobile Menu Toggle -->
-           <button @click="isOpen = !isOpen" type="button" class="inline-flex items-center p-2 text-sm 
-           text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 mr-4 md:mr-8">
-                <span class="sr-only">Open main menu</span>
-                <!-- <i class="fa fa-hamburger w-6 h-6" :class="isOpen ? 'fa-close' : 'fa fa-hamburger'"></i> -->
-                <template x-if="!isOpen">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                    </svg>
-                </template>
-                <template x-if="isOpen">
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                </template>
-            </button>
-    
-            <!-- Navigation Menu -->
-            <nav x-cloak :class="isOpen ? 'flex' : 'hidden lg:block'" class="w-screen absolute p-2 lg:p-0 top-full z-50 bg-white lg:relative lg:top-0 flex-col justify-between items-start md:w-full lg:w-max lg:flex lg:items-center lg:mr-20" id="mobile-menu">
-                <ul class="flex flex-col lg:items-center mt-4 w-full px-3 lg:px-0 md:w-full lg:w-max lg:flex-row lg:gap-4 lg:text-sm lg:mt-0 *:block *:text-gray-700 *:pl-2 *:py-2 *:lg:p-0 *:hover:bg-gray-100 *:lg:hover:bg-transparent *:lg:hover:underline">
-                    <li><a class="block w-full" href="{% url 'core:home' %}">Home</a></li>
-                    <li><a class="block w-full" href="{% url 'core:real_estate' %}">Real Estate</a></li>
-                    <li><a class="block w-full" href="{% url 'core:home' %}">Travel</a></li>
-                    <li><a class="block w-full" href="{% url 'blog:home' %}">Blogs</a></li>
-                    <li><a class="block w-full" href="{% url 'core:about' %}">About Us</a></li>
-                    <li><a class="block w-full" href="{% url 'core:contact' %}">Contact</a></li>
-
-                    {% if request.user.is_authenticated %}
-                    <li x-cloak x-data="{ open: false }" @click.away="open = false" class="lg:relative cursor-pointer">
-                        <!-- Trigger (User Icon) -->
-                         <div class="flex gap-1 items-center" @click="open = !open">
-                            {% if user.profileImage %}
-                                <img src="{{user.profileImage.url}}" alt="{{user.firstname}}" width="24" class="rounded-full object-cover border-2 border-blue-600 h-6 w-6 p-0.5">
-                            {% else %}
-                                <img src="{% static 'images/default-user.svg' %}" class="rounded-full border-2 border-blue-600 hover:p-0.5" width="24">
-                            {% endif %}
-                            <div class="lg:hidden flex justify-between w-full">
-                                <span>Profile</span>
-                                <svg fill="none" height="24" shape-rendering="geometricPrecision"
-                                stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                stroke-width="1.5" viewBox="0 0 24 24" width="24" class="transition-transform duration-300" :class="{ 'rotate-180': open }">
-                                <path d="M6 9l6 6 6-6"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        
-                    
-                        <!-- Dropdown Menu -->
-                        <ul x-show="open" x-transition 
-                            class="lg:absolute right-0 mt-2 w-full lg:w-38 bg-white border border-gray-300 rounded-md shadow-lg">
-                            <li class="px-4 py-2 hover:bg-gray-100"><a href="{% url 'user:settings'%}" class="w-full block">Settings</a></li>
-                            <li class="px-4 py-2 hover:bg-gray-100"><a href="{% url 'listing:favourite_listings'%}" class="w-full block">Favourite Listing</a></li>
-                            {%if user.user_role == 'admin'%}
-                            <li class="px-4 py-2 hover:bg-gray-100"><a href="{% url 'adminv2:dashboard' %}" class="w-full block">Control Panel</a></li>
-                            {% endif %}
-                            <li>
-                                <form method="POST" action="{% url 'user:logout' %}">
-                                    {% csrf_token %}
-                                    <button type="submit" class="cursor-pointer text-red-500 text-left px-4 py-2 w-full hover:bg-gray-100">Logout</button>
-                                </form>
-                            </li>
-                            
-                            <!-- <li class=""><a href="#">Logout</a></li> -->
-                        </ul>
-                    </li>
-                    {% else %}
-                        <li>
-                            {% component "button" label="Sign Up/Login" type="primary" width="full" attr="@click='$store.modal.openLoginModal = true'" %} {% endcomponent %}
-                        </li>
-                    {% endif %}
-                    
-                </ul>
-            </nav>
-        </div>
-    </header>
-    
+    {% block header %}
+        {% component "header" %} {% endcomponent %}
+    {% endblock %}
     
 
     <div class="wrapper w-full">
         {% block content %} {% endblock %}
     </div>
     
-    <footer class="bg-slate-100 responsive-padding py-12 mt-28 flex flex-col gap-8">
-        <div class="flex flex-col gap-2">
-            <img src="{% static 'images/eaglespoint-logo.png' %}" width="72"> 
-            <p>Your trusted partner in real estate, travel, and education consulting.</p>
-            <hr class="border-t border-gray-300 my-4">
-        </div>
-
-        <nav aria-label="Footer Navigation" class="flex flex-col">
-            <div class="flex flex-col md:flex-row gap-y-6 gap-x-12 md:self-center" >
-                <section>
-                    <h2 class="text-lg uppercase font-semibold">Services</h2>
-                    <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
-                        <li><a href="{% url 'core:home' %}">Real Estate</a></li>
-                        <li><a href="{% url 'core:home' %}">Travel and Study</a></li>
-                    </ul>
-                </section>
-                <section>
-                    <h2 class="text-lg uppercase font-semibold">Quick Links</h2>
-                    <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700 *:hover:text-blue-600">
-                        <li><a href="#">List with Us</a></li>
-                        <li><a href="{% url 'core:contact' %}">Contact Us</a></li>
-                        <li><a href="{% url 'core:about' %}">About Us</a></li>
-                        <li><a href="{% url 'blog:home' %}">Blog</a></li>
-                    </ul>
-                </section>
-                
-            </div>
-        </nav>
-
-        <div>
-            <hr class="border-t border-gray-300 my-4">
-            <ul class="mt-2 space-y-2 *:font-medium *:text-gray-700">
-                <li><span class="font-bold">Telephone: </span><a class="hover:text-blue-600" href="tel:+2348165704879">+2348165704879</a></li>
-                <li><span class="font-bold">Email: </span><a class="hover:text-blue-600" href="mailto:eaglespointglobal@gmail.com">eaglespointglobal@gmail.com</a></li>
-                <li><span class="font-bold">Address: </span>No 5, Rumuwegwu, Igwuruta Road. Eneka first market, Port-Harcout, Rivers State</li>
-            </ul>
-        </div>
-
-        <div>
-            <p class="text-gray-700">&copy; <span x-data x-text="new Date().getFullYear()">2025</span> Eaglespoint Horizon Limited. All rights reserved. </p>
-        </div>        
-    </footer>
+    {% block footer %}
+        {% component "footer" %} {% endcomponent %}
+    {% endblock %}
     
 
     <template x-if="$store.modal.openLoginModal">
