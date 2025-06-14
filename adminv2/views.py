@@ -555,7 +555,7 @@ def display_blog_form(request):
     categories = BlogArticle.ARTICLE_CATEGORY
     breadcrumbs = [
         {'title': 'Home', 'url': reverse('adminv2:dashboard')},
-        {'title': 'Blog Articles', 'url': reverse('adminv2:display-blog-form')},
+        {'title': 'Blog Articles', 'url': reverse('adminv2:blog-page')},
         {'title': 'Create Blog Article', 'url':None},
     ]
 
@@ -587,7 +587,7 @@ def display_update_blog_form(request, id):
     categories = BlogArticle.ARTICLE_CATEGORY
     breadcrumbs = [
         {'title': 'Home', 'url': reverse('adminv2:dashboard')},
-        {'title': 'Blog Articles', 'url': reverse('adminv2:display-blog-form')},
+        {'title': 'Blog Articles', 'url': reverse('adminv2:blog-page')},
         {'title': 'Update Blog Article', 'url':None},
     ]
 

@@ -1,29 +1,13 @@
+{% extends "core/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %} Admin Dashboard {% endblock  %}</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    {% comment %} <script src="https://unpkg.com/alpinejs" defer></script> {% endcomment %}
-    <script defer src="{% static 'js/alpine_component.js' %}"></script>
-    <!-- Alpine Plugins -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
-    <!-- Alpine Core -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    {% block title %} Admin Dashboard {% endblock %}
 
-    {% block style %}{% endblock %}
-</head>
-<body class="font-base text-gray-900">
+    {% block header %} {% endblock %}
+
+    {% block content %}
     <div x-data="{ isOpen:false }" class="wrapper relative grid grid-cols-1 lg:grid-cols-4 bg-slate-100 lg:p-4">
-
+        
         <!-- Nav bar -->
         <nav x-cloak :class="isOpen ? 'absolute' : 'hidden'" class="w-2/3 md:max-w-56 lg:w-full lg:flex h-screen bg-white flex flex-col gap-5 p-4 lg:sticky top-0 lg:col-span-1 z-[90]">
             <a class="flex gap-2" href="{% url 'core:home' %}">
@@ -136,21 +120,12 @@
             </button>
             </header>
             
-            {% block content %}{% endblock %}
+            {% block admin_content %}{% endblock %}
 
         </div>
     </div>
 
+    {% endblock %}
 
-    {% component "toast_notification" notification_type="success" message="" %} {% endcomponent %}
-    {% component "toast_notification" notification_type="danger" message="" %} {% endcomponent %}
-    {% component "toast_notification" notification_type="warning" message="" %} {% endcomponent %}
+    {% block footer %} {% endblock %}
 
-    {% component "loading_modal" %} {% endcomponent %}
-</body>
-
-<script src="{% static 'js/helper_func.js' %}"></script>
-<script src="{% static 'js/utils.js' %}"></script>
-
-{% block script %}{% endblock  %}
-</html>

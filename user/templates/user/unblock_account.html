@@ -1,23 +1,31 @@
-{% extends "core/base.html" %}
+{% extends "user/auth_base.html" %}
 
 {% block content %}
 
-    <form method="POST" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 flex flex-col gap-3 lg:gap-4" onsubmit="submitUnblockRequesttForm(event)" action="{% url 'user:send-unblock-request' %}">
-        <h3 class="text-2xl font-bold mb-1.5">Request to Unblock Account</h3>
+<main class="responsive-padding flex flex-col mt-9 justify-center items-center">
+    <div class="wrapper">
+        <a href="{% url 'core:home' %}" class="block text-sm underline text-gray-700 mb-2">Go back home</a>
+        <form method="POST" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 flex flex-col gap-3 lg:gap-4" onsubmit="submitUnblockRequesttForm(event)" action="{% url 'user:send-unblock-request' %}">
+            <div>
+                <h3 class="text-2xl font-bold">Request to Unblock Account</h3>
+                <p class="text-sm text-gray-500 mt-1">Please provide details about why your account should be unblocked</p>
+            </div>
 
-        <div>
-            <label class="label-primary" for="id_sender_email">Email</label>
-            <input class="input-primary" type="email" name="sender_email" autocomplete="email" maxlength="254" required id="id_sender_email" placeholder="Enter email">
-        </div>
+            <div>
+                <label class="label-primary" for="id_sender_email">Email</label>
+                <input class="input-primary placeholder:text-sm" type="email" name="sender_email" placeholder="Enter the email associated with your account" autocomplete="email" maxlength="254" required id="id_sender_email">
+            </div>
 
-        <div>
-            <label class="label-primary" for="id_body">Message</label>
-            <textarea class="input-primary" name="body" id="id_body" required></textarea>
-        </div>
+            <div>
+                <label class="label-primary" for="id_body">Message</label>
+                <textarea class="input-primary resize-none placeholder:text-sm" placeholder="Explain why you believe your account was blocked incorrectly. Include any relevant details that might help us review your case." rows="5" name="body" id="id_body" required></textarea>
+            </div>
 
-        <button class="btn primary-btn" type="submit">Submit</button>
-    </form>
-
+            <button class="btn primary-btn" type="submit">Submit</button>
+        </form>
+    </div>
+    
+</main>
 {% endblock %}
 
 {% block script %}

@@ -1,8 +1,12 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
+{% block title %} {{block.super}} {% endblock %}
+
 {% block section_title %} Dashboard {% endblock %}
-{% block content %} 
+{% block section_caption%} .... {% endblock %}
+
+{% block admin_content %} 
     <section class="grid grid-cols-1 lg:grid-cols-3 gap-2">
         <div class="flex justify-between pt-2 pb-4 px-2 rounded-xl bg-white shadow-2xl">
             <div>

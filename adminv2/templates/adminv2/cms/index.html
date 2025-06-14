@@ -1,12 +1,12 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %}CMS | {{ block.super }} {% endblock %}
 
 {% block section_title %}Content Management{% endblock %}
 {% block section_caption%} Edit and update static content across the website, including About Us, FAQs, Testimonials, and Partner Logos. {% endblock %}
 
-{% block content %} 
+{% block admin_content %} 
     
     <div id="cms-container" x-data="{
         activeTab: '{% url 'adminv2:testimonial-partial' %}',

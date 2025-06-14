@@ -1,11 +1,11 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}Create New Listing{% endblock %}
+{% block title %}Create New Listing {{block.super}} {% endblock %}
 {% block section_title %} Create New Listing {% endblock %}
 {% block section_caption%} Create a new property listing with all required details. {% endblock %}
 
-{% block content %} 
+{% block admin_content %} 
 
     <form method="post" enctype="multipart/form-data" class="bg-white rounded-xl shadow px-6 py-4 max-w-2xl self-center lg:self-start" onsubmit="submitForm(event)">
         {% csrf_token %}        

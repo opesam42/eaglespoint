@@ -1,32 +1,10 @@
-{% extends "core/base.html" %}
+{% extends "user/auth_base.html" %}
 
 {% block title %} Login | Eaglespoint Horizon Limited {% endblock %}
 {% block meta_description %} Log in to your Eaglespoint account to manage your profile, explore property listings, book travel, or apply for study abroad programs. {% endblock %}
 {% block meta_keywords %}Eaglespoint login, user login, real estate login, study abroad portal, travel booking login, secure account access{% endblock %}
 {% block og_title%} Login | Eaglespoint Horizon Limited {% endblock %}
 {% block og_description %} Access your Eaglespoint account to manage listings, travel plans, or study abroad applications. {% endblock %}
-{% comment %} 
-{% block styleblock %} 
-    <style>
-        header form{
-            display: none;
-        }
-        header nav{
-            display: none;
-        }
-        header #headerWrapper{
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
-        header #logo{
-            width: 80px;
-        }
-        #error-message a{
-            text-decoration: underline;
-            color: blue;
-        }
-    </style>
-{% endblock %} {% endcomment %}
 
 {% block content %}
     <main class="responsive-padding flex flex-col mt-9 justify-center items-center">

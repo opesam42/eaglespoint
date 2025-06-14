@@ -1,12 +1,12 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %} Users | {{block.super}} {% endblock %}
 
 {% block section_title %} Users {% endblock %}
 {% block section_caption%} View and manage all registered users and their roles. {% endblock %}
 
-{% block content %} 
+{% block admin_content %} 
 
     <div>
         <form class="flex flex-col gap-2 max-w-md mx-auto mb-6 mt-6" onsubmit="handleSearch(event)">

@@ -1,12 +1,12 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}{% endblock %}
+{% block title %} Listings {{block.super}} {% endblock %}
 
 {% block section_title %} Listings {% endblock %}
 {% block section_caption %} Manage and review all property listings in one place. {% endblock%}
 
-{% block content %} 
+{% block admin_content %} 
 
     <div class="flex self-start md:justify-end">
         <a class="btn primary-btn flex gap-0.5" href="{% url 'adminv2:add_listing' %}">

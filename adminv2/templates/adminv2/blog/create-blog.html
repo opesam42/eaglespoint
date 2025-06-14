@@ -1,7 +1,7 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}Blog | Control Panel | Eaglespoint{% endblock %}
+{% block title %}Create New Article | {{ block.super }} {% endblock %}
 
 {% block style %}
     {{ form.media }}
@@ -10,7 +10,7 @@
 {% block section_title %} Create Blog Article {% endblock %}
 {% block section_caption%} Write blog content {% endblock %}
 
-{% block content %} 
+{% block admin_content %} 
     <form action="{% url 'adminv2:create-blog' %}" onsubmit="submitBlogForm(event)" class="bg-white rounded-xl shadow px-6 py-4 w-full max-w-2xl self-center lg:self-start">
         <div class="flex flex-col gap-3 lg:gap-4">
             <h3 class="text-xl font-bold">Create Blog Article</h3>

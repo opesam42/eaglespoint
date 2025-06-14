@@ -38,6 +38,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    
+    <script defer src="{% static 'js/alpine_component.js' %}"></script>
+    <!-- Alpine Plugins -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/sort@3.x.x/dist/cdn.min.js"></script>
+    <!-- Alpine Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -60,7 +67,7 @@
     {% block styleblock %} {% endblock %}
 
 </head>
-<body class='font-base text-gray-900' x-data="{ openLoginModal: false }" x-init="
+<body class='font-base text-gray-900 flex flex-col min-h-[100vh]' x-data="{ openLoginModal: false }" x-init="
         $nextTick(() => {
             document.body.classList.add('visible');
             document.getElementById('page-loader')?.remove();
@@ -80,9 +87,11 @@
         {% block content %} {% endblock %}
     </div>
     
-    {% block footer %}
-        {% component "footer" %} {% endcomponent %}
-    {% endblock %}
+    <div class='mt-auto'>
+        {% block footer %}
+            {% component "footer" %} {% endcomponent %}
+        {% endblock %}
+    </div>
     
 
     <template x-if="$store.modal.openLoginModal">
@@ -130,7 +139,8 @@
 
     {% component "loading_modal" %} {% endcomponent %}
     
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    
+    {% comment %} <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script> {% endcomment %}
     <script src="{% static 'js/helper_func.js' %}"></script>
     <script src="{% static 'js/utils.js' %}"></script>
     <script>

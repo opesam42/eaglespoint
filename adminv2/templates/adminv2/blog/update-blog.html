@@ -1,7 +1,7 @@
 {% extends 'adminv2/base.html'%}
 {% load static %}
 
-{% block title %}Update Blog Article - {{ article.title }}{% endblock %}
+{% block title %}Update Blog Article - {{ article.title }} | {{ block.super }} {% endblock %}
 
 {% block style %}
     {{ form.media }}
@@ -10,7 +10,7 @@
 {% block section_title %} Update Blog Article {% endblock %}
 {% block section_caption%} Update blog content {% endblock %}
 
-{% block content %} 
+{% block admin_content %} 
     {% if article %}
         <form action="{% url 'adminv2:update-blog' article.id %}" onsubmit="updateBlog(event)" class="bg-white rounded-xl shadow px-6 py-4 w-full max-w-2xl self-center lg:self-start">
             
