@@ -383,6 +383,9 @@ def user_info(request, user_id):
         #     "message": "User does not exist",
         # }, status=400)
 
+@admin_only
+def user_info_page(request):
+    return render(request, 'adminv2/users/user-info.html')
 
 # messaging views
 @admin_only

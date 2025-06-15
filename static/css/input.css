@@ -1,13 +1,16 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  prefix: "daisy-";
+  themes: false;
+}
+
 
 @source '../../**/templates/**/*.html';
 @source '../../components/**/*.html';
 @source '../../components/**/*.js';
 @source '../../static/js/**/*.js';
 
-/* * {
-  outline: 1px solid red;
-} */
+
 
 @theme {
 

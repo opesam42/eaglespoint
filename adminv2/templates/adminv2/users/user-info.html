@@ -1,0 +1,144 @@
+{% extends 'adminv2/base.html'%}
+{% load static %}
+
+{% block title %} Users | {{block.super}} {% endblock %}
+
+{% block admin_content %}
+    <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <!-- Profile Header Section -->
+        <section class="flex flex-col gap-4 bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 mb-4 sm:mb-6">
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center"> 
+                <div class="profile-photo">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border-2 border-blue-100">
+                        <img src="https://img.daisyui.com/images/profile/demo/yellingcat@192.webp" class="w-full h-full object-cover" />
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full min-w-0">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+                        <div class="min-w-0">
+                            <h1 class="text-xl sm:text-2xl font-bold text-gray-800 truncate">Olamide Ayomide</h1>
+                            <div class="flex items-center gap-2 mt-1 flex-wrap">
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap">Active</span>
+                                <span class="text-gray-600 text-sm whitespace-nowrap">Regular User</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 items-center flex-wrap">
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap">
+                                Message User
+                            </button>
+                            <button class="hidden sm:block border border-gray-300 hover:bg-gray-50 text-gray-700 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-colors whitespace-nowrap">
+                                Reset Password
+                            </button>
+                            
+                            <div class="relative">
+                                <button class="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors" 
+                                        popovertarget="more-actions-menu" 
+                                        style="anchor-name:--more-actions-anchor">
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="20" width="20" viewBox="0 -960 960 960" fill="currentColor">
+                                        <path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/>
+                                    </svg>
+                                </button>
+
+                                <ul class="absolute right-0 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                                    popover 
+                                    id="more-actions-menu" 
+                                    style="position-anchor:--more-actions-anchor; 
+                                        inset: anchor(bottom);
+                                        margin-top: 0.5rem;">
+                                    <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 whitespace-nowrap">View Profile</a></li>
+                                    <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 whitespace-nowrap">Edit User</a></li>
+                                    <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 whitespace-nowrap">Account Settings</a></li>
+                                    <li class="border-t border-gray-200 mt-1"></li>
+                                    <li><a class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">Deactivate</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div x-data="{
+            activeTab: '{% url 'adminv2:testimonial-partial' %}',
+            templates : {
+                '{% url 'adminv2:testimonial-partial' %}': 'Basic Info',
+                '{% url 'adminv2:faqs-partial' %}': 'Listings',
+                '{% url 'adminv2:team-partial' %}': 'Blog',
+                '{% url 'adminv2:partners-partial' %}' : 'Partners',
+            },
+            loadTemplate(url){
+                openLoadingModal()
+                this.activeTab = url;
+                console.log(url);
+                fetch(url)
+                .then(response => response.text())
+                .then(html => {
+                    this.$refs.content.innerHTML = html;
+                    injectHTMLWithScripts(this.$refs.content, html); //the func is in the utils
+                    Alpine.initTree(this.$refs.content); // Re-initialize bindings in loaded content
+                })
+                .catch(error => {
+                    console.error('Error loading template:', error);
+                    this.$refs.content.innerHTML = '<p>Error loading content.</p>';
+                })
+                .finally(() => {
+                    closeLoadingModal()
+                })
+            }
+        }">
+            <!-- Tab Navigation - Scrollable on small screens -->
+            <div class="relative">
+                <div class="overflow-x-auto scrollbar-hide">
+                    <nav class="flex border-b border-gray-200 w-max min-w-full">
+                        <template x-for="[url, label] in Object.entries(templates)" :key="url">
+                             <button role="tab" class="px-3 py-2.5 sm:px-4 sm:py-3 text-xs sm:text-sm font-medium whitespace-nowrap cursor-pointer"
+                             :class="activeTab === url ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700' " @click.prevent="loadTemplate(url)" x-text="label"></button>
+                        </template>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Tab Content - Fully responsive -->
+            <div class="bg-white p-4 sm:p-6 rounded-b-lg shadow-sm border border-gray-100 border-t-0">
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div class="min-w-0">
+                        <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Personal Information</h3>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="break-words">
+                                <p class="text-xs sm:text-sm text-gray-500">Full Name</p>
+                                <p class="text-gray-900 text-sm sm:text-base">Olamide Ayomide</p>
+                            </div>
+                            <div class="break-words">
+                                <p class="text-xs sm:text-sm text-gray-500">Email</p>
+                                <p class="text-gray-900 text-sm sm:text-base">olamide@example.com</p>
+                            </div>
+                            <div class="break-words">
+                                <p class="text-xs sm:text-sm text-gray-500">Phone</p>
+                                <p class="text-gray-900 text-sm sm:text-base">+1 (555) 123-4567</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="min-w-0">
+                        <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Account Information</h3>
+                        <div class="space-y-3 sm:space-y-4">
+                            <div class="break-words">
+                                <p class="text-xs sm:text-sm text-gray-500">Member Since</p>
+                                <p class="text-gray-900 text-sm sm:text-base">January 15, 2023</p>
+                            </div>
+                            <div class="break-words">
+                                <p class="text-xs sm:text-sm text-gray-500">Last Active</p>
+                                <p class="text-gray-900 text-sm sm:text-base">2 hours ago</p>
+                            </div>
+                            <div class="break-words">
+                                <p class="text-xs sm:text-sm text-gray-500">Status</p>
+                                <p class="text-green-700 font-medium text-sm sm:text-base">Active</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

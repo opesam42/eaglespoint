@@ -150,34 +150,50 @@ async function handleLogin(event){
         const result = await response.json();
 
         const errorMessageContainer = form.querySelector('#error-message')
-        console.log(errorMessageContainer)
-
-        if(!response.ok){
-            console.log(result.message)
-            if(result.message == "Verification email sent"){
-                errorMessageContainer.innerHTML = "Your account has not been verified. A verification mail has been sent to your email";
-                errorMessageContainer.classList.remove("hidden");
-                return;
-            }
-            if(result.message == "Invalid login details"){
-                message = "Invalid login details. Check your email and password"
-                showToastNotification('danger', message);
-                errorMessageContainer.innerHTML = message;
-            }
-
-            errorMessageContainer.innerHTML = result.message;
+        console.log(result)
+        if(result.status == 'error'){
+            errorMessageContainer.classList.add("hidden");
+            switch(result.error_type){
+                case 'user_not_verified':
+                    errorMessageContainer.innerHTML = "Your account has not been verified. A verification mail has been sent to your email";
+                    break;
+                case 'invalid_credentials':
+                    message = "Invalid login details. Check your email and password"
+                    // showToastNotification('danger', message);
+                    errorMessageContainer.innerHTML = message;
+                    break;
+                case 'blocked_user':
+                    errorMessageContainer.innerHTML = result.message;
+                    if(result.redirect_url != null){
+                        window.location.href = result.redirect_url
+                    }
+                    break;
+                case 'server_error':
+                    message = "We're experiencing some technical issues. Please try again shortly.";
+                    errorMessageContainer.innerHTML = message;
+                    break;
+                case 'unexpected_error':
+                    message = "Something went wrong. Please refresh the page or try again later.";
+                    errorMessageContainer.innerHTML = message;
+                    break;
+                default:
+                    errorMessageContainer.innerHTML = response.message || "An unknown error occurred.";
+            }            
             errorMessageContainer.classList.remove("hidden");
+            console.log("Container", errorMessageContainer)
             return;
         } 
         
-        // if successful
-        errorMessageContainer.classList.add("hidden");
-        showToastNotification('success', result.message)
-        if(result.next_url == null){
-            window.location.reload();
-        }else{
-            window.location.href = result.next_url
+        if(result.status == 'success'){
+            errorMessageContainer.classList.add("hidden");
+            showToastNotification('success', result.message)
+            if(result.next_url == null){
+                window.location.reload();
+            }else{
+                window.location.href = result.next_url
+            }
         }
+        
 
     } catch(error){
         console.error("Error:", error);
