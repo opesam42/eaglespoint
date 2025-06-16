@@ -325,7 +325,31 @@ def get_users(request, message_id=None):
             'users': users,
         })
     
+
+@admin_only
+@user_passes_test(lambda u: u.is_superuser)
+def toggle_block_status(request, user_id):
+    """ This is used to block/unblock user """
+    user = get_object_or_404(User, pk=user_id)
+    try:
+        if request.method == "POST":
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                if user.is_block:
+                    user.is_block = False
+                    message = 'The user has been unblocked'
+                else:
+                    user.is_block = True
+                    message = 'The user has been blocked'
+                user.save()
+                return JsonResponse({'status': 'success', 'message': message, 'blockStatus': user.is_block})
+            
+            return JsonResponse({"status": 'error', "message": "Invalid request",}, status=400)
     
+    except User.DoesNotExist:
+        return JsonResponse({"status": 'error',"message": "User does not exist",}, status=400)
+    except Exception as e:
+            return JsonResponse({'status': 'error', 'message': 'Failed to update user status'}, status=500)
+
 
 @admin_only
 @user_passes_test(lambda u: u.is_superuser)
@@ -384,8 +408,13 @@ def user_info(request, user_id):
         # }, status=400)
 
 @admin_only
-def user_info_page(request):
-    return render(request, 'adminv2/users/user-info.html')
+def user_info_page(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+
+    context = {
+        'user': user,
+    }
+    return render(request, 'adminv2/users/user-info.html', context)
 
 # messaging views
 @admin_only

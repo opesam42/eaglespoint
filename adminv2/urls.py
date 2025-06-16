@@ -17,8 +17,9 @@ urlpatterns = [
     path('user/', views.user_control_page, name="user-control-page"),
     path('get-users/', views.get_users, name='get-users'),
     path('user/toggle-admin/<int:user_id>', views.toggle_admin, name="toggle-admin"),
+    path('user/block-status/<int:user_id>', views.toggle_block_status, name='toggle-block-status'),
     # path('user/info/<int:user_id>', views.user_info, name="user-info"),
-    path('user/info/', views.user_info_page, name='user-info'),
+    path('user/info/<int:user_id>', views.user_info_page, name='user-info'),
 
     path('message/', views.message_page, name="message-page"),
     path('get-messages/', views.get_messages, name="get-messages"),
