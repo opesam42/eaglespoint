@@ -293,38 +293,7 @@
             })
         });
 
-        function change_admin_status(user_id, alpineComponent){
-            let url = "{% url 'adminv2:toggle-admin' 123 %}".replace("123", user_id);
-
-            fetch(url, {
-                method: "POST",
-                headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCsrfToken()
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.success){
-                    alpineComponent.isAdmin = !alpineComponent.isAdmin; //toggle admin status
-                    alpineComponent.userRole = data.user_role;
-
-                    showToastNotification('success', data.message);
-                }
-                else{
-                    showToastNotification('danger', data.message)
-                    console.log("Oh! oh! sth went wrong")
-                }
-            })
-            .catch(error => console.log("Error:", error))
-            .finally(() => {
-                alpineComponent.isLoading = false;
-            })
-        }
-
-        
-        
-
+            
         // function for handling the status of a listing
         function attachEventListeners(){
 

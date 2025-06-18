@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from functools import wraps
+from django.http import HttpResponseBadRequest
 
 def admin_only(view_func):
     @wraps(view_func)
@@ -7,6 +8,16 @@ def admin_only(view_func):
         if not request.user.is_authenticated:
             return redirect('user:login')
         if request.user.user_role != 'admin':
+            return redirect('core:error_page')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+def super_user_only(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('user:login')
+        if not request.user.is_super_user:
             return redirect('core:error_page')
         return view_func(request, *args, **kwargs)
     return wrapper
@@ -30,3 +41,12 @@ def is_admin_or_agent(user):
 def is_admin_or_customer(user):
     """Check if the user is either an admin or a customer."""
     return user.user_role in ['admin', 'customer']
+
+
+def require_ajax(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return HttpResponseBadRequest('This endpoint requires an AJAX request.')
+        return view_func(request, *args, **kwargs)
+    return wrapper

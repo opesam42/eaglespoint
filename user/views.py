@@ -177,8 +177,6 @@ def resend_activation_token(request, uid):
 
     User = get_user_model()
 
-    print(uid)
-
     try:
         user = User.objects.get(pk=uid)
     except User.DoesNotExist:
@@ -193,7 +191,7 @@ def resend_activation_token(request, uid):
         return JsonResponse({'message': 'Email sent', 'type': 'success_message'}, status=201)
     else:
         return JsonResponse({'message': 'Error sending mail', 'type': 'error_message'}, status=500)
-
+    
 
 # forget password
 class ResetPasswordView(SuccessMessageMixin, PasswordResetView):

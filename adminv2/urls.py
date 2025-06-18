@@ -15,12 +15,16 @@ urlpatterns = [
     path('listing/delete/<int:listing_id>', views.delete_listing, name="delete-listing"),
 
     path('user/', views.user_control_page, name="user-control-page"),
-    path('get-users/', views.get_users, name='get-users'),
-    path('user/toggle-admin/<int:user_id>', views.toggle_admin, name="toggle-admin"),
-    path('user/block-status/<int:user_id>', views.toggle_block_status, name='toggle-block-status'),
-    # path('user/info/<int:user_id>', views.user_info, name="user-info"),
     path('user/info/<int:user_id>', views.user_info_page, name='user-info'),
-
+    path('get-users/', views.get_users, name='get-users'),
+    path('user/change-role/<int:user_id>', views.change_user_role, name="change-user-role"),
+    path('user/agent-status/<int:agent_id>', views.toggle_agent_status, name="toggle_agent_status"),
+    path('user/block-status/<int:user_id>', views.toggle_block_status, name='toggle-block-status'),
+    path('user/basic-info/', views.basic_user_info_partial, name="basic-user-info-partial"),
+    path('user/articles/<int:user_id>', views.user_blog_articles_partial, name="user-blog-articles-partial"),
+    path('user/listings/<int:user_id>', views.user_listings_partial, name="user-listings-partial"),
+    path('user/fav-listings/<int:user_id>', views.user_fav_listings_partial, name="user-fav-listings-partial"),
+    
     path('message/', views.message_page, name="message-page"),
     path('get-messages/', views.get_messages, name="get-messages"),
     path('get-messages/<int:message_id>/', views.get_messages, name="get-messages"),

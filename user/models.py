@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.auth import get_user_model
 from .managers import CustomUserManager
 
 
@@ -34,5 +34,27 @@ class CustomUser(AbstractUser):
 
     objects = CustomUserManager()
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        if self.user_role == 'agent':
+            # Create or update the Agents record for this user
+            Agent.objects.get_or_create(user=self, defaults={'is_active': True})
+        else:
+            # If not an agent, remove from Agents table if exists
+            Agent.objects.filter(user=self).delete()
+
     def __str__(self):
         return self.email
+ 
+class Agent(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Agent {self.user.first_name} {self.user.last_name}"
+
+class PasswordReset(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
+    token = models.CharField(max_length=100)
+    created_at = models.DateTimeField(auto_now_add=True)

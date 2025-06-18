@@ -1,0 +1,17 @@
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+    {% for result in listings %}
+        {% component "listing_card" 
+            title=result.title 
+            href="{% url 'core:property_details_by_id' result.id %}" 
+            price=result.price 
+            size=result.size 
+            type=result.listing_type 
+            imageUrl=result.cover_image.url 
+            address="{{result.street_address}}, {{result.lga}}, {{result.state}}" 
+            listing=result
+            id=result.pk 
+            user_favourites=user_favourites 
+        %}
+        {% endcomponent %}
+    {% endfor %}
+</div>

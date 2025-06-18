@@ -7,9 +7,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from .forms import ListingForm
-from listing.models import Listings, Feature, ListingImages
+from listing.models import Listings, Feature, ListingImages, Favourites
 from utils.choices import LISTING_TYPE, STATE_CHOICES
-from utils.role_check import is_admin, admin_only
+from utils.role_check import is_admin, admin_only, require_ajax
 from django.db.models import Q
 from django.urls import reverse
 from django.core.paginator import Paginator
@@ -20,6 +20,8 @@ from messaging.models import ContactMessage
 from cmscontent.models import Testimonial, FAQ, TESTIMONIAL_CATEGORIES, TeamMember, Partners
 from blog.models import BlogArticle
 from blog.forms import BlogArticleForm
+from user.serializer import UserSerializer
+from user.models import Agent
 
 User = get_user_model()
 
@@ -350,70 +352,117 @@ def toggle_block_status(request, user_id):
     except Exception as e:
             return JsonResponse({'status': 'error', 'message': 'Failed to update user status'}, status=500)
 
-
 @admin_only
+@require_POST
+@require_ajax
 @user_passes_test(lambda u: u.is_superuser)
-def toggle_admin(request, user_id):
-    """ This is used to promote a user into admin or demote a user into a customer """
+def change_user_role(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-    try:
-        if request.method == "POST":
-            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-                
-                if user.user_role == "admin":
-                    if user.is_superuser:
-                        return JsonResponse({
-                            "success": False,
-                            "user_role": user.user_role,
-                            "message": f'This user cannot be demoted',
-                        })
-                    user.user_role = "customer"
-                else:
-                    user.user_role = "admin"
-                
-                user.save()
-                
-                return JsonResponse({
-                    "success": True,
-                    "user_role": user.user_role,
-                    "message": f'{user.first_name} user role has been successfully changed',
-                })
-            
-        return JsonResponse({
-            "success": False,
-            "message": "Invalid request",
-        }, status=400)
+    new_role = request.POST.get('role')
     
+    try:
+        if new_role not in ['admin', 'agent', 'customer']:
+            return JsonResponse({'status': 'error', 'message': 'Invalid role'}, status=400)
+        if user.user_role == new_role:
+            return JsonResponse({'status': 'error', 'message': f'User already has the role: {new_role}'}, status=400)
+        if user.user_role == 'agent':
+            return JsonResponse({'status': 'error', 'message': 'The role of an agent cannot be changed'}, status=400)
+        if user.is_superuser or user.is_staff:
+            return JsonResponse({'status': 'error', 'message': 'The role of a super-user cannot be changed'}, status=400)
+        
+        user.user_role = new_role
+        user.save()
+
+        return JsonResponse({'status': 'success', 'message': f'User role changed to {new_role}', 'user_role': new_role})
+        
     except User.DoesNotExist:
-        return JsonResponse({
-            "success": False,
-            "message": "User does not exist",
-        }, status=400)
+        return JsonResponse({"status": "error", "message": "User does not exist",}, status=400)
 
 @admin_only
-def user_info(request, user_id):
-    """ To generate the information for a specific user. """
-    user = get_object_or_404(User, pk=user_id)
-    try:
-        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-            return render(request, 'adminv2/users/partials/user-info.html', {
-            'user': user,
-        })
+@require_POST
+@require_ajax
+@user_passes_test(lambda u: u.is_superuser)
+def toggle_agent_status(request, agent_id):
+    """ This is to activate agent account or to deactivate it  """
+    agent = get_object_or_404(Agent, pk=agent_id)
 
-    except User.DoesNotExist:
-        print("User does not exist")
-        # return JsonResponse({
-        #     "success": False,
-        #     "message": "User does not exist",
-        # }, status=400)
+    try:
+        if agent.is_active == True:
+            agent.is_active = False
+        else:
+            agent.is_active = True
+        
+        agent.save()    
+        return JsonResponse({'status': 'success', 'message': 'Agent status has being changed', 'is_active': agent.is_active})
+    
+    except Agent.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Agent does not exist"}, status=400)
+
+@admin_only
+@require_ajax
+def basic_user_info_partial(request):
+    """ Generate partial that contain basic info of user """
+    # user = get_object_or_404(User, pk=user_id)
+    return render(request, 'adminv2/users/partials/basic-info.html')
+
+@admin_only
+@require_ajax
+def user_blog_articles_partial(request, user_id):
+    """Render partial template with blog articles posted by a specific user."""
+    
+    user_articles = BlogArticle.objects.filter(author__id=user_id)
+    context = {
+        'articles': user_articles,
+        # 'user_id': user_id
+    }
+    return render(request, 'adminv2/users/partials/user-blog-articles.html', context)
+
+@admin_only
+@require_ajax
+def user_listings_partial(request, user_id):
+    """Render partial template with listings posted by a specific user."""
+    
+    user_listings = Listings.objects.filter(posted_by__id=user_id)
+
+    user_favourites = []
+    if request.user.is_authenticated:
+        user_favourites = Listings.objects.filter(is_listed=True, favourites__user=request.user)
+
+    context = {
+        'listings': user_listings,
+        'user_favourites': user_favourites
+    }
+    return render(request, 'adminv2/users/partials/user-listings.html', context)
+
+@admin_only
+@require_ajax
+def user_fav_listings_partial(request, user_id):
+    """ Return favourite listings of specific user """
+    fav_relations = Favourites.objects.filter(user_id=user_id).select_related('listing')
+    fav_listings = [relation.listing for relation in fav_relations]
+
+    
+    user_favourites = []
+    if request.user.is_authenticated:
+        user_favourites = Listings.objects.filter(is_listed=True, favourites__user=request.user)
+
+    context = {
+        'listings': fav_listings,
+        'user_favourites': user_favourites
+    }
+    return render(request, 'adminv2/users/partials/user-fav-listings.html', context)
 
 @admin_only
 def user_info_page(request, user_id):
     user = get_object_or_404(User, pk=user_id)
-
+    serializer = UserSerializer(user)
+    
     context = {
         'user': user,
+        'user_json': json.dumps(serializer.data),
     }
+    print("Django Traditional", user)
+    print("Json User", (json.dumps(serializer.data, ensure_ascii=False)))
     return render(request, 'adminv2/users/user-info.html', context)
 
 # messaging views

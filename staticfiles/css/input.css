@@ -46,6 +46,14 @@
     @apply bg-red-500 hover:bg-red-700 text-white
   }
 
+  .danger-btn{
+    @apply border-red-500 hover:bg-red-300 text-red-700
+  }
+
+  .success-btn{
+    @apply border-green-500 hover:bg-green-100 text-green-700
+  }
+
   @keyframes infinite-scroll {
     from {
       transform: translateX(0);

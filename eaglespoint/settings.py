@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 SECRET_KEY = 'django-insecure-fr85#p0^htm)3g+wm8@^f@7_l-z#sb1(uw42hv-33fsfma$aab'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['.vercel.app', '*']
 
@@ -56,6 +56,7 @@ INSTALLED_APPS = [
 
     'django_components',
     'django_ckeditor_5',
+    'rest_framework',
 ]
 
 AUTH_USER_MODEL = 'user.CustomUser' # updated
@@ -292,3 +293,14 @@ CKEDITOR_5_FILE_STORAGE = "utils.storage.CustomS3Storage"
 CKEDITOR_5_ALLOW_ALL_FILE_TYPES = False
 CKEDITOR_5_UPLOAD_FILE_TYPES = ['jpeg', 'webp', 'jpg', 'png', 'gif']
 
+REST_FRAMEWORK = {
+    'UNAUTHENTICATED_USER': None,  # Disable authentication system
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ]
+}
+
+# MJML EMAIL TEMPLATE SERVICE CREDENTIALS
+MJML_APP_ID = env('MJML_APP_ID'),
+MJML_PUBLIC_KEY = env('MJML_PUBLIC_KEY'),
+MJML_SECRET_KEY = env('MJML_SECRET_KEY'),

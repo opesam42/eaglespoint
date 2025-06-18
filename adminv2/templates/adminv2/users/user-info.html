@@ -4,7 +4,8 @@
 {% block title %} Users | {{block.super}} {% endblock %}
 
 {% block admin_content %}
-    <div class="max-w-6xl">
+    <div class="max-w-6xl" x-data="userComponent">
+
         <!-- Profile Header Section -->
         <section class="flex flex-col gap-4 bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-gray-100 mb-4 sm:mb-6">
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center"> 
@@ -28,7 +29,10 @@
                                 {% else %}
                                     <span class="bg-red-100 text-red-600 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap">Inactive</span>
                                 {% endif %}
-                                <span class="text-gray-600 text-sm whitespace-nowrap">{{ user.get_user_role_display }}</span>
+                                <div class="inline-flex items-center gap-1">
+                                    <span class="text-gray-600 text-sm whitespace-nowrap" x-text="user.user_role.charAt(0).toUpperCase() + user.user_role.slice(1)"></span>
+                                    <div x-show="user.user_role == 'agent'" class="daisy-badge h-2 w-2 rounded-full" :class="user.agent && user.agent.is_active ? 'bg-green-500' : 'bg-red-500' "></div>
+                                </div>
                             </div>
                         </div>
                         
@@ -37,10 +41,9 @@
                                 Reset Password
                             </button>
                             <button class="border  px-3 py-1.5 sm:px-4 sm:py-2 rounded-md text-sm font-medium transition-colors whitespace-nowrap cursor-pointer flex items-center gap-2" 
-                            :class="blockStatus ? 'success-btn' : 'danger-btn'"
-                            onclick="toggleBlock({{ user.id }}, event)"
+                            :class="user.is_block ? 'success-btn' : 'danger-btn'"
+                            @click="toggleBlock($event, user.id)"
                                 x-data="{
-                                    blockStatus: {% if user.is_block %}true{% else %}false{% endif %},
                                     loading: false,
                                 }"
                                 >
@@ -50,7 +53,7 @@
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                     </svg>
                                 </template>
-                                <span x-text="blockStatus ? 'Unblock User':'Block User'"></span>
+                                <span x-text="user.is_block ? 'Unblock User':'Block User'"></span>
                             </button>
                             
 
@@ -63,19 +66,18 @@
                                     </svg>
                                 </button>
 
-                                <ul class="absolute right-0 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200"
+                                <ul class="absolute right-0 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200 *:block *:px-4 *:py-2 *:text-sm *:text-gray-700 *:hover:bg-blue-50 *:whitespace-nowrap *:cursor-pointer *:*:block"
                                     popover 
                                     id="more-actions-menu" 
                                     style="position-anchor:--more-actions-anchor; 
                                         inset: anchor(bottom);
                                         margin-top: 0.5rem;">
-                                    {% if user.user_role == 'admin' or user.user_role == 'customer' %}
-                                    <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 whitespace-nowrap">Upgrade to Admin</a></li>
-                                    {% endif %}
-                                    <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 whitespace-nowrap">Edit User</a></li>
-                                    <li><a class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 whitespace-nowrap">Account Settings</a></li>
-                                    <li class="border-t border-gray-200 mt-1"></li>
-                                    <li><a class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 whitespace-nowrap">Deactivate</a></li>
+                                
+                                    
+                                    <li x-show="user.user_role == 'admin'" class=""><a @click="changeRole(user.id, 'customer')">Change to Customer</a></li>
+                                    <li x-show="user.user_role == 'customer'" class=""><a @click="changeRole(user.id, 'admin')" class="">Change to Admin</a></li>
+                                    <li x-show="user.user_role == 'customer'" class=""><a @click="changeRole(user.id, 'agent')" class="">Change to Agent</a></li>
+                                    <li x-show="user.user_role == 'agent'" class=""><a @click="toggleAgentStatus(user.agent.id)" x-text="user.agent && user.agent.is_active ? 'Deactivate Agent' : 'Activate Agent'"></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -84,34 +86,7 @@
             </div>
         </section>
         
-        <div x-data="{
-            activeTab: '{% url 'adminv2:testimonial-partial' %}',
-            templates : {
-                '{% url 'adminv2:testimonial-partial' %}': 'Basic Info',
-                '{% url 'adminv2:faqs-partial' %}': 'Listings',
-                '{% url 'adminv2:team-partial' %}': 'Blog',
-                '{% url 'adminv2:partners-partial' %}' : 'Partners',
-            },
-            loadTemplate(url){
-                openLoadingModal()
-                this.activeTab = url;
-                console.log(url);
-                fetch(url)
-                .then(response => response.text())
-                .then(html => {
-                    this.$refs.content.innerHTML = html;
-                    injectHTMLWithScripts(this.$refs.content, html); //the func is in the utils
-                    Alpine.initTree(this.$refs.content); // Re-initialize bindings in loaded content
-                })
-                .catch(error => {
-                    console.error('Error loading template:', error);
-                    this.$refs.content.innerHTML = '<p>Error loading content.</p>';
-                })
-                .finally(() => {
-                    closeLoadingModal()
-                })
-            }
-        }">
+        <div x-data="tabComponent">
             <!-- Tab Navigation - Scrollable on small screens -->
             <div class="relative">
                 <div class="overflow-x-auto scrollbar-hide">
@@ -124,44 +99,16 @@
                 </div>
             </div>
 
-            <!-- Tab Content - Fully responsive -->
-            <div class="bg-white p-4 sm:p-6 rounded-b-lg shadow-sm border border-gray-100 border-t-0">
-                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-                    <div class="min-w-0">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3 sm:mb-4">Personal Information</h3>
-                        <div class="space-y-3 sm:space-y-4">
-                            <div class="break-words">
-                                <p class="text-sm text-gray-500">Full Name</p>
-                                <p class="text-gray-900 sm:text-base">{{ user.first_name }} {{ user.last_name }}</p>
-                            </div>
-                            <div class="break-words">
-                                <p class="text-sm text-gray-500">Email</p>
-                                <p class="text-gray-900 sm:text-base"><a class="underline" href="mailto:{{user.email}}">{{ user.email }}</a></p>
-                            </div>
-                            <div class="break-words">
-                                <p class="text-sm text-gray-500">Phone</p>
-                                <p class="text-gray-900 sm:text-base"><a class="underline" href="tel:{{user.phone_number}}">{{ user.phone_number }}</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="min-w-0">
-                        <h3 class="text-lg font-medium text-gray-900 mb-3 sm:mb-4">Account Information</h3>
-                        <div class="space-y-3 sm:space-y-4">
-                            <div class="break-words">
-                                <p class="text-sm text-gray-500">Member Since</p>
-                                <p class="text-gray-900 sm:text-base">January 15, 2023</p>
-                            </div>
-                            <div class="break-words">
-                                <p class="text-sm text-gray-500">Last Active</p>
-                                <p class="text-gray-900 sm:text-base">2 hours ago</p>
-                            </div>
-                            <div class="break-words">
-                                <p class="text-sm text-gray-500">Status</p>
-                                <p class="text-green-700 font-medium text-sm sm:text-base">Active</p>
-                            </div>
-                        </div>
-                    </div>
+            <div class="relative bg-white p-4 sm:p-6 rounded-b-lg shadow-sm border border-gray-100 border-t-0 min-h-56">
+                <div x-show="loading" class="absolute inset-0 flex justify-center items-center" role="status">
+                    <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                    </svg>
+                    <span class="sr-only">Loading...</span>
                 </div>
+
+                <div x-show="!loading" x-ref="content"></div>
             </div>
         </div>
     </div>
@@ -171,34 +118,130 @@
     
     <script>
         
-        function toggleBlock(user_id, event){
-            alpineComponent = Alpine.$data(event.target)
-            alpineComponent.loading = true
-            let url = "{% url 'adminv2:toggle-block-status' 123 %}".replace("123", user_id);
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('userComponent', () => ({
+                user: {{ user_json|safe }},
 
-            fetch(url, {
-                method: "POST",
-                headers: {
-                "X-Requested-With": "XMLHttpRequest",
-                "X-CSRFToken": getCsrfToken()
+                toggleBlock(event, user_id){
+                    buttonComponent = Alpine.$data(event.target);
+                    buttonComponent.loading = true;
+                    let url = "{% url 'adminv2:toggle-block-status' 123 %}".replace("123", user_id);
+
+                    fetch(url, {
+                        method: "POST",
+                        headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCsrfToken()
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.status == 'success'){
+                            this.user.is_block = data.blockStatus
+                        }
+                        else{
+                            showToastNotification('danger', data.message)
+                        }
+                    })
+                    .catch(error => console.log("Error:", error))
+                    .finally(() => {
+                        buttonComponent.loading = false;
+                    })
+                },
+
+                changeRole(user_id, role) {
+                    openLoadingModal()
+                    fetch(`{% url 'adminv2:change-user-role' 123 %}`.replace('123', user_id), {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': getCsrfToken(),
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: `role=${role}`
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            this.user.user_role = data.user_role;
+                            console.log(data.user_role)
+                            showToastNotification('success', data.message);
+                        } else {
+                            showToastNotification('danger', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error))
+                    .finally(() => closeLoadingModal())
+                },
+
+                toggleAgentStatus(agent_id) {
+                    openLoadingModal()
+                    fetch(`{% url 'adminv2:toggle_agent_status' 123 %}`.replace('123', agent_id), {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': getCsrfToken(),
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            this.user.agent.is_active = data.is_active;
+                            console.log(data.is_active)
+                            showToastNotification('success', data.message);
+                        } else {
+                            showToastNotification('danger', data.message);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error))
+                    .finally(() => closeLoadingModal())
+                },
+            }))
+
+            Alpine.data('tabComponent', () => ({
+                loading: true,
+                activeTab: null,
+                
+                templates : {
+                    '{% url 'adminv2:basic-user-info-partial' %}': 'Basic Info',
+                    '{% url 'adminv2:user-blog-articles-partial' user.id %}': 'Blog',
+                    '{% url 'adminv2:user-listings-partial' user.id %}': 'Listings',
+                    '{% url 'adminv2:user-fav-listings-partial' user.id %}': 'Favourite Listings',
+                },
+
+                init(){
+                    this.activeTab = Object.keys(this.templates)[0];
+                    this.loadTemplate(this.activeTab);
+                },
+                
+                loadTemplate(url){
+                    this.loading = true
+
+                    this.activeTab = url;
+
+                    fetch(url, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                        },
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        this.$refs.content.innerHTML = html;
+                        console.log(html)
+                        injectHTMLWithScripts(this.$refs.content, html); //the func is in the utils
+                        Alpine.initTree(this.$refs.content); // Re-initialize bindings in loaded content
+                    })
+                    .catch(error => {
+                        console.error('Error loading template:', error);
+                        this.$refs.content.innerHTML = '<p>Error loading content.</p>';
+                    })
+                    .finally(() => {
+                        this.loading = false;
+                    })
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status == 'success'){
-                    console.log(alpineComponent.blockStatus)
-                    alpineComponent.blockStatus = data.blockStatus 
-                    // showToastNotification('success', data.message);
-                }
-                else{
-                    showToastNotification('danger', data.message)
-                }
-            })
-            .catch(error => console.log("Error:", error))
-            .finally(() => {
-                alpineComponent.loading = false;
-            })
-        }
+
+            }))
+        })
 
 
     </script>
