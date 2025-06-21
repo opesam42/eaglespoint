@@ -97,9 +97,16 @@ def user_login(request):
                 email = data.get('username')
                 password = data.get('password') 
 
-                user = authenticate(request, email=email, password=password)
-                
-                
+                user = User.objects.filter(email=email).first()
+                if user:
+                    if not is_user_active(email):
+                        send_verification_email(request, user)
+                        return JsonResponse({'status':'error', 'error_type': 'user_not_verified', 'message': 'Verification email sent'}, status=403)
+                    
+                    if user.is_block:
+                        return JsonResponse({'status': 'error', 'error_type': 'blocked_user', 'message': 'This account is blocked', 'redirect_url': reverse('user:unblock-account-page')})
+
+                user = authenticate(request, email=email, password=password)                
                 if user:         
                     login(request, user)
                     full_url = request.session.get('full_url')
@@ -108,16 +115,6 @@ def user_login(request):
                         del request.session['full_url']
 
                     return JsonResponse({'status': 'success', 'message': 'Login successful', 'next_url': full_url}, status=200)
-
-                user = User.objects.filter(email=email).first()
-                if user:
-                    if not is_user_active(email):
-                        send_verification_email(request, user)
-                        return JsonResponse({'status':'error', 'error_type': 'user_not_verified', 'message': 'Verification email sent'}, status=403)
-                    
-                    if user.is_block:
-                        print('yes')
-                        return JsonResponse({'status': 'error', 'error_type': 'blocked_user', 'message': 'This account is blocked', 'redirect_url': reverse('user:unblock-account-page')})
                     
                 return JsonResponse({'status': 'error', 'error_type': 'invalid_credentials', 'message': 'Invalid login details'}, status=401)
             

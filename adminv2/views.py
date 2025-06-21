@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.utils.safestring import mark_safe
+from django.contrib.sessions.models import Session
 import json
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
@@ -341,8 +342,10 @@ def toggle_block_status(request, user_id):
                     message = 'The user has been unblocked'
                 else:
                     user.is_block = True
+                    # Invalidate all sessions for the blocked user
                     message = 'The user has been blocked'
                 user.save()
+
                 return JsonResponse({'status': 'success', 'message': message, 'blockStatus': user.is_block})
             
             return JsonResponse({"status": 'error', "message": "Invalid request",}, status=400)

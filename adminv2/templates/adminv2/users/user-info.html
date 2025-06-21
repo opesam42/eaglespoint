@@ -26,11 +26,25 @@
                         <div class="min-w-0">
                             <h1 class="text-2xl font-bold text-gray-800 truncate">{{ user.first_name }} {{ user.last_name }}</h1>
                             <div class="flex items-center gap-2 mt-1 flex-wrap">
-                                {% if user.is_active == True %}
-                                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap">Active</span>
-                                {% else %}
-                                    <span class="bg-red-100 text-red-600 px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap">Inactive</span>
-                                {% endif %}
+                                <span
+                                    x-data = "{
+                                        'status': '',
+                                        'statusClass': '',
+                                        init(){
+                                            if(this.user.is_block){
+                                                this.status = 'Blocked';
+                                                this.statusClass = 'bg-red-100 text-red-600'
+                                            } else if(this.user.is_active){
+                                                this.statusClass = 'bg-green-100 text-redgreen-700';
+                                                this.status = 'Active';
+                                            } else{
+                                                this.status = 'Inactive';
+                                                this.statusClass = 'bg-red-100 text-red-600'
+                                            }
+                                        }
+                                    }" 
+                                    class="px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap" :class="statusClass" x-text="status">
+                                </span>
                                 <div class="inline-flex items-center gap-1">
                                     <span class="text-gray-600 text-sm whitespace-nowrap" x-text="user.user_role.charAt(0).toUpperCase() + user.user_role.slice(1)"></span>
                                     <div x-show="user.user_role == 'agent'" class="daisy-badge h-2 w-2 rounded-full" :class="user.agent && user.agent.is_active ? 'bg-green-500' : 'bg-red-500' "></div>
