@@ -1,5 +1,11 @@
+{% load static %}
+
+{% if articles %}
 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
     {% for article in articles %}
         {% component "blog_card" title="{{ article.title }}" tag="{{ article.get_category_display }}" imageUrl="{{ article.cover_image.url }}" articleURL="{% url 'blog:article' article.slug %}" excerpt="{{ article.excerpt }}" %} {% endcomponent %}
     {% endfor %}
 </div>
+{% else %}
+{% component "no_results" caption="This user hasn’t published any articles yet." %} {% endcomponent %}
+{%endif%}
