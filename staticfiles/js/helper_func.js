@@ -84,3 +84,65 @@ function injectHTMLWithScripts(container, html) {
         oldScript.parentNode.replaceChild(newScript, oldScript);
     });
 }
+
+
+/**
+ * Formats a date string to "Month Day, Year" in WAT timezone
+ * @param {string} dateString - ISO date string (e.g., "2025-06-02T00:44:42.149454+01:00")
+ * @returns {string} Formatted date (e.g., "June 2, 2025")
+ */
+
+function formatDateWAT(dateString) {
+    if (!dateString) return '';
+    
+    try {
+        // Create date object and force WAT timezone (UTC+1)
+        const date = new Date(dateString);
+        const options = {
+            timeZone: 'Africa/Lagos', // WAT timezone (same as UTC+1)
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        };
+        
+        return date.toLocaleDateString('en-US', options);
+    } catch (e) {
+        console.error('Date formatting error:', e);
+        return 'Invalid date';
+    }
+}
+
+window.formatDateWAT = formatDateWAT //making it global to be use with AlpineJS
+
+/**
+ * Returns the difference between the present time and the entered dateString
+ * @param {string} dateString - ISO date string (e.g., "2025-06-02T00:44:42.149454+01:00")
+ * @returns {string}  strings like "3 days ago", "1 hour ago", "just now"
+ */
+function timesince(dateString) {
+  if (!dateString) return '';
+
+  const date = new Date(dateString);
+  const now = new Date();
+  const seconds = Math.floor((now - date) / 1000);
+  
+  const intervals = {
+    year: 31536000,
+    month: 2592000,
+    week: 604800,
+    day: 86400,
+    hour: 3600,
+    minute: 60
+  };
+
+  for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+    const interval = Math.floor(seconds / secondsInUnit);
+    if (interval >= 1) {
+      return interval === 1 ? `${interval} ${unit} ago` : `${interval} ${unit}s ago`;
+    }
+  }
+
+  return 'just now';
+}
+
+window.timesince = timesince

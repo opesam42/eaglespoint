@@ -4,15 +4,15 @@
         <div class="space-y-3 sm:space-y-4">
             <div class="break-words">
                 <p class="text-sm text-gray-500">Full Name</p>
-                <p class="text-gray-900 sm:text-base">{{ user.first_name }} {{ user.last_name }}</p>
+                <p class="text-gray-900 sm:text-base" x-text=" `${user.first_name} ${user.last_name}` ">{{ user.first_name }} {{ user.last_name }}</p>
             </div>
             <div class="break-words">
                 <p class="text-sm text-gray-500">Email</p>
-                <p class="text-gray-900 sm:text-base"><a class="underline" href="mailto:{{user.email}}">{{ user.email }}</a></p>
+                <p class="text-gray-900 sm:text-base"><a class="underline" href="mailto:{{user.email}}" x-text="user.email">{{ user.email }}</a></p>
             </div>
             <div class="break-words">
                 <p class="text-sm text-gray-500">Phone</p>
-                <p class="text-gray-900 sm:text-base"><a class="underline" href="tel:{{user.phone_number}}">{{ user.phone_number }}</a></p>
+                <p class="text-gray-900 sm:text-base"><a class="underline" href="tel:{{user.phone_number}}" x-text="user.phone_number">{{ user.phone_number }}</a></p>
             </div>
         </div>
     </div>
@@ -21,11 +21,11 @@
         <div class="space-y-3 sm:space-y-4">
             <div class="break-words">
                 <p class="text-sm text-gray-500">Member Since</p>
-                <p class="text-gray-900 sm:text-base">{{ user.date_joined|date:"F d, Y" }}</p>
+                <p class="text-gray-900 sm:text-base" x-text=" `${formatDateWAT(user.date_joined)} WAT`">{{ user.date_joined|date:"F d, Y" }}</p>
             </div>
             <div class="break-words">
                 <p class="text-sm text-gray-500">Last Login</p>
-                <p class="text-gray-900 sm:text-base">{{ user.last_login|timesince }} ago</p>
+                <p class="text-gray-900 sm:text-base" x-text="timesince(user.date_joined)">{{ user.last_login|timesince }} ago</p>
             </div>
             <div class="break-words">
                 <p class="text-sm text-gray-500">Status</p>
