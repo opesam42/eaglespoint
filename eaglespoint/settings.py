@@ -307,3 +307,7 @@ REST_FRAMEWORK = {
 MJML_APP_ID = env('MJML_APP_ID'),
 MJML_PUBLIC_KEY = env('MJML_PUBLIC_KEY'),
 MJML_SECRET_KEY = env('MJML_SECRET_KEY'),
+
+#SESSION SETTINGS
+SESSION_COOKIE_AGE = 259200 #3 days
+SESSION_SAVE_EVERY_REQUEST = True #extends cookies expiration date every time user makes request

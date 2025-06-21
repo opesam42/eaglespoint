@@ -11,6 +11,7 @@ def home(request):
     testimonials = Testimonial.objects.filter(category='travel').order_by('?')
     articles = BlogArticle.objects.filter(published=True).order_by('-created_at')[:3]
     partners = Partners.objects.all().order_by('-order')
+    print(request.session.get_expiry_age())
 
     context = {
         'testimonials': testimonials,

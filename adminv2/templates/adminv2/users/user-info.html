@@ -27,22 +27,7 @@
                             <h1 class="text-2xl font-bold text-gray-800 truncate">{{ user.first_name }} {{ user.last_name }}</h1>
                             <div class="flex items-center gap-2 mt-1 flex-wrap">
                                 <span
-                                    x-data = "{
-                                        'status': '',
-                                        'statusClass': '',
-                                        init(){
-                                            if(this.user.is_block){
-                                                this.status = 'Blocked';
-                                                this.statusClass = 'bg-red-100 text-red-600'
-                                            } else if(this.user.is_active){
-                                                this.statusClass = 'bg-green-100 text-redgreen-700';
-                                                this.status = 'Active';
-                                            } else{
-                                                this.status = 'Inactive';
-                                                this.statusClass = 'bg-red-100 text-red-600'
-                                            }
-                                        }
-                                    }" 
+                                    x-data = "userStatus" 
                                     class="px-2 py-1 rounded-md text-xs font-medium whitespace-nowrap" :class="statusClass" x-text="status">
                                 </span>
                                 <div class="inline-flex items-center gap-1">
@@ -124,6 +109,25 @@
     <script>
         
         document.addEventListener('alpine:init', () => {
+            Alpine.data('userStatus', () => ({
+                'status': '',
+                'statusClass': '',
+                init(){
+                    Alpine.effect(() => {
+                        if(this.user.is_block){
+                            this.status = 'Blocked';
+                            this.statusClass = 'bg-red-100 text-red-600'
+                        } else if(this.user.is_active){
+                            this.statusClass = 'bg-green-100 text-redgreen-700';
+                            this.status = 'Active';
+                        } else{
+                            this.status = 'Inactive';
+                            this.statusClass = 'bg-red-100 text-red-600'
+                        }
+                    });
+                }
+            })),
+
             Alpine.data('userComponent', () => ({
                 user: {{ user_json|safe }},
 
