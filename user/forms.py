@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .models import CustomUser
+from .models import CustomUser, Agent
 from django import forms
 
 class SignUpForm(UserCreationForm):
@@ -12,3 +12,10 @@ class LoginForm(AuthenticationForm):
     class Meta:
         model = CustomUser
         field = ['username', 'password']
+
+
+class AgentForm(forms.ModelForm):
+    
+    class Meta:
+        model = Agent
+        fields = []

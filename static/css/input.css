@@ -54,6 +54,14 @@
     @apply border-green-500 hover:bg-green-100 text-green-700
   }
 
+  .error-message{
+    @apply text-red-500 bg-red-100 text-center text-sm px-2 py-1
+  }
+
+  .success-message{
+    @apply text-green-800 bg-green-100 text-center text-sm px-2 py-1
+  }
+
   @keyframes infinite-scroll {
     from {
       transform: translateX(0);

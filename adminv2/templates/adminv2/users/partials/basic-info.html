@@ -21,7 +21,7 @@
         <div class="space-y-3 sm:space-y-4">
             <div class="break-words">
                 <p class="text-sm text-gray-500">Member Since</p>
-                <p class="text-gray-900 sm:text-base" x-text=" `${formatDateWAT(user.date_joined)} WAT`">{{ user.date_joined|date:"F d, Y" }}</p>
+                <p class="text-gray-900 sm:text-base" x-text="formatDateWAT(user.date_joined)">{{ user.date_joined|date:"F d, Y" }}</p>
             </div>
             <div class="break-words">
                 <p class="text-sm text-gray-500">Last Login</p>

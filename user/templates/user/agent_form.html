@@ -1,0 +1,91 @@
+{% extends "user/auth_base.html" %}
+{% block title %} Become an Agent {% endblock title %}
+{% block content %}
+
+    <main class="responsive-padding flex flex-col mt-9 justify-center items-center">
+
+        {% if request.user.is_authenticated %}
+            <form x-data="formComponent" method="POST" id="agent-registrattion-form" class="w-full lg:max-w-[400px] shadow-xl ring-2 ring-gray-900/5 px-6 pt-10 pb-8 flex flex-col gap-3 lg:gap-4">
+                {% csrf_token %}
+                <h3 class="text-2xl font-bold mb-1.5">Become an Agent</h3>
+
+                <div class="flex justify-center">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert w-max {{ message.tags }}-message">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+                <div>
+                    <label class="label-primary" for="id_email">Email</label>
+                    <input class="input-primary" type="email" name="email" required id="id_email" value="{{ request.user.email }}" readonly/>
+                </div>
+                {% component "button" html_tag="button" label="Register as Agent" type="primary" width="full" function="submit" %} {% endcomponent %}
+            </form>
+        {% else %}
+            <p class="text-center text-lg text-gray-600">You must be logged in to register as an agent.</p>
+        {% endif %}
+    </main>
+
+    
+{% endblock content %}
+
+{% block script %}
+    <script>
+        async function submitAgentForm(event) {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const messageBox = form.querySelector('#message')
+
+            try{
+                const response = await fetch(form.action, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCsrfToken(),
+                    },
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if(result.message == 'error'){
+
+                }
+
+                if(!response.ok){
+                    console.log(result.message);
+                    messageBox.classList.remove('hidden');
+                    messageBox.classList.add('text-red-800', 'bg-red-100');
+                    messageBox.innerHTML = result.message;
+                    return;
+                } 
+
+                // if successful
+                messageBox.classList.remove('hidden')
+                messageBox.classList.add('text-green-800', 'bg-green-100');
+                messageBox.innerHTML = result.message;
+                console.log(result.message);
+                
+                 // Redirect after 6 seconds
+                 setTimeout(() => {
+                    window.location.href = "{% url 'user:password_reset_complete' %}"; // Redirect to success page
+                }, 6000); 
+
+            } catch (error) {
+                messageBox.classList.remove('hidden');
+                messageBox.classList.add('text-red-800', 'bg-red-100');
+                messageBox.innerHTML = "An unexpected error occurred. Please try again.";
+                console.error('Error:', error);
+            }
+
+        }
+
+        // document.getElementById('reset-password-form').addEventListener('submit', handlePasswordReset);
+    </script>
+{% endblock script %}
+    
+

@@ -390,10 +390,10 @@ def toggle_agent_status(request, agent_id):
     agent = get_object_or_404(Agent, pk=agent_id)
 
     try:
-        if agent.is_active == True:
-            agent.is_active = False
+        if agent.is_verified == True:
+            agent.is_verified = False
         else:
-            agent.is_active = True
+            agent.is_verified = True
         
         agent.save()    
         return JsonResponse({'status': 'success', 'message': 'Agent status has being changed', 'is_active': agent.is_active})

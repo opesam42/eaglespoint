@@ -32,7 +32,7 @@
                                 </span>
                                 <div class="inline-flex items-center gap-1">
                                     <span class="text-gray-600 text-sm whitespace-nowrap" x-text="user.user_role.charAt(0).toUpperCase() + user.user_role.slice(1)"></span>
-                                    <div x-show="user.user_role == 'agent'" class="daisy-badge h-2 w-2 rounded-full" :class="user.agent && user.agent.is_active ? 'bg-green-500' : 'bg-red-500' "></div>
+                                    <div x-show="user.user_role == 'agent'" class="daisy-badge h-2 w-2 rounded-full" :class="user.agent && user.agent.is_verified ? 'bg-green-500' : 'bg-red-500' "></div>
                                 </div>
                             </div>
                         </div>
@@ -67,7 +67,7 @@
                                     <li x-show="user.user_role == 'admin'" class=""><a @click="changeRole(user.id, 'customer')">Change to Customer</a></li>
                                     <li x-show="user.user_role == 'customer'" class=""><a @click="changeRole(user.id, 'admin')" class="">Change to Admin</a></li>
                                     <li x-show="user.user_role == 'customer'" class=""><a @click="changeRole(user.id, 'agent')" class="">Change to Agent</a></li>
-                                    <li x-show="user.user_role == 'agent'" class=""><a @click="toggleAgentStatus(user.agent.id)" x-text="user.agent && user.agent.is_active ? 'Deactivate Agent' : 'Activate Agent'"></a></li>
+                                    <li x-show="user.user_role == 'agent'" class=""><a @click="toggleAgentStatus(user.agent.id)" x-text="user.agent && user.agent.is_verified ? 'Deactivate Agent' : 'Activate Agent'"></a></li>
                                 </ul>
                             </div>
                         </div>

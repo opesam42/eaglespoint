@@ -11,6 +11,7 @@ urlpatterns = [
     path('register/', views.sign_up, name='register'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    path('agent/register/', views.agent_form, name='agent-register-form'),
     path('settings/', views.user_settings, name='settings'),
     path('update-profile/', views.update_profile, name='update-profile'),
     path('reset-password', views.reset_password, name='reset-password'),

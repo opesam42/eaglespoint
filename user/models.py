@@ -39,7 +39,7 @@ class CustomUser(AbstractUser):
 
         if self.user_role == 'agent':
             # Create or update the Agents record for this user
-            Agent.objects.get_or_create(user=self, defaults={'is_active': True})
+            Agent.objects.get_or_create(user=self)
         else:
             # If not an agent, remove from Agents table if exists
             Agent.objects.filter(user=self).delete()
@@ -49,7 +49,8 @@ class CustomUser(AbstractUser):
  
 class Agent(models.Model):
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
-    is_active = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+    renewal_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"Agent {self.user.first_name} {self.user.last_name}"

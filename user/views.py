@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from .forms import SignUpForm, LoginForm
+from .forms import SignUpForm, LoginForm, AgentForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 import json
@@ -16,6 +16,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import SetPasswordForm
+
+from .models import Agent
 from django.contrib.auth.tokens import default_token_generator
 from .tokens import email_verification_token
 from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
@@ -24,6 +26,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
 from messaging.forms import ContactMessageForm
+from utils.role_check import require_ajax
 
 User = get_user_model()
 
@@ -133,7 +136,6 @@ def user_login(request):
 
                 if user:
                     login(request, user) #login user
-                    print('Working')
                     return redirect(next_url)
                 else:
                     print('invalid credentials')
@@ -353,3 +355,79 @@ def unblock_request(request):
         return JsonResponse({'status': 'success', 'message': 'Your unblock request has been submitted successfully!'}, status=201)
     else:
         return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+
+def agent_form(request):
+    form = AgentForm()
+
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            messages.error(request, "Please login first")
+            return redirect("user:agent-register-form")
+        
+        if request.POST['email'] != request.user.email:
+                messages.error(request, "The email does not match your email. Check and try again")
+                return redirect("user:agent-register-form")
+        
+        user = User.objects.filter(email=request.POST['email']).first()
+        if not user:
+            messages.error(request, "No user found with that email address.")
+        
+        if Agent.objects.filter(user=user):
+           messages.error(request, "You are already registered as an agent. No further action is needed.") 
+
+        user.user_role = 'agent'
+        user.save()
+        messages.success(request, "Your registration was successful! Please check your email for the next steps.")
+        return redirect("user:agent-register-form")
+    
+    return render(request, 'user/agent_form.html')
+                
+
+def agent_form1(request):
+    if request.method == "POST":
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            try:   
+                post_data = request.POST.copy()
+                post_data['user'] = request.user
+                
+                if not request.user.is_authenticated:
+                    return JsonResponse({"status": "error", "message": "Authentication required"}, status=400)
+
+                if post_data['email'] != request.user.email:
+                    return JsonResponse({"status": "error", "message": "The email does not match your email. Check and try again"}, status=400)
+                
+                form = AgentForm(post_data)
+                if form.is_valid:
+                    form.save()
+                    return JsonResponse({"status": "success", "message": "Agent created successfully"})
+                
+                return JsonResponse({"status": "error", "errors": form.errors}, status=400)
+            
+            except OperationalError:
+                return JsonResponse({'status': 'error', 'error_type': 'server_error', 'message': 'A server error has occured. Please try again later'}, status=500)
+            except Exception as e:
+                return JsonResponse({'status': 'error', 'error_type': 'unexpected_error', 'message': f'Unexpected error {str(e)}'}, status=500)
+
+    return render(request, 'user/agent_form.html')
+
+@require_ajax
+@require_POST
+def submit_agent_form(request):
+    post_data = request.POST.copy()
+    post_data['user'] = request.user
+    
+    if not request.user.is_authenticated:
+        return JsonResponse({"status": "error", "message": "Authentication required"}, status=400)
+
+    if post_data['email'] != request.user.email:
+        return JsonResponse({"status": "error", "message": "The email does not match your email. Check and try again"}, status=400)
+    
+    form = AgentForm(post_data)
+    if form.is_valid:
+        form.save()
+        return JsonResponse({"status": "success", "message": "Agent created successfully"})
+    
+    return JsonResponse({"status": "error", "errors": form.errors}, status=400)
+
+
+
