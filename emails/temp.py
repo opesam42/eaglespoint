@@ -39,6 +39,7 @@ def compile_mjml(mjml_content, output_file_path):
         return None
 
 def load_mjml_from_file(file_path):
+
     """ Load MJML content from file """
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -47,43 +48,3 @@ def load_mjml_from_file(file_path):
     except Exception as e:
         print(f"Error loading MJML file: {e}")
         return None
-
-
-class EmailSender:
-    def __init__(self, recipient_email, subject, template_path, template_context=None):
-        self.recipient_email = recipient_email
-        self.subject = subject
-        self.template_path = template_path
-        self.template_context = template_context or {}
-
-    def send(self):
-        try:
-            file_path = os.path.join(settings.BASE_DIR, 'emails', 'templates', 'compiled', self.template_path)
-            
-            try:
-                with open(file_path, 'r', encoding='utf-8') as f:
-                    html_content = f.read()
-            except Exception as e:
-                print(f"Error loading MJML file: {e}")
-                return None
-            
-            # pass template_context 
-            django_engines = engines['django']
-            compiled_template = django_engines.from_string(html_content)
-            final_html = compiled_template.render(self.template_context)
-            print(final_html)
-            email = EmailMessage(
-                subject=self.subject,
-                body=final_html,
-                from_email=settings.EMAIL_HOST_USER,
-                to=[self.recipient_email],
-            )
-            email.content_subtype = "html"
-            email.encoding = 'utf-8'
-            email.send()
-            print('email sent')
-            return True
-        
-        except Exception as error:
-            print(f"Error sending email: {error}")
-            return False

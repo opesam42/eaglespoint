@@ -1,0 +1,2 @@
+To compile your mjml code to html code use the command line 
+python manage.py compile_mjml

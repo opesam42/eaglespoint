@@ -16,15 +16,17 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.views.generic import TemplateView
 from django.contrib.auth.forms import SetPasswordForm
-
-from .models import Agent
-from django.contrib.auth.tokens import default_token_generator
-from .tokens import email_verification_token
-from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
-from .utils import send_verification_email, is_user_active
 from django.views.decorators.http import require_POST
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.tokens import default_token_generator
+
+from .models import Agent
+from .tokens import email_verification_token
+from .utils import send_verification_email, is_user_active
+from utils.storage import delete_cover_image_folder, get_signed_b2_url, BackBlazeAPI
+
+from emails.views import send_account_verification_email
 from messaging.forms import ContactMessageForm
 from utils.role_check import require_ajax
 
@@ -51,7 +53,8 @@ def sign_up(request):
                     user = form.save(commit=False)
                     user.is_active = False
                     user.save()
-                    send_verification_email(request, user)
+                    send_account_verification_email(request, user, context={})
+                    # send_verification_email(request, user)
 
                     return JsonResponse({'message': 'A verification link has been sent to your email. Please check your inbox and spam folder.'}, status=201)
                 else:

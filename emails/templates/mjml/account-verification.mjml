@@ -1,0 +1,62 @@
+<mjml>
+  <mj-head>
+    <mj-title>Verify Your Eaglespoint Horizon Ltd Account</mj-title>
+    <mj-font name="Roboto" href="https://fonts.googleapis.com/css?family=Roboto:400,700" />
+    <mj-attributes>
+      <mj-text font-family="Roboto, Arial, sans-serif" font-size="16px" color="#333333" line-height="24px" />
+      <mj-button background-color="#003087" color="#FFFFFF" font-family="Roboto, Arial, sans-serif" font-size="16px" border-radius="4px" />
+      <mj-section background-color="#FFFFFF" padding="20px" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body background-color="#F4F4F4">
+    <!-- Header -->
+    <mj-section>
+      <mj-column>
+        <mj-text align="center" font-size="24px" font-weight="700" color="#003087">
+          Eaglespoint Horizon Ltd
+        </mj-text>
+        <mj-text align="center" font-size="18px" color="#333333">
+          Account Verification
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Main Content -->
+    <mj-section>
+      <mj-column>
+        <mj-text>
+          Hello {{ user.first_name }},
+        </mj-text>
+        <mj-text>
+          Thank you for registering with Eaglespoint Horizon Ltd. To complete your account setup, please verify your email address by clicking the button below.
+        </mj-text>
+        <mj-button href="{{ activation_link }}" background-color="#003087" color="#FFFFFF">
+          Verify Your Account
+        </mj-button>
+        <mj-text>
+          If the button above doesn’t work, you can copy and paste the following link into your browser:
+        </mj-text>
+        <mj-text>
+          <a href="{{ activation_link }}" style="color: #D32F2F;">{{ activation_link }}</a>
+        </mj-text>
+        <mj-text>
+          If you did not create an account with us, please ignore this email or contact our support team at support@eaglespointhorizon.com.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+
+    <!-- Footer -->
+    <mj-section background-color="#003087" padding="10px">
+      <mj-column>
+        <mj-text align="center" color="#FFFFFF" font-size="14px">
+          Eaglespoint Horizon Ltd<br />
+          123 Business Avenue, Lagos, Nigeria<br />
+          <a href="mailto:support@eaglespointhorizon.com" style="color: #FFFFFF;">support@eaglespointhorizon.com</a>
+        </mj-text>
+        <mj-text align="center" color="#FFFFFF" font-size="12px">
+          &copy; 2025 Eaglespoint Horizon Ltd. All rights reserved.
+        </mj-text>
+      </mj-column>
+    </mj-section>
+  </mj-body>
+</mjml>
